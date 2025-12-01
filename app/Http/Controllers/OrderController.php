@@ -30,6 +30,6 @@ class OrderController extends Controller
             ]
         ];
 
-        return view('layouts.track-order', compact('orders'));
+        return view('layouts.TrackOrder', compact('orders'));
     }
 }
