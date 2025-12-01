@@ -25,3 +25,5 @@ Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
 Route::get('/change-address', [PaymentController::class, 'changeAddress'])->name('change.address');
 
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+
+Route::get('/track-order', [\App\Http\Controllers\OrderController::class, 'track'])->name('track.order');
