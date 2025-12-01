@@ -10,4 +10,5 @@ class WTSController extends Controller
     {
         return view('layouts.HomePageMain');
     }
+
 }
