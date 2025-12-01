@@ -33,13 +33,13 @@ class SellerProductController extends Controller
             ],
         ];
 
-        return view('seller.products', compact('activeProducts', 'soldProducts'));
+        return view('seller.sellerProducts', compact('activeProducts', 'soldProducts'));
     }
 
 
     public function create()
     {
-        return view('seller.createProduct');
+        return view('seller.sellerAddProducts');
     }
 
 
@@ -58,7 +58,7 @@ class SellerProductController extends Controller
         //     $path = $image->store('products', 'public');
         // }
 
-        return redirect()->route('seller.products')
+        return redirect()->route('seller.sellerProducts')
                          ->with('success', 'Product added!');
     }
 
@@ -79,7 +79,7 @@ class SellerProductController extends Controller
             'price_type' => 'negotiation',
         ];
 
-        return view('seller.editProduct', compact('product'));
+        return view('seller.sellerEditProducts', compact('product'));
     }
 
 
@@ -93,7 +93,7 @@ class SellerProductController extends Controller
             'price' => 'required|numeric',
         ]);
 
-        return redirect()->route('seller.products')
+        return redirect()->route('seller.sellerEditProducts')
                          ->with('success', 'Product updated!');
     }
 }

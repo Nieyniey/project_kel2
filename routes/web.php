@@ -7,6 +7,9 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SellerProductController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BuyerController;
 
 Route::get('/', [WTSController::class, 'index']);
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
@@ -36,3 +39,15 @@ Route::get('/seller/products/create', [SellerProductController::class, 'create']
 Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
 Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
 Route::put('/seller/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
+Route::prefix('chat')->group(function () {
+    Route::get('/seller', [ChatController::class, 'sellerChat'])
+        ->name('chat.seller');
+    Route::get('/buyer', [ChatController::class, 'buyerChat'])
+        ->name('chat.buyer');
+});
+
+Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyerSettings');
+Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyerFavorites');
+Route::get('/buyer/chat', [BuyerController::class, 'chat'])->name('buyerChat');
+Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyerKeranjang');
+Route::get('/product/{id}', [ProductController::class, 'detail'])->name('detailProduct');
