@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SellerProductController;
 
 Route::get('/', [WTSController::class, 'index']);
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
@@ -27,3 +28,11 @@ Route::get('/change-address', [PaymentController::class, 'changeAddress'])->name
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 
 Route::get('/track-order', [\App\Http\Controllers\OrderController::class, 'track'])->name('track.order');
+
+Route::get('/seller/products', [SellerProductController::class, 'index'])->name('seller.products');
+Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
+Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
+Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
+Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+Route::put('/seller/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
