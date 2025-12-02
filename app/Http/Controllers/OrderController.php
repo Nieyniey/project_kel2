@@ -2,34 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function track()
+    // Place order from cart
+    public function place()
     {
-        // DUMMY DATA
-        $orders = [
-            [
-                'shop' => 'TokoSepedaPro',
-                'status' => 'Dikirim',  // status yang muncul di kanan atas
-                'image' => 'item1.jpg',
-                'name' => 'Sepeda BMX Remaja VELON | Rem DISC BRAKE',
-                'desc' => 'Ukuran 16 inci – 12 Gear',
-                'price' => 1200000,
-                'id' => 1
-            ],
-            [
-                'shop' => 'PedalMasterShop',
-                'status' => 'Selesai',
-                'image' => 'item2.jpg',
-                'name' => 'Sepeda MTB XC Elite 27.5 – Alloy Frame',
-                'desc' => 'Cocok untuk Off-road & Track Ringan',
-                'price' => 1350000,
-                'id' => 2
-            ]
-        ];
+        $cart = Cart::where('user_id', Auth::id())->with('items.product')->first();
 
-        return view('layouts.TrackOrder', compact('orders'));
+        if (!$cart) return back()->with('error', 'Cart is empty');
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'status' => 'pending',
+            'total'  => $cart->items->sum(fn($i) => $i->product->price * $i->qty),
+        ]);
+
+        foreach ($cart->items as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item->product_id,
+                'qty' => $item->qty,
+                'price' => $item->product->price,
+            ]);
+        }
+
+        $cart->items()->delete(); // Clear cart after order
+        return redirect()->route('orders.show', $order->id);
+    }
+
+    // Track order
+    public function show($id)
+    {
+        $order = Order::with('items.product')->findOrFail($id);
+        return view('order.show', compact('order'));
     }
 }
