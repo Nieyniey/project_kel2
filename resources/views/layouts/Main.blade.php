@@ -1,22 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'WTS')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+@extends('layouts.app')
 
-<body style="background: #f4f4f4; font-family: Poppins, sans-serif;">
+@section('content')
 
-    {{-- @include('components.navbar') --}}
+{{-- HEADER --}}
+<div style="
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center; 
+    background:#faf6ec; 
+    padding:12px 18px;
+    border-bottom:1px solid #d8d3c4;
+">
+    <div style="display:flex; align-items:center; gap:15px;">
+        {{-- SETTINGS ICON --}}
+        <a href="{{ route('buyerSettings') }}">
+            <img src="/icons/gear.png" style="width:22px; cursor:pointer;">
+        </a>
+    </div>
 
-    <main class="container py-5">
-        @yield('content')
-    </main>
+    <div style="font-size:24px; font-weight:700;">WTS</div>
 
-    {{-- @include('components.footer') --}}
+    <div style="display:flex; align-items:center; gap:15px;">
+        {{-- SEARCH ICON --}}
+        <img src="/icons/search.png" 
+             style="width:20px; cursor:pointer;" 
+             onclick="toggleSearchBar()">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        {{-- FAVORITES --}}
+        <a href="{{ route('buyerFavorites') }}">
+            <img src="/icons/heart.png" style="width:20px;">
+        </a>
+
+        {{-- CHAT --}}
+        <a href="{{ route('buyerChat') }}">
+            <img src="/icons/chat.png" style="width:20px;">
+        </a>
+
+        {{-- CART --}}
+        <a href="{{ route('buyerKeranjang') }}">
+            <img src="/icons/bag.png" style="width:20px;">
+        </a>
+    </div>
+</div>
+
+{{-- HIDDEN SEARCH BAR --}}
+<div id="searchBar" style="
+    display:none;
+    background:#fff;
+    padding:10px 18px;
+    border-bottom:1px solid #ccc;
+">
+    <input type="text" placeholder="Search items..." 
+           style="
+                width:100%; 
+                padding:10px; 
+                border:1px solid #cfcfcf;
+                border-radius:6px;
+           ">
+</div>
+
+
+{{-- CATEGORY NAV --}}
+<div style="
+    display:flex; 
+    justify-content:space-around;
+    background:#f6f2e7;
+    padding:10px;
+    border-bottom:1px solid #ddd;
+">
+    <div style="text-align:center; width:70px;">
+        <img src="/icons/bagcat.png" style="width:35px;">
+        <div style="font-size:12px;">Outer</div>
+    </div>
+    <div style="text-align:center; width:70px;">
+        <img src="/icons/dresscat.png" style="width:35px;">
+        <div style="font-size:12px;">Dress</div>
+    </div>
+    <div style="text-align:center; width:70px;">
+        <img src="/icons/pantscat.png" style="width:35px;">
+        <div style="font-size:12px;">Pants</div>
+    </div>
+    <div style="text-align:center; width:70px;">
+        <img src="/icons/shoescat.png" style="width:35px;">
+        <div style="font-size:12px;">Shoes</div>
+    </div>
+    <div style="text-align:center; width:70px;">
+        <img src="/icons/accessories.png" style="width:35px;">
+        <div style="font-size:12px;">Accessories</div>
+    </div>
+</div>
+
+{{-- FEATURED BANNER --}}
+<div style="padding:18px;">
+    <img src="/images/banner1.png" style="width:100%; border-radius:10px;">
+</div>
+
+
+{{-- PRODUCT GRID --}}
+<div style="
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+    gap:18px;
+    padding:18px;
+">
+    @foreach ($products as $product)
+        <div style="
+            background:#faf5e5;
+            border-radius:10px;
+            padding:10px; 
+            border:1px solid #e5dccb;
+        ">
+            <a href="{{ route('detailProduct', $product->id) }}">
+                <img src="{{ $product->image }}" 
+                     style="width:100%; border-radius:10px;">
+            </a>
+
+            <div style="margin-top:8px; font-weight:600; font-size:14px;">
+                {{ $product->name }}
+            </div>
+
+            <div style="font-size:13px; color:#a46536;">
+                Rp {{ number_format($product->price, 0, ',', '.') }}
+            </div>
+        </div>
+    @endforeach
+</div>
+
+
+<script>
+function toggleSearchBar() {
+    let bar = document.getElementById("searchBar");
+    bar.style.display = (bar.style.display === "none" || bar.style.display === "") 
+                        ? "block" : "none";
+}
+</script>
+
+@endsection
