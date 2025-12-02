@@ -39,12 +39,20 @@ Route::get('/seller/products/create', [SellerProductController::class, 'create']
 Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
 Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
 Route::put('/seller/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
-Route::prefix('chat')->group(function () {
+
+// --- Chat Room Routes (ChatController) ---
+Route::prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [ChatController::class, 'index'])->name('index'); 
+    Route::get('/room/{receiverId}', [ChatController::class, 'show'])->name('show');
+    Route::post('/room/{chat}', [ChatController::class, 'store'])->name('store');
+});
+
+/* Route::prefix('chat')->group(function () {
     Route::get('/seller', [ChatController::class, 'sellerChat'])
         ->name('chat.seller');
     Route::get('/buyer', [ChatController::class, 'buyerChat'])
         ->name('chat.buyer');
-});
+}); */
 
 Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyerSettings');
 Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyerFavorites');

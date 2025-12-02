@@ -1,99 +1,156 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule; //untuk validation
 
 class SellerProductController extends Controller
 {
-    public function index() 
+    public function __construct()
     {
-        // example static data (replace with database later)
-        $activeProducts = [
-            [
-                'id' => 1,
-                'name' => 'Sepeda VOC',
-                'price' => 1500000,
-                'image' => '/images/bike.png'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Sepeda VOC',
-                'price' => 1500000,
-                'image' => '/images/bike.png'
-            ],
-        ];
-
-        $soldProducts = [
-            [
-                'id' => 10,
-                'name' => 'Sepeda VOC',
-                'price' => 1500000,
-                'image' => '/images/bike.png'
-            ],
-        ];
-
-        return view('seller.sellerProducts', compact('activeProducts', 'soldProducts'));
+        // Gerbang Pertama: Memastikan hanya user yang sudah login DAN memiliki relasi 'seller' yang boleh masuk.
+        $this->middleware('is_seller'); 
     }
 
+    /**
+     * Tampilkan daftar semua produk yang dijual oleh seller yang sedang login.
+     */
+    public function index()
+    {
+        
+        // Sekarang kita bisa langsung ambil ID seller karena kita yakin objek 'seller' itu ada
+        $sellerId = Auth::user()->seller->seller_id;
+        
+        // Ambil semua produk milik seller ini
+        $products = Product::where('seller_id', $sellerId)
+                           ->orderBy('created_at', 'desc')
+                           ->get();
+        
+        // Anda mengganti view name di sini
+        return view('seller.sellerProducts', compact('products'));
+    }
 
+    /**
+     * Tampilkan form untuk membuat produk baru.
+     */
     public function create()
     {
+        // Anda mengganti view name di sini
         return view('seller.sellerAddProducts');
     }
 
-
+    /**
+     * Simpan produk baru ke database (termasuk upload gambar).
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
+        // 1. Validasi data
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
             'description' => 'required|string',
-            'category' => 'required|string',
-            'weight' => 'required|numeric',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0.01',
+            'stock' => 'required|integer|min:0',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // image upload sample code
-        // foreach ($request->images as $image) {
-        //     $path = $image->store('products', 'public');
-        // }
+        $seller = Auth::user()->seller; 
 
-        return redirect()->route('seller.sellerProducts')
-                         ->with('success', 'Product added!');
+        $imagePath = null;
+        
+        // 2. Proses Upload Gambar
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+        
+        // 3. Buat produk baru
+        Product::create(array_merge($validated, [
+            'seller_id' => $seller->seller_id,
+            'image_path' => $imagePath,
+        ]));
+
+        return redirect()->route('seller.products')->with('success', 'Produk berhasil ditambahkan dan siap dijual!');
     }
 
-
-    public function edit($id)
+    /**
+     * Tampilkan form untuk mengedit produk spesifik.
+     */
+    public function edit(Product $product)
     {
-        // dummy example
-        $product = [
-            'id' => $id,
-            'name' => 'SEPEDA VOC ORI',
-            'description' => 'REAL NO HOAX',
-            'category' => 'Fashion',
-            'weight' => 2.0,
-            'length' => 2.0,
-            'breadth' => 2.0,
-            'width' => 2.0,
-            'price' => 100000000000,
-            'price_type' => 'negotiation',
-        ];
+
+        $this->authorizeProductOwnership($product); 
 
         return view('seller.sellerEditProducts', compact('product'));
     }
 
-
-    public function update(Request $request, $id)
+    /**
+     * Perbarui produk spesifik di database.
+     */
+    public function update(Request $request, Product $product)
     {
-        $request->validate([
-            'name' => 'required|string',
+        $this->authorizeProductOwnership($product);
+
+        // 1. Validasi data
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
             'description' => 'required|string',
-            'category' => 'required|string',
-            'weight' => 'required|numeric',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0.01',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        return redirect()->route('seller.sellerEditProducts')
-                         ->with('success', 'Product updated!');
+        $updateData = $validated;
+
+        // 2. Proses Update Gambar (Jika ada file baru)
+        if ($request->hasFile('image')) {
+            // A. Hapus gambar lama jika ada
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            // B. Upload gambar baru
+            $imagePath = $request->file('image')->store('products', 'public');
+            $updateData['image_path'] = $imagePath;
+        }
+
+        // 3. Perbarui data produk
+        $product->update($updateData);
+
+        return redirect()->route('seller.products')->with('success', 'Produk berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus produk spesifik dari database (termasuk file gambarnya).
+     */
+    public function destroy(Product $product)
+    {
+        // Cek kepemilikan
+        $this->authorizeProductOwnership($product);
+
+        // Hapus file gambar dari storage
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        // Hapus produk dari database
+        $product->delete();
+
+        return redirect()->route('seller.products')->with('success', 'Produk berhasil dihapus dari daftar jual.');
+    }
+
+    /**
+     * Fungsi helper untuk memastikan produk milik seller yang login
+     */
+    protected function authorizeProductOwnership(Product $product)
+    {
+        $currentSellerId = Auth::user()->seller->seller_id ?? null;
+        
+        // Jika seller_id produk tidak sama dengan seller_id user yang login
+        if ($product->seller_id != $currentSellerId) {
+            // Menghentikan eksekusi dan menampilkan 403 Forbidden
+            abort(403, 'Akses Tidak Diizinkan. Produk ini bukan milik Anda.');
+        }
     }
 }
