@@ -13,12 +13,18 @@ return new class extends Migration
     {
         Schema::create('wishlist_items', function (Blueprint $table) {
             $table->id('wishlist_item_id');
-            $table->unsignedBigInteger('wishlist_id');
-            $table->unsignedBigInteger('product_id');
+            $table->foreignId('wishlist_id')
+                  ->constrained('wishlists') 
+                  ->onDelete('cascade');
+                  
+
+            $table->foreignId('product_id')
+                  ->constrained('products', 'product_id') 
+                  ->onDelete('cascade');
+            
+            $table->unique(['wishlist_id', 'product_id']); // Item wishlist tidak boleh ganda
             $table->timestamps();
 
-            $table->foreign('wishlist_id')->references('wishlist_id')->on('wishlists')->onDelete('cascade');
-            $table->foreign('product_id')->references('product_id')->on('products')->onDelete('cascade');
         });
     }
 

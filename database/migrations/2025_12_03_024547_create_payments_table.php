@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_models', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id('payment_id');
             $table->unsignedBigInteger('order_id');
             $table->enum('method', ['transfer', 'cod', 'ewallet']);
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_models');
+        Schema::dropIfExists('payments');
     }
 };

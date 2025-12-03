@@ -1,32 +1,35 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up()
+    public function up(): void
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            $table->id('cart_item_id');
-            $table->unsignedBigInteger('cart_id');
-            $table->unsignedBigInteger('product_id');
-            $table->integer('qty');
-            $table->decimal('price_per_item', 10, 2);
-            $table->timestamps();
+            $table->id('cart_item_id'); // Atau hanya $table->id();
 
-            $table->foreign('cart_id')->references('cart_id')->on('carts')->onDelete('cascade');
-            $table->foreign('product_id')->references('product_id')->on('products')->onDelete('cascade');
+            // 🛑 PERBAIKAN DI SINI:
+            // Rujuk ke Primary Key 'id' di tabel 'carts'.
+            // Parameter kedua ('id') tidak wajib, tapi memastikan jelas.
+            $table->foreignId('cart_id')
+                  ->constrained('carts') 
+                  ->onDelete('cascade');
+                  
+            // Tambahkan FK ke Products (jika belum ada)
+            $table->foreignId('product_id')->constrained('products', 'product_id')->onDelete('cascade');
+
+            $table->unsignedSmallInteger('qty');
+            $table->decimal('price_per_item', 10, 2);
+            
+            // Tambahkan unique constraint untuk mencegah duplikasi item produk di cart yang sama
+            $table->unique(['cart_id', 'product_id']);
+
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('cart_items');
