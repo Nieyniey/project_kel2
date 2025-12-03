@@ -1,21 +1,33 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\WTSController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\SellerProductController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SellerProductController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\WTSController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [WTSController::class, 'index']);
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+// Homepage
+Route::get('/', [WTSController::class, 'index'])->name('home');
+
+// Auth pages
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/logout', [AuthController::class, 'showLogout'])->name('logout');
 
+// Forgot password
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.email');
 Route::post('/forgot-password/send', [ForgotPasswordController::class, 'sendCode'])->name('forgot.send');
 Route::get('/forgot-password/verify', [ForgotPasswordController::class, 'showVerifyForm'])->name('forgot.verify');
@@ -23,39 +35,64 @@ Route::post('/forgot-password/verify', [ForgotPasswordController::class, 'verify
 Route::get('/forgot-password/new', [ForgotPasswordController::class, 'showNewPassword'])->name('forgot.new');
 Route::post('/forgot-password/new', [ForgotPasswordController::class, 'updatePassword'])->name('forgot.update');
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
+// Product detail + search
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/search', [ProductController::class, 'search'])->name('products.search');
 
-Route::get('/payment', [PaymentController::class, 'payment'])->name('payment');
-Route::get('/change-address', [PaymentController::class, 'changeAddress'])->name('change.address');
+/*
+|--------------------------------------------------------------------------
+| Seller Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('seller')->group(function () {
+    Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');
+    Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
+    Route::post('/products', [SellerProductController::class, 'store'])->name('seller.products.store');
+    Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+    Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
+});
 
-Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
-
-Route::get('/track-order', [\App\Http\Controllers\OrderController::class, 'track'])->name('track.order');
-
-Route::get('/seller/products', [SellerProductController::class, 'index'])->name('seller.products');
-Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
-Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
-Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
-Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
-Route::get('/seller/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
-Route::put('/seller/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
-
-// --- Chat Room Routes (ChatController) ---
+/*
+|--------------------------------------------------------------------------
+| Chat Routes
+|--------------------------------------------------------------------------
+*/
 Route::prefix('chat')->name('chat.')->group(function () {
-    Route::get('/', [ChatController::class, 'index'])->name('index'); 
+    Route::get('/', [ChatController::class, 'index'])->name('index');
     Route::get('/room/{receiverId}', [ChatController::class, 'show'])->name('show');
     Route::post('/room/{chat}', [ChatController::class, 'store'])->name('store');
 });
 
-/* Route::prefix('chat')->group(function () {
-    Route::get('/seller', [ChatController::class, 'sellerChat'])
-        ->name('chat.seller');
-    Route::get('/buyer', [ChatController::class, 'buyerChat'])
-        ->name('chat.buyer');
-}); */
+/*
+|--------------------------------------------------------------------------
+| Buyer routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
+Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
+Route::get('/buyer/chat', [BuyerController::class, 'chat'])->name('buyer.chat');
+Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
-Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyerSettings');
-Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyerFavorites');
-Route::get('/buyer/chat', [BuyerController::class, 'chat'])->name('buyerChat');
-Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyerKeranjang');
-Route::get('/product/{id}', [ProductController::class, 'detail'])->name('detailProduct');
+/*
+|--------------------------------------------------------------------------
+| Auth-protected ESSENTIAL routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    // Cart
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
+    // Orders
+    Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Payment
+    Route::post('/payment/{order_id}', [PaymentController::class, 'pay'])->name('payment.pay');
+
+    // Wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+});
