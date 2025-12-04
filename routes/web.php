@@ -32,17 +32,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Forgot password
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.email');
-Route::post('/forgot-password/send', [ForgotPasswordController::class, 'sendCode'])->name('forgot.send');
-Route::get('/forgot-password/verify', [ForgotPasswordController::class, 'showVerifyForm'])->name('forgot.verify');
-Route::post('/forgot-password/verify', [ForgotPasswordController::class, 'verifyCode'])->name('forgot.verify.submit');
-Route::get('/forgot-password/new', [ForgotPasswordController::class, 'showNewPassword'])->name('forgot.new');
-Route::post('/forgot-password/new', [ForgotPasswordController::class, 'updatePassword'])->name('forgot.update');
+// Forgot Password input email
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmail'])->name('forgot.email');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'checkEmail'])->name('forgot.send');
 
-// Product detail + search
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+// Reset Password Page
+Route::get('/reset-password/{email}', [ForgotPasswordController::class, 'showReset'])->name('reset.page');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('reset.save');
 
 /*
 |--------------------------------------------------------------------------

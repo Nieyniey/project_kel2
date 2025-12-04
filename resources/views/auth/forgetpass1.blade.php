@@ -1,96 +1,109 @@
-@extends('layouts.main')
-
-@section('title', 'Forget Password')
+@extends('layouts.app')
 
 @section('content')
 
+<style>
+    body {
+        background: #F4F0E6 !important;
+    }
+
+    .grid-img {
+        width: 180px;
+        height: 180px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .grid-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 380px;
+    }
+
+    .card-box {
+        width: 360px;
+        background: #FFF7DE;
+        padding: 32px 36px;
+        border-radius: 16px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+</style>
+
 <div style="
-    display: flex;
-    max-width: 1300px;
-    margin: 40px auto;
-    border-radius: 25px;
-    overflow: hidden;
-    background: #FFFBE8;
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:70px;
+    padding-top:20px;
 ">
 
-    {{-- LEFT GALLERY --}}
-    <div style="
-        width: 32%;
-        padding: 15px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    ">
-        @foreach (['item1','item2','item3','item4'] as $img)
-            <img src="{{ asset($img.'.jpg') }}"
-                 style="width:100%; height:200px; object-fit:cover; border-radius:12px;">
-        @endforeach
-    </div>
+    {{-- <!-- LEFT IMAGES -->
+    <div class="grid-box">
+        <img src="/item1.jpg" class="grid-img">
+        <img src="/item2.jpg" class="grid-img">
+        <img src="/item3.jpg" class="grid-img">
+        <img src="/item4.jpg" class="grid-img">
+    </div> --}}
 
-    {{-- CENTER --}}
-    <div style="
-        width: 36%;
-        background: #FFFBE8;
-        padding: 60px 50px;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        text-align:center;
-    ">
+    <!-- CARD -->
+    <div class="card-box">
 
-        {{-- LOGO (optional) --}}
-        <img src="{{ asset('logo.jpg') }}"
-             style="height:120px; margin-bottom:25px;">
-
-        <h2 style="font-weight:700; margin-bottom:20px; font-size:32px; color:#CC5A1A;">
-            Forget <br> Password
+        <h2 style="font-weight:700; font-size:20px; color:#333; margin-bottom:6px;">
+            Forgot Password
         </h2>
 
-        <label style="font-weight:600; margin-bottom:8px;">Enter Email Address</label>
+        <p style="font-size:14px; color:#555; margin-bottom:20px;">
+            Enter your email address
+        </p>
 
-        <input type="email" placeholder="Email Address"
-            style="
-                width:100%;
-                padding:12px 15px;
-                border-radius:10px;
-                border:2px solid #FF8A3D;
-                margin-bottom:25px;
-                font-size:15px;
-            ">
+        <form method="POST" action="{{ route('forgot.send') }}">
+            @csrf
 
-        <a href="/forgot-password/verify"
-            style="
-                padding:12px 35px;
-                border-radius:12px;
-                background:#FF6E00;
-                color:white;
-                text-decoration:none;
-                font-size:17px;
-                margin-bottom:18px;
-            ">
-            Send
-        </a>
+            <input type="email" name="email"
+                placeholder="Enter Email Address"
+                style="
+                    width:100%;
+                    padding:10px 12px;
+                    border:2px solid #FF8A3D;
+                    border-radius:8px;
+                    margin-bottom:18px;
+                    font-size:14px;
+                " required>
 
-        <a href="/login" style="color:#FF6E00; font-size:15px; text-decoration:none;">
-            Back to log in
-        </a>
+            <button type="submit"
+                style="
+                    background:#FF6E00;
+                    color:white;
+                    width:100%;
+                    padding:10px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    font-size:15px;
+                    font-weight:600;
+                ">
+                Send
+            </button>
+        </form>
+
+        <div style="margin-top:12px; text-align:center;">
+            <a href="/login" style="color:#FF6E00; font-size:14px; text-decoration:none;">
+                Back to log in
+            </a>
+        </div>
 
     </div>
 
-    {{-- RIGHT GALLERY --}}
-    <div style="
-        width: 32%;
-        padding: 15px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    ">
-        @foreach (['item5','item6','item7','item8'] as $img)
-            <img src="{{ asset($img.'.jpg') }}"
-                 style="width:100%; height:200px; object-fit:cover; border-radius:12px;">
-        @endforeach
-    </div>
+    {{-- <!-- RIGHT IMAGES -->
+    <div class="grid-box">
+        <img src="/item5.jpg" class="grid-img">
+        <img src="/item6.jpg" class="grid-img">
+        <img src="/item7.jpg" class="grid-img">
+        <img src="/item8.jpg" class="grid-img">
+    </div> --}}
 
 </div>
 

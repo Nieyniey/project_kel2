@@ -3,46 +3,52 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class ForgotPasswordController extends Controller
 {
-    // email
-    public function showEmailForm()
+    // STEP 1: show email form
+    public function showEmail()
     {
         return view('auth.forgetpass1');
     }
 
-    // Step 1 Submit (fake function)
-    public function sendCode(Request $request)
+    // STEP 1: validate email
+    public function checkEmail(Request $request)
     {
-        return redirect()->route('forgot.verify');
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email not found']);
+        }
+
+        // go to new password page
+        return redirect()->route('reset.page', $request->email);
     }
 
-
-    // verify code
-    public function showVerifyForm()
+    // STEP 2: show new password form
+    public function showReset($email)
     {
-        return view('auth.forgetpass2');
+        return view('auth.forgetpass3', compact('email'));
     }
 
-    // 
-    public function verifyCode(Request $request)
+    // STEP 2: save new password
+    public function resetPassword(Request $request)
     {
-        // validasi otp
-        return redirect()->route('forgot.new');
-    }
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed'
+        ]);
 
+        User::where('email', $request->email)->update([
+            'password' => Hash::make($request->password)
+        ]);
 
-    // new pass
-    public function showNewPassword()
-    {
-        return view('auth.forgetpass3');
-    }
-
-    // submit
-    public function updatePassword(Request $request)
-    {
-        // Simulasi update password
-        return redirect('/login')->with('success', 'Password has been updated!');
+        return redirect('/login')->with('success', 'Password updated successfully!');
     }
 }

@@ -82,6 +82,14 @@
                     margin-bottom:18px;
                 " required>
 
+            {{-- FORGOT PASSWORD --}}
+            <div style="text-align:right; margin-bottom:10px;">
+                <a href="/forgot-password" 
+                style="color:#FF6E00; font-size:14px; text-decoration:none;">
+                    Forgot password?
+                </a>
+            </div>
+
             <button type="submit" style="
                 width:100%; 
                 background:#FF6E00;
