@@ -50,6 +50,14 @@ Route::prefix('seller')->group(function () {
     Route::post('/products', [SellerProductController::class, 'store'])->name('seller.products.store');
     Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
+
+    // Seller Settings Routes
+    Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
+    Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
+    
+    // Placeholder routes for navigation links
+    Route::get('/settings/orders', function() { return view('seller.settings', ['activeTab' => 'orders']); })->name('seller.settings.orders');
+    Route::get('/settings/user-page', function() { return view('seller.settings', ['activeTab' => 'user-page']); })->name('seller.settings.user-page');
 });
 
 /*

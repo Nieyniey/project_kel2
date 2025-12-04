@@ -14,6 +14,7 @@
     <div style="display:flex; align-items:center; gap:15px;">
         {{-- SETTINGS ICON --}}
         <a href="{{ route('buyer.settings') }}">
+        <a href="{{ route('buyer.settings') }}">
             <img src="/icons/gear.png" style="width:22px; cursor:pointer;">
         </a>
     </div>
@@ -28,15 +29,18 @@
 
         {{-- FAVORITES --}}
         <a href="{{ route('buyer.favorites') }}">
+        <a href="{{ route('buyer.favorites') }}">
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 
         {{-- CHAT --}}
         <a href="{{ route('buyer.chat') }}">
+        <a href="{{ route('buyer.chat') }}">
             <img src="/icons/chat.png" style="width:20px;">
         </a>
 
         {{-- CART --}}
+        <a href="{{ route('buyer.cart') }}">
         <a href="{{ route('buyer.cart') }}">
             <img src="/icons/bag.png" style="width:20px;">
         </a>
