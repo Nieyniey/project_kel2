@@ -2,44 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Cart;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    // Place order from cart
-    public function place()
+    public function place(Request $request)
     {
-        $cart = Cart::where('user_id', Auth::id())->with('items.product')->first();
+        $cart = Cart::where('user_id', Auth::id())
+                    ->with('items.product')
+                    ->first();
 
-        if (!$cart) return back()->with('error', 'Cart is empty');
+        if (!$cart || $cart->items->isEmpty()) {
+            return back()->with('error', 'Keranjang masih kosong.');
+        }
+
+        $subtotal = $cart->items->sum(fn($item) =>
+            $item->product->price * $item->qty
+        );
+
+        $shipping = 10000;
+        $total = $subtotal + $shipping;
 
         $order = Order::create([
             'user_id' => Auth::id(),
-            'status' => 'pending',
-            'total'  => $cart->items->sum(fn($i) => $i->product->price * $i->qty),
+            'address_id' => 1,
+            'total_price' => $total,
+            'status' => 'pending'
         ]);
 
         foreach ($cart->items as $item) {
             OrderItem::create([
-                'order_id' => $order->id,
+                'order_id' => $order->order_id,
                 'product_id' => $item->product_id,
                 'qty' => $item->qty,
-                'price' => $item->product->price,
+                'price_per_item' => $item->product->price
             ]);
         }
 
-        $cart->items()->delete(); // Clear cart after order
-        return redirect()->route('orders.show', $order->id);
-    }
+        CartItem::where('cart_id', $cart->cart_id)->delete();
 
-    // Track order
-    public function show($id)
-    {
-        $order = Order::with('items.product')->findOrFail($id);
-        return view('order.show', compact('order'));
+        return redirect()->route('payment.page', $order->order_id);
     }
 }

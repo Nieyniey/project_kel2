@@ -18,12 +18,6 @@
             <a href="/" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
             <span style="font-weight:600; font-size:20px;">Keranjang Belanja</span>
         </div>
-
-        <div>
-            <a href="#" style="margin-right:10px; color:#FF6E00;"><i class="bi bi-search"></i></a>
-            <a href="#" style="margin-right:10px; color:#FF6E00;"><i class="bi bi-heart"></i></a>
-            <a href="#" style="color:#FF6E00;"><i class="bi bi-cart"></i></a>
-        </div>
     </div>
 
     {{-- TABLE HEADER --}}
@@ -47,6 +41,7 @@
         style="
         display:flex;
         justify-content:space-between;
+        align-items:center;
         padding:15px;
         background:white;
         border-radius:15px;
@@ -56,10 +51,10 @@
 
         {{-- CHECKBOX --}}
         <div style="display:flex; align-items:center; padding-right:10px;">
-            <input type="checkbox" 
-                   class="item-check" 
-                   data-price="{{ $item->product->price }}"
-                   style="width:20px; height:20px;">
+            <input type="checkbox"
+                class="item-check"
+                data-price="{{ $item->product->price }}"
+                style="width:20px; height:20px;">
         </div>
 
         {{-- IMAGE --}}
@@ -70,39 +65,28 @@
 
         {{-- PRODUCT INFO --}}
         <div style="width:30%;">
-            <div style="font-weight:600; font-size:14px; margin-bottom:5px;">
-                {{ $item->product->name }}
-            </div>
-            <div style="color:gray; font-size:13px;">
-                {{ $item->product->description }}
-            </div>
+            <div style="font-weight:600;">{{ $item->product->name }}</div>
+            <div style="color:gray;">{{ $item->product->description }}</div>
         </div>
 
         {{-- PRICE --}}
-        <div style="width:20%; font-weight:600; color:#FF6E00; display:flex; align-items:center;">
+        <div style="width:20%; font-weight:600; color:#FF6E00;">
             Rp {{ number_format($item->product->price, 0, ',', '.') }}
         </div>
 
-        {{-- QUANTITY --}}
+        {{-- QTY --}}
         <div style="width:20%; display:flex; align-items:center; gap:10px;">
-
             <button class="qty-btn" data-action="minus"
-                style="width:28px; height:28px; border-radius:50%;
-                       background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#FF6E00;">
                 -
             </button>
 
             <span class="qty-number">{{ $item->qty }}</span>
 
             <button class="qty-btn" data-action="plus"
-                style="width:28px; height:28px; border-radius:50%;
-                       background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#FF6E00;">
                 +
             </button>
-
-            <a href="#" class="delete-item" style="color:red; margin-left:10px;">
-                <i class="bi bi-trash"></i>
-            </a>
         </div>
 
     </div>
@@ -136,20 +120,32 @@
             <span id="total" style="color:#FF6E00;">Rp 0</span>
         </div>
 
+        {{-- CHECKOUT FORM --}}
+        <form id="place-order-form" method="POST" action="{{ route('orders.place') }}">
+            @csrf
+        </form>
+
         <a id="checkout-btn" href="javascript:void(0)"
-            style="width:100%; background:#CCC; display:block; text-align:center;
-                   padding:10px; color:white; border-radius:10px; font-size:16px;">
+            style="
+                width:100%;
+                background:#CCC;
+                display:block;
+                text-align:center;
+                padding:10px;
+                color:white;
+                border-radius:10px;
+                font-size:16px;
+                text-decoration:none;
+            ">
             Checkout
         </a>
-
     </div>
 
 </div>
 
 @endsection
 
-
-{{-- =====================  JS QUANTITY + CHECKBOX  ===================== --}}
+{{-- ===================== JS ===================== --}}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -171,51 +167,42 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
-
         let total = subtotal > 0 ? subtotal + shipping : 0;
         totalText.innerText = "Rp " + total.toLocaleString('id-ID');
 
         if (subtotal > 0) {
             checkoutBtn.style.background = "#FF6E00";
             checkoutBtn.style.pointerEvents = "auto";
-            checkoutBtn.href = "/payment";
+
+            checkoutBtn.onclick = function () {
+                document.getElementById('place-order-form').submit();
+            };
+
         } else {
             checkoutBtn.style.background = "#CCC";
             checkoutBtn.style.pointerEvents = "none";
-            checkoutBtn.href = "javascript:void(0)";
         }
     }
 
+    // Checkbox event
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
     });
 
+    // Quantity buttons
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
             let container = this.parentElement;
             let number = container.querySelector('.qty-number');
-            let row = this.closest('.cart-item');
             let value = parseInt(number.innerText);
 
-            if (this.dataset.action === "minus") {
-                if (value > 1) {
-                    number.innerText = value - 1;
-                } else {
-                    row.remove();
-                }
+            if (this.dataset.action === "minus" && value > 1) {
+                number.innerText = value - 1;
             }
-
             if (this.dataset.action === "plus") {
                 number.innerText = value + 1;
             }
 
-            updateSummary();
-        });
-    });
-
-    document.querySelectorAll('.delete-item').forEach(btn => {
-        btn.addEventListener('click', function () {
-            this.closest('.cart-item').remove();
             updateSummary();
         });
     });

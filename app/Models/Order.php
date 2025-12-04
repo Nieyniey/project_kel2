@@ -9,19 +9,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    use HasFactory;
-    
     protected $primaryKey = 'order_id';
 
-    protected $fillable = ['user_id', 'total_price', 'status', 'payment_method'];
+    protected $fillable = [
+        'user_id',
+        'address_id',
+        'total_price',
+        'status'
+    ];
 
     public function items()
     {
-        return $this->hasMany(OrderItem::class, 'order_id');
-    }
-
-    public function payment()
-    {
-        return $this->hasOne(Payment::class, 'order_id');
+        return $this->hasMany(OrderItem::class, 'order_id', 'order_id');
     }
 }
+

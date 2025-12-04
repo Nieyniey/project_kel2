@@ -4,23 +4,62 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Address;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function pay($order_id)
+    public function page($order_id)
+    {
+        $order = Order::with('items.product')->findOrFail($order_id);
+
+        // Ambil alamat default user
+        $address = Address::where('user_id', auth()->id())
+            ->where('is_default', 1)
+            ->first();
+
+        if (!$address) {
+            $address = (object)[
+                'address_text' => 'Alamat belum diatur',
+                'city' => '',
+                'postal_code' => ''
+            ];
+        }
+
+        $paymentMethods = [
+            [
+                'name' => 'Card',
+                'icons' => ['visa.png', 'mastercard.png', 'paypal.png']
+            ],
+            [
+                'name' => 'Bank Transfer',
+                'icons' => ['bca.png', 'bri.png', 'bni.png']
+            ],
+            [
+                'name' => 'E-Money',
+                'icons' => ['ovo.png', 'dana.png', 'gopay.png']
+            ],
+        ];
+
+        return view('buyer.keranjang.payment',
+            compact('order', 'address', 'paymentMethods'));
+    }
+
+    public function pay(Request $request, $order_id)
     {
         $order = Order::findOrFail($order_id);
 
-        $payment = Payment::create([
+        Payment::create([
             'order_id' => $order_id,
-            'status' => 'success',
-            'paid_at' => now(),
+            'method'   => $request->method,  // sudah aman karena VARCHAR
+            'status'   => 'completed',
+            // 'paid_at'  => now(),
         ]);
 
         $order->update(['status' => 'paid']);
 
-        return redirect()->route('orders.show', $order_id)
-                         ->with('success', 'Payment Successful');
+        return redirect()
+            ->route('orders.show', $order_id)
+            ->with('success', 'Payment Successful');
     }
 }

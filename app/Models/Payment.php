@@ -9,12 +9,14 @@ class Payment extends Model
 {
     use HasFactory; // <<< TAMBAHKAN INI AGAR FACTORY BISA DIPANGGIL
 
-    protected $primaryKey = 'payment_id'; // Sesuaikan jika migration pakai $table->id('payment_id')
+    protected $table = 'payments';
+    protected $primaryKey = 'payment_id';
 
     protected $fillable = [
         'order_id',
         'method',
         'status',
+        'paid_at'
     ];
 
     public function order(): BelongsTo

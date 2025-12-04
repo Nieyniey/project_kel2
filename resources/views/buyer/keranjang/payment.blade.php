@@ -4,220 +4,160 @@
 
 @section('content')
 
-<div style="padding: 20px 40px; max-width:1250px; margin:auto;">
+<div style="max-width: 1250px; margin:30px auto; padding:20px;">
 
     {{-- BACK --}}
-    <a href="/cart" style="color:#FF6E00; font-size:20px; text-decoration:none; display:flex; align-items:center; gap:6px;">
+    <a href="/cart" style="color:#FF6E00; font-size:18px; text-decoration:none;">
         ← Payment
     </a>
 
-    <h1 style="margin-top:20px; font-weight:700;">Hi, John,</h1>
+    {{-- HEADER --}}
+    <h2 style="margin-top:20px; font-weight:700;">Hi, {{ Auth::user()->name }},</h2>
 
-    <p style="font-size:18px;">
-        You need to pay
-        <span style="color:#FF6E00; font-weight:700;">Rp 2.002.000</span>
+    <p style="font-size:18px; margin-bottom:20px;">
+        You need to pay 
+        <span style="color:#FF6E00; font-weight:700;">
+            Rp {{ number_format($order->total_price, 0, ',', '.') }}
+        </span>
     </p>
 
+    {{-- ADDRESS BOX --}}
+    <div style="
+        background:#FFF7E6;
+        padding:15px 20px;
+        border-radius:10px;
+        margin-bottom:30px;
+        font-size:14px;
+        border:1px solid #FFE2B3;
+    ">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <b>Address:</b><br>
 
-    <div style="display:flex; gap:40px; align-items:flex-start; margin-top:20px;">
-
-        {{-- LEFT SECTION --}}
-        <div style="width:60%;">
-
-            {{-- ADDRESS BOX --}}
-            <div style="
-                background:white;
-                padding:18px;
-                border-radius:12px;
-                border:2px solid #FFE3C2;
-                margin-bottom:25px;
-            ">
-                <b style="display:flex; align-items:center; gap:6px; font-size:16px;">
-                    📍 Address
-                </b>
-
-                <div style="margin-top:6px; color:#333; line-height:1.4;">
-                    {{ $address }}
-                </div>
-
-                <a href="/change-address" 
-                   style="color:#FF6E00; margin-top:10px; display:inline-block; font-size:14px;">
-                   Change Address
-                </a>
+                {{ $address->address_text }}
+                {{ $address->city ? ', '.$address->city : '' }}
+                {{ $address->postal_code ? ', '.$address->postal_code : '' }}
             </div>
 
+            {{-- BUTTON CHANGE ADDRESS --}}
+            <a href="{{ route('address.change.page') }}"
+               style="
+                   padding:6px 12px;
+                   background:#FF6E00;
+                   color:white;
+                   border-radius:6px;
+                   text-decoration:none;
+                   font-size:13px;
+               ">
+               Change Address
+            </a>
+        </div>
+    </div>
 
-            {{-- PAYMENT METHODS --}}
-            <div style="
-                background:white;
-                padding:20px;
-                border-radius:12px;
-                box-shadow:0 2px 6px rgba(0,0,0,0.05);
-            ">
-                @foreach ($paymentMethods as $method)
-                    <label class="payment-row">
+    {{-- MAIN 2 COLUMN WRAPPER --}}
+    <div style="display:flex; gap:35px; align-items:flex-start;">
 
-                        <div class="left">
-                            <span class="radio-select" data-method="{{ $method['name'] }}"></span>
-                            <span class="pay-name">{{ $method['name'] }}</span>
-                        </div>
+        {{-- LEFT COLUMN – PAYMENT OPTIONS --}}
+        <div style="
+            flex:1; background:white; border-radius:12px; 
+            padding:25px; box-shadow:0 3px 10px rgba(0,0,0,0.08);
+        ">
 
-                        <div class="icons">
-                            @foreach ($method['icons'] as $icon)
-                                <img src="{{ asset('icons/'.$icon) }}" class="pay-icon">
-                            @endforeach
-                        </div>
+            @foreach ($paymentMethods as $method)
+                <div style="margin-bottom:25px;">
 
+                    <label style="font-weight:700; display:block; margin-bottom:10px;">
+                        {{ $method['name'] }}
                     </label>
 
-                    @if (!$loop->last)
-                        <hr>
-                    @endif
-                @endforeach
-            </div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        @foreach ($method['icons'] as $icon)
+                            <div onclick="selectMethod('{{ $method['name'] }}')" 
+                                 style="
+                                    padding:10px 15px;
+                                    border:1px solid #DDD;
+                                    border-radius:8px;
+                                    display:flex;
+                                    align-items:center;
+                                    gap:10px;
+                                    cursor:pointer;
+                                 ">
+                                <img src="{{ asset('icons/'.$icon) }}" 
+                                     style="width:40px; height:28px; object-fit:contain;">
+                                <span>{{ strtoupper(pathinfo($icon, PATHINFO_FILENAME)) }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            @endforeach
+
         </div>
 
+        {{-- RIGHT COLUMN – SUMMARY --}}
+        <div style="width:380px;">
 
-
-        {{-- RIGHT SUMMARY --}}
-        <div style="width:40%;">
             <div style="
                 background:white;
-                padding:20px;
+                padding:25px;
                 border-radius:12px;
-                box-shadow:0 2px 6px rgba(0,0,0,0.05);
+                box-shadow:0 3px 10px rgba(0,0,0,0.08);
             ">
-                <h2 style="font-size:22px; font-weight:700; margin-bottom:15px;">Summary</h2>
 
-                <div style="margin-bottom:10px;">
-                    <b>Sepeda BMX Remaja</b>
-                    <div style="font-size:13px; color:gray;">
-                        Quantity: 1 × Rp 2.000.000
+                <h4 style="font-weight:700; margin-bottom:15px;">Summary</h4>
+
+                @foreach ($order->items as $item)
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span>{{ $item->product->name }} (x{{ $item->qty }})</span>
+                        <span>
+                            Rp {{ number_format($item->price_per_item * $item->qty, 0, ',', '.') }}
+                        </span>
                     </div>
+                @endforeach
+
+                <hr style="margin:15px 0;">
+
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <b>Total order amount</b>
+                    <b style="color:#FF6E00;">
+                        Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                    </b>
                 </div>
 
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    padding-bottom:6px;
-                    border-bottom:1px solid #eee;
-                ">
-                    <span>Transportation Fee</span>
-                    <span>Rp 2.000</span>
-                </div>
+                {{-- PAY BUTTON --}}
+                <form action="{{ route('payment.pay', $order->order_id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="selected-method" name="method">
 
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    margin-top:15px;
-                    font-size:18px;
-                    font-weight:700;
-                ">
-                    <span>Total order amount</span>
-                    <span style="color:#FF6E00;">Rp 2.002.000</span>
-                </div>
-
-                <a id="pay-btn" href="javascript:void(0)"
-                    style="
-                        display:block;
-                        margin-top:20px;
-                        background:#CCC;
-                        color:white;
-                        padding:12px;
-                        text-align:center;
-                        border-radius:10px;
-                        font-weight:600;
-                        text-decoration:none;
-                        pointer-events:none;
-                    ">
-                    Pay
-                </a>
+                    <button type="submit"
+                        style="
+                            width:100%;
+                            margin-top:20px;
+                            background:#FF6E00;
+                            color:white;
+                            padding:12px;
+                            font-size:16px;
+                            font-weight:600;
+                            border:none;
+                            border-radius:10px;
+                            cursor:pointer;
+                        ">
+                        Pay
+                    </button>
+                </form>
 
             </div>
+
         </div>
 
-
     </div>
+
 </div>
 
-@endsection
-
-
-{{-- ================= CUSTOM CSS ================= --}}
-<style>
-.payment-row {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 0;
-    cursor:pointer;
-}
-
-.payment-row .left {
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.pay-name {
-    font-size:16px;
-    font-weight:500;
-}
-
-.radio-select {
-    width:20px;
-    height:20px;
-    border:2px solid #FF6E00;
-    border-radius:50%;
-    display:inline-block;
-    position:relative;
-    cursor:pointer;
-}
-
-.radio-select.active::after {
-    content:"";
-    width:10px;
-    height:10px;
-    background:#FF6E00;
-    border-radius:50%;
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
-}
-
-.icons {
-    display:flex;
-    gap:8px;
-}
-
-.pay-icon {
-    height:22px;
-}
-</style>
-
-
-{{-- ================= JS ================= --}}
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    const radios = document.querySelectorAll('.radio-select');
-    const payBtn = document.getElementById('pay-btn');
-
-    radios.forEach(r => {
-        r.addEventListener('click', function() {
-
-            // Remove old selection
-            radios.forEach(a => a.classList.remove('active'));
-
-            // Set new selection
-            this.classList.add('active');
-
-            // Allow payment
-            payBtn.style.background = "#FF6E00";
-            payBtn.style.pointerEvents = "auto";
-            payBtn.href = "/payment-success";
-        });
-    });
-
-});
+function selectMethod(method) {
+    document.getElementById('selected-method').value = method;
+}
 </script>
+
+@endsection

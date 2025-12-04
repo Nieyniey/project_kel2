@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use App\Models\Order;
+use App\Models\Address;
 
 class BuyerController extends Controller
 {
@@ -147,5 +148,39 @@ class BuyerController extends Controller
         ];
 
         return view('buyer.buyerKeranjang', compact('cartItems'));
+    }
+
+    public function changeAddressPage()
+    {
+        $address = Address::where('user_id', auth()->id())
+                    ->where('is_default', 1)
+                    ->first();
+
+        return view('buyer.keranjang.changeaddress', compact('address'));
+    }
+
+    public function saveAddress(Request $request)
+    {
+        $request->validate([
+            'address_text' => 'required',
+            'city'         => 'required',
+            'postal_code'  => 'required'
+        ]);
+
+        // Hapus default sebelumnya
+        Address::where('user_id', auth()->id())->update(['is_default' => 0]);
+
+        // Simpan alamat baru
+        Address::create([
+            'user_id'     => auth()->id(),
+            'label'       => 'Default Address',
+            'address'     => $request->address_text,
+            'city'        => $request->city,
+            'postal_code' => $request->postal_code,
+            'is_default'  => 1
+        ]);
+
+        return redirect()->route('payment.page', session('last_order_id'))
+                        ->with('success', 'Address updated');
     }
 }

@@ -16,15 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| PUBLIC ROUTES
 |--------------------------------------------------------------------------
 */
 
-// Homepage
 Route::get('/', [WTSController::class, 'index'])->name('home');
 Route::get('/home', [WTSController::class, 'show'])->name('homeIn');
 
-// Auth pages
+// AUTH
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
 Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
 
@@ -33,14 +32,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Forgot Password
+// FORGOT PASSWORD
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmail'])->name('forgot.email');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'checkEmail'])->name('forgot.send');
 
 Route::get('/reset-password/{email}', [ForgotPasswordController::class, 'showReset'])->name('reset.page');
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('reset.save');
 
-// Product detail + search
+// PRODUCT PAGES
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('products.search.ajax');
@@ -48,75 +47,90 @@ Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('produ
 
 /*
 |--------------------------------------------------------------------------
-| Seller Routes
+| BUYER PUBLIC PAGES
 |--------------------------------------------------------------------------
 */
-Route::prefix('seller')->group(function () {
-
-    // CRUD Produk Seller
-    Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');
-    Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
-    Route::post('/products', [SellerProductController::class, 'store'])->name('seller.products.store');
-    Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
-    Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
-
-    // Seller Settings
-    Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
-    Route::get('/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
-    Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
-
-    // Placeholder
-    Route::get('/settings/orders', fn() => view('seller.settings', ['activeTab' => 'orders']))->name('seller.settings.orders');
-    Route::get('/settings/user-page', fn() => view('seller.settings', ['activeTab' => 'user-page']))->name('seller.settings.user-page');
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| Buyer Routes
-|--------------------------------------------------------------------------
-*/
-Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings'); 
+Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
 Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
 
 /*
 |--------------------------------------------------------------------------
-| Auth-Protected Routes
+| SELLER ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('seller')->group(function () {
+
+    // PRODUCTS
+    Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');
+    Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
+    Route::post('/products', [SellerProductController::class, 'store'])->name('seller.products.store');
+    Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+    Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
+
+    // SETTINGS
+    Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
+    Route::get('/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
+    Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH-PROTECTED ROUTES
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    // Cart
+    /*
+    |---------------- CART ----------------|
+    */
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
-    // Orders
+    /*
+    |---------------- ORDER ----------------|
+    */
     Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
 
-    // Payment
+    /*
+    |---------------- PAYMENT ----------------|
+    */
+    Route::get('/payment/{order_id}', [PaymentController::class, 'page'])->name('payment.page');
     Route::post('/payment/{order_id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
-    // Wishlist
+    /*
+    |---------------- ADDRESS CHANGE ----------------|
+    */
+    Route::get('/address/change', [BuyerController::class, 'changeAddressPage'])
+        ->name('address.change.page');
+
+    Route::post('/address/change', [BuyerController::class, 'saveAddress'])
+        ->name('address.change.save');
+
+    /*
+    |---------------- WISHLIST ----------------|
+    */
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
-    // Buyer update profile
+    /*
+    |---------------- BUYER PROFILE ----------------|
+    */
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])
         ->name('buyer.settings.update.personal');
 
-    // Buyer → Seller
+    /*
+    |---------------- BUYER → SELLER ----------------|
+    */
     Route::get('/seller/create', [SellerController::class, 'showCreateStore'])->name('seller.create.form');
     Route::post('/seller/create', [SellerController::class, 'registerStore'])->name('seller.register');
 
-
     /*
-    |--------------------------------------------------------------------------
-    | Chat Routes
-    |--------------------------------------------------------------------------
+    |---------------- CHAT ----------------|
     */
     Route::prefix('chat')->name('chat.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
