@@ -79,12 +79,10 @@ class SellerController extends Controller
         ]);
 
         // 2. Create the Seller model
-        // We use $user->id for user_id and the validated store_name.
         $seller = Seller::create([
             'user_id' => $user->id,
             'store_name' => $validated['store_name'],
             // Add other mandatory fields here if your Seller model requires them 
-            // (e.g., initial status, if it's not nullable)
         ]);
         
         // 3. Optional: Add a check if creation failed, then redirect
