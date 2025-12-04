@@ -114,7 +114,7 @@
             padding:10px; 
             border:1px solid #e5dccb;
         ">
-            <a href="{{ route('products.show', $product->id) }}">
+            <a href="{{ route('products.show', $product->product_id) }}">
                 <img src="{{ $product->image }}" 
                      style="width:100%; border-radius:10px;">
             </a>
