@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 // Homepage
 Route::get('/', [WTSController::class, 'index'])->name('home');
+Route::get('/home', [WTSController::class, 'show'])->name('homeIn');
 
 // Auth pages
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
@@ -32,6 +33,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+<<<<<<< HEAD
 // Forgot Password input email
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmail'])->name('forgot.email');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'checkEmail'])->name('forgot.send');
@@ -39,6 +41,12 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'checkEmail'])
 // Reset Password Page
 Route::get('/reset-password/{email}', [ForgotPasswordController::class, 'showReset'])->name('reset.page');
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('reset.save');
+=======
+// Product detail + search
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('products.search.ajax');
+>>>>>>> 10c41a28e07198f77122254afbd473e398dbd643
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +62,7 @@ Route::prefix('seller')->group(function () {
 
     // Seller Settings Routes
     Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
+    Route::get('/seller/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
     Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
     
     // Placeholder routes for navigation links
@@ -63,23 +72,11 @@ Route::prefix('seller')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Chat Routes
-|--------------------------------------------------------------------------
-*/
-Route::prefix('chat')->name('chat.')->group(function () {
-    Route::get('/', [ChatController::class, 'index'])->name('index');
-    Route::get('/room/{receiverId}', [ChatController::class, 'show'])->name('show');
-    Route::post('/room/{chat}', [ChatController::class, 'store'])->name('store');
-});
-
-/*
-|--------------------------------------------------------------------------
 | Buyer routes
 |--------------------------------------------------------------------------
 */
-Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
+Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings'); 
 Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
-Route::get('/buyer/chat', [BuyerController::class, 'chat'])->name('buyer.chat');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
 /*
@@ -104,4 +101,24 @@ Route::middleware('auth')->group(function () {
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
+    // Buyer profile
+    Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])->name('buyer.settings.update.personal');
+
+    // Buyer becomes a Seller
+    Route::get('/seller/create', [SellerController::class, 'showCreateStore'])->name('seller.create.form');
+    Route::post('/seller/create', [SellerController::class, 'registerStore'])->name('seller.register');
+
+    /*
+|--------------------------------------------------------------------------
+| Chat Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [ChatController::class, 'index'])->name('index');
+    Route::get('/with/{receiverId}', [ChatController::class, 'show'])->name('show.user');
+    Route::post('/{chat}/{chat}', [ChatController::class, 'show'])->name('show');
+    Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
+});
 });
