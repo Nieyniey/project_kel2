@@ -13,7 +13,7 @@
 ">
     <div style="display:flex; align-items:center; gap:15px;">
         {{-- SETTINGS ICON --}}
-        <a href="{{ route('buyerSettings') }}">
+        <a href="{{ route('buyer.settings') }}">
             <img src="/icons/gear.png" style="width:22px; cursor:pointer;">
         </a>
     </div>
@@ -27,17 +27,17 @@
              onclick="toggleSearchBar()">
 
         {{-- FAVORITES --}}
-        <a href="{{ route('buyerFavorites') }}">
+        <a href="{{ route('buyer.favorites') }}">
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 
         {{-- CHAT --}}
-        <a href="{{ route('buyerChat') }}">
+        <a href="{{ route('buyer.chat') }}">
             <img src="/icons/chat.png" style="width:20px;">
         </a>
 
         {{-- CART --}}
-        <a href="{{ route('buyerKeranjang') }}">
+        <a href="{{ route('buyer.cart') }}">
             <img src="/icons/bag.png" style="width:20px;">
         </a>
     </div>
@@ -110,7 +110,7 @@
             padding:10px; 
             border:1px solid #e5dccb;
         ">
-            <a href="{{ route('detailProduct', $product->id) }}">
+            <a href="{{ route('product.show', $product->id) }}">
                 <img src="{{ $product->image }}" 
                      style="width:100%; border-radius:10px;">
             </a>

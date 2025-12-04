@@ -9,7 +9,7 @@ class WTSController extends Controller
     public function index()
     {
         $products = Product::all();  // Read logic from `products` table
-        return view('HomePageMain', compact('products'));
+        return view('layouts.HomePageMain', compact('products'));
     }
 
 }
