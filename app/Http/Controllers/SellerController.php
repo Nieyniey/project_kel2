@@ -9,10 +9,10 @@ use App\Models\Seller; // Ensure this is imported
 
 class SellerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('is_seller'); 
-    }
+    // public function __construct()
+    // {
+    //     $this->Middleware('is_seller'); 
+    // }
 
     /**
      * Show the Seller Settings page with Store Information tab active.
