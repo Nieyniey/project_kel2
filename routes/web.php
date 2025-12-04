@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
 
     // Buyer profile
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])->name('buyer.settings.update.personal');

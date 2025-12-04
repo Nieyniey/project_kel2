@@ -11,11 +11,15 @@ class WishlistController extends Controller
 {
     public function index()
     {
+        // Use 'first()' instead of 'firstOrFail()' if a user might not have a wishlist yet
         $wishlist = Wishlist::where('user_id', Auth::id())
-                           ->with('items.product')
-                           ->first();
+                            ->with('items.product')
+                            ->first();
 
-        return view('wishlist.index', compact('wishlist'));
+        // Pass an empty collection if wishlist doesn't exist yet
+        $items = $wishlist ? $wishlist->items : collect();
+        
+        return view('buyer.wishlist', compact('items')); 
     }
 
     public function add(Request $request)
@@ -28,5 +32,27 @@ class WishlistController extends Controller
         ]);
 
         return back()->with('success', 'Added to Wishlist');
+    }
+
+    /**
+     * Remove an item from the wishlist (Unliking the filled heart).
+     */
+    public function remove(Request $request)
+    {
+        $request->validate(['product_id' => 'required|exists:products,id']);
+
+        $wishlist = Wishlist::where('user_id', Auth::id())->first();
+
+        if ($wishlist) {
+            $deleted = WishlistItem::where('wishlist_id', $wishlist->id)
+                                   ->where('product_id', $request->product_id)
+                                   ->delete();
+
+            if ($deleted) {
+                 return back()->with('success', 'Product removed from your Wishlist.');
+            }
+        }
+        
+        return back()->with('error', 'Product was not found in your Wishlist.');
     }
 }
