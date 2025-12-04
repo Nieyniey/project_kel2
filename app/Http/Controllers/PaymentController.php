@@ -49,6 +49,10 @@ class PaymentController extends Controller
     {
         $order = Order::findOrFail($order_id);
 
+        if (!$request->method) {
+            return back()->with('error', 'Please select a payment method.');
+        }
+        
         Payment::create([
             'order_id' => $order_id,
             'method'   => $request->method,  // sudah aman karena VARCHAR

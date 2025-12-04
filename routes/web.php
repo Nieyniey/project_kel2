@@ -98,17 +98,23 @@ Route::middleware('auth')->group(function () {
     /*
     |---------------- PAYMENT ----------------|
     */
-    Route::get('/payment/{order_id}', [PaymentController::class, 'page'])->name('payment.page');
-    Route::post('/payment/{order_id}', [PaymentController::class, 'pay'])->name('payment.pay');
+    Route::get('/payment/{order_id}', [PaymentController::class, 'page'])
+    ->name('payment.page');
+    Route::post('/payment/{order_id}', [PaymentController::class, 'pay'])
+    ->name('payment.pay');
 
     /*
     |---------------- ADDRESS CHANGE ----------------|
     */
-    Route::get('/address/change', [BuyerController::class, 'changeAddressPage'])
-        ->name('address.change.page');
+    // PAGE ganti alamat (GET)
+    Route::get('/address/change/{order_id}', 
+        [BuyerController::class, 'changeAddressPage']
+    )->name('address.change.page');
 
-    Route::post('/address/change', [BuyerController::class, 'saveAddress'])
-        ->name('address.change.save');
+    // SAVE alamat baru (POST)
+    Route::post('/address/change', 
+        [BuyerController::class, 'saveAddress']
+    )->name('address.change.save');
 
     /*
     |---------------- WISHLIST ----------------|

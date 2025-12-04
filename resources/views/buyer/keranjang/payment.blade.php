@@ -40,17 +40,18 @@
             </div>
 
             {{-- BUTTON CHANGE ADDRESS --}}
-            <a href="{{ route('address.change.page') }}"
-               style="
-                   padding:6px 12px;
-                   background:#FF6E00;
-                   color:white;
-                   border-radius:6px;
-                   text-decoration:none;
-                   font-size:13px;
-               ">
-               Change Address
+            <a href="{{ route('address.change.page', $order->order_id) }}"
+                style="
+                    padding:6px 12px;
+                    background:#FF6E00;
+                    color:white;
+                    border-radius:6px;
+                    text-decoration:none;
+                    font-size:13px;
+                ">
+                Change Address
             </a>
+
         </div>
     </div>
 
@@ -125,9 +126,9 @@
                 </div>
 
                 {{-- PAY BUTTON --}}
-                <form action="{{ route('payment.pay', $order->order_id) }}" method="POST">
+                <form action="{{ route('payment.pay', $order->order_id) }}" method="POST" onsubmit="return validatePayment()">
                     @csrf
-                    <input type="hidden" id="selected-method" name="method">
+                    <input type="hidden" id="selected-method" name="method" required>
 
                     <button type="submit"
                         style="
@@ -157,6 +158,15 @@
 <script>
 function selectMethod(method) {
     document.getElementById('selected-method').value = method;
+}
+
+function validatePayment() {
+    let method = document.getElementById('selected-method').value;
+    if (!method) {
+        alert("Please select a payment method first.");
+        return false;
+    }
+    return true;
 }
 </script>
 
