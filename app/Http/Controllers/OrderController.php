@@ -48,4 +48,26 @@ class OrderController extends Controller
 
         return redirect()->route('payment.page', $order->order_id);
     }
+
+    public function trackList()
+    {
+        // Ambil semua order milik user
+        $orders = Order::with('items.product')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('buyer.track.track-list', compact('orders'));
+    }
+
+    // public function trackDetail($id)
+    // {
+    //     // Ambil 1 order + itemnya
+    //     $order = Order::with('items.product')
+    //         ->where('user_id', auth()->id())
+    //         ->findOrFail($id);
+
+    //     return view('buyer.track.track-detail', compact('order'));
+    // }
+
 }

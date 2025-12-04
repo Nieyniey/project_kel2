@@ -145,4 +145,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
 
+    // track order detail
+    // Route::get('/track-order/{id}', [OrderController::class, 'trackDetail'])
+    // ->name('track.detail');
+
+
 });

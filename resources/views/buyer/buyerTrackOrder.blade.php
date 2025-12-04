@@ -64,7 +64,7 @@
 
                 {{-- BUTTON --}}
                 <div style="display:flex; align-items:center;">
-                    <a href="/track-order/{{ $order['id'] }}"
+                    <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}"
                        style="
                             padding:8px 15px;
                             background:#FF6E00;

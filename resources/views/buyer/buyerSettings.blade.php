@@ -194,7 +194,10 @@
                                 <hr class="my-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     {{-- Chat button linked to the seller's user ID --}}
-                                    <a href="{{ route('chat.show', ['receiverId' => $sellerId]) }}" class="btn btn-sm btn-outline-secondary">Chat Penjual</a>
+                                    <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}"
+                                        class="btn btn-sm btn-outline-secondary">
+                                        Chat Penjual
+                                    </a>
                                     
                                     {{-- Total price from the Order model --}}
                                     <p class="mb-0 fw-bold">Total: <span class="text-danger">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></p>

@@ -39,28 +39,32 @@ class BuyerController extends Controller
     }
 
 
-    public function settings(Request $request, $tab = 'personal-info')
+    public function settings(Request $request)
     {
         $user = Auth::user();
         $isSeller = $user->seller()->exists();
 
+        // ⬅ INI FIX-nya!!
+        $activeTab = $request->query('tab', 'personal-info');
+
         $data = [
             'user' => $user,
             'isSeller' => $isSeller,
-            'activeTab' => $tab,
+            'activeTab' => $activeTab,
         ];
 
-        if ($tab === 'orders') {
+        if ($activeTab === 'orders') {
             $orders = Order::where('user_id', $user->id)
-                           ->orderBy('created_at', 'desc') 
-                           ->with('items.product.seller') 
-                           ->get();
-                           
+                        ->orderBy('created_at', 'desc')
+                        ->with('items.product.seller')
+                        ->get();
+
             $data['orders'] = $orders;
         }
 
         return view('buyer.buyerSettings', $data);
     }
+
 
     public function updatePersonalInfo(Request $request)
     {

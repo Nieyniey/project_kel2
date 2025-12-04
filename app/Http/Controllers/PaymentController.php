@@ -52,18 +52,18 @@ class PaymentController extends Controller
         if (!$request->method) {
             return back()->with('error', 'Please select a payment method.');
         }
-        
+
         Payment::create([
             'order_id' => $order_id,
-            'method'   => $request->method,  // sudah aman karena VARCHAR
+            'method'   => $request->method,
             'status'   => 'completed',
-            // 'paid_at'  => now(),
         ]);
 
         $order->update(['status' => 'paid']);
 
         return redirect()
-            ->route('orders.show', $order_id)
-            ->with('success', 'Payment Successful');
+            ->route('buyer.settings', ['tab' => 'orders'])
+            ->with('success', 'Payment Successful!');
     }
+
 }
