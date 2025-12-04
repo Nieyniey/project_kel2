@@ -18,7 +18,10 @@ class CartController extends Controller
                     ->first();
 
         if (!$cart) {
-            return view('cart.index', ['items' => [], 'summary' => null]);
+            return view('buyer.keranjang.buyerKeranjang', [
+                'items' => [],
+                'summary' => ['shipping' => 10000]
+            ]);
         }
 
         $items = $cart->items;
@@ -31,7 +34,7 @@ class CartController extends Controller
             'total' => $subtotal + $shipping,
         ];
 
-        return view('cart.index', compact('items', 'summary'));
+        return view('buyer.keranjang.buyerKeranjang', compact('items', 'summary'));
     }
 
     // Add to cart

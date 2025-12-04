@@ -42,7 +42,7 @@
     </div>
 
     {{-- CART ITEMS --}}
-    @foreach ($items as $index => $item)
+    @foreach ($items as $item)
     <div class="cart-item"
         style="
         display:flex;
@@ -56,47 +56,49 @@
 
         {{-- CHECKBOX --}}
         <div style="display:flex; align-items:center; padding-right:10px;">
-            <input type="checkbox" class="item-check" data-price="{{ $item['price'] }}"
+            <input type="checkbox" 
+                   class="item-check" 
+                   data-price="{{ $item->product->price }}"
                    style="width:20px; height:20px;">
         </div>
 
         {{-- IMAGE --}}
         <div style="width:15%;">
-            <img src="{{ asset($item['image']) }}"
+            <img src="{{ asset($item->product->image) }}"
                 style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
         </div>
 
         {{-- PRODUCT INFO --}}
         <div style="width:30%;">
             <div style="font-weight:600; font-size:14px; margin-bottom:5px;">
-                {{ $item['name'] }}
+                {{ $item->product->name }}
             </div>
             <div style="color:gray; font-size:13px;">
-                {{ $item['desc'] }}
+                {{ $item->product->description }}
             </div>
         </div>
 
         {{-- PRICE --}}
         <div style="width:20%; font-weight:600; color:#FF6E00; display:flex; align-items:center;">
-            Rp {{ number_format($item['price'], 0, ',', '.') }}
+            Rp {{ number_format($item->product->price, 0, ',', '.') }}
         </div>
 
         {{-- QUANTITY --}}
         <div style="width:20%; display:flex; align-items:center; gap:10px;">
 
             <button class="qty-btn" data-action="minus"
-                style="
-                    width:28px; height:28px; border-radius:50%;
-                    background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;
-                ">-</button>
+                style="width:28px; height:28px; border-radius:50%;
+                       background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;">
+                -
+            </button>
 
-            <span class="qty-number">{{ $item['qty'] }}</span>
+            <span class="qty-number">{{ $item->qty }}</span>
 
             <button class="qty-btn" data-action="plus"
-                style="
-                    width:28px; height:28px; border-radius:50%;
-                    background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;
-                ">+</button>
+                style="width:28px; height:28px; border-radius:50%;
+                       background:#FFF3D2; border:none; color:#FF6E00; font-size:18px;">
+                +
+            </button>
 
             <a href="#" class="delete-item" style="color:red; margin-left:10px;">
                 <i class="bi bi-trash"></i>
@@ -135,17 +137,8 @@
         </div>
 
         <a id="checkout-btn" href="javascript:void(0)"
-            style="
-                width:100%;
-                background:#CCC;
-                display:block;
-                text-align:center;
-                padding:10px;
-                color:white;
-                border-radius:10px;
-                font-size:16px;
-                text-decoration:none;
-            ">
+            style="width:100%; background:#CCC; display:block; text-align:center;
+                   padding:10px; color:white; border-radius:10px; font-size:16px;">
             Checkout
         </a>
 
@@ -182,11 +175,10 @@ document.addEventListener("DOMContentLoaded", function () {
         let total = subtotal > 0 ? subtotal + shipping : 0;
         totalText.innerText = "Rp " + total.toLocaleString('id-ID');
 
-        // Update checkout button
         if (subtotal > 0) {
             checkoutBtn.style.background = "#FF6E00";
             checkoutBtn.style.pointerEvents = "auto";
-            checkoutBtn.href = "/payment"; // <-- MASUK PAYMENT
+            checkoutBtn.href = "/payment";
         } else {
             checkoutBtn.style.background = "#CCC";
             checkoutBtn.style.pointerEvents = "none";
@@ -194,15 +186,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Checkbox event
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
     });
 
-    // Quantity buttons
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
-
             let container = this.parentElement;
             let number = container.querySelector('.qty-number');
             let row = this.closest('.cart-item');
@@ -224,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Delete button
     document.querySelectorAll('.delete-item').forEach(btn => {
         btn.addEventListener('click', function () {
             this.closest('.cart-item').remove();

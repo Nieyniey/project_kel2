@@ -97,27 +97,35 @@
     gap:18px;
     padding:18px;
 ">
-    @foreach ($products as $product)
-        <div style="
-            background:#faf5e5;
-            border-radius:10px;
-            padding:10px; 
-            border:1px solid #e5dccb;
-        ">
-            <a href="{{ route('products.show', $product->product_id) }}">
-                <img src="{{ $product->image }}" style="width:100%; border-radius:10px;">
-            </a>
 
-            <div style="margin-top:8px; font-weight:600; font-size:14px;">
-                {{ $product->name }}
-            </div>
+    @if(isset($products) && count($products) > 0)
+        @foreach ($products as $product)
+            <div style="
+                background:#faf5e5;
+                border-radius:10px;
+                padding:10px; 
+                border:1px solid #e5dccb;
+            ">
+                <a href="{{ route('products.show', $product->product_id) }}">
+                    <img src="{{ $product->image }}" style="width:100%; border-radius:10px;">
+                </a>
 
-            <div style="font-size:13px; color:#a46536;">
-                Rp {{ number_format($product->price, 0, ',', '.') }}
+                <div style="margin-top:8px; font-weight:600; font-size:14px;">
+                    {{ $product->name }}
+                </div>
+
+                <div style="font-size:13px; color:#a46536;">
+                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                </div>
             </div>
+        @endforeach
+    @else
+        <div style="text-align:center; color:#555; padding:20px;">
+            <em>No products available.</em>
         </div>
-    @endforeach
+    @endif
 </div>
+
 
 <script>
 function toggleSearchBar() {
