@@ -3,7 +3,6 @@
 @section('title', 'Seller Settings')
 
 @php
-    // Determine the active tab based on the current route/logic
     $activeTab = $activeTab ?? 'store-info'; 
 @endphp
 
@@ -26,10 +25,12 @@
                     <div class="d-flex flex-column align-items-center mb-4">
                         {{-- Profile Picture Placeholder --}}
                         <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
-                            {{-- Placeholder for a store logo --}}
-                            <img src="{{ asset('placeholder.jpg') }}" 
-                                 alt="Store Logo" 
-                                 class="w-100 h-100 object-fit-cover rounded-circle">
+                            @php
+                                $path = Auth::user()->profile_photo;
+                                $profileImageUrl = $path 
+                                                ? asset('storage/' . $path)
+                                                : asset('placeholder.jpg');
+                            @endphp
                         </div>
                         <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
                         <small class="text-muted">Seller</small>
