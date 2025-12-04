@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerProductController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\WTSController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +25,12 @@ Route::get('/', [WTSController::class, 'index'])->name('home');
 
 // Auth pages
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
+Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/logout', [AuthController::class, 'showLogout'])->name('logout');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Forgot password
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.email');

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login Page')
+@section('title', 'Login')
 
 @section('content')
 
@@ -15,14 +15,12 @@
     background: #FFFBE8;
 ">
 
-    {{-- LEFT PANEL --}}
     <div style="
         width: 45%;
         background: #FFFBE8;
         padding: 60px 70px;
     ">
 
-        {{-- LOGO --}}
         <div style="text-align:center; margin-bottom: 30px;">
             <img src="{{ asset('logo.jpg') }}" 
                  alt="WTS Logo"
@@ -31,38 +29,60 @@
 
         <h3 style="font-weight: 700; margin-bottom: 25px;">Log In</h3>
 
-        {{-- FORM --}}
-        <form>
+        {{-- ERROR MESSAGE --}}
+        @if ($errors->any())
+            <div style="
+                background:#ffe0e0;
+                color:#b10000;
+                padding:10px 15px;
+                border-radius:10px;
+                margin-bottom:15px;
+                border:1px solid #ffb3b3;
+                font-size:14px;
+            ">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-            {{-- EMAIL --}}
+        {{-- SUCCESS MESSAGE (setelah signup) --}}
+        @if (session('success'))
+            <div style="
+                background:#e0ffe8;
+                color:#008f2a;
+                padding:10px 15px;
+                border-radius:10px;
+                margin-bottom:15px;
+                border:1px solid #b2ffcc;
+                font-size:14px;
+            ">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login.post') }}">
+            @csrf
+
             <label>Email Address</label>
-            <input type="email" placeholder="Enter Email Address"
+            <input type="email" name="email" placeholder="Enter Email Address"
                 style="
                     width:100%;
                     padding:10px 15px;
                     border:2px solid #FF8A3D;
                     border-radius:10px;
                     margin-bottom:18px;
-                ">
+                " required>
 
-            {{-- PASSWORD --}}
             <label>Password</label>
-            <input type="password" placeholder="Enter Password"
+            <input type="password" name="password" placeholder="Enter Password"
                 style="
                     width:100%;
                     padding:10px 15px;
                     border:2px solid #FF8A3D;
                     border-radius:10px;
-                    margin-bottom:10px;
-                ">
-            
-            {{-- FORGOT --}}
-            <a href="#" style="color:#FF6E00; font-size:14px; text-decoration:none;">
-                Forgot password?
-            </a>
+                    margin-bottom:18px;
+                " required>
 
-            {{-- LOGIN BTN --}}
-            <button style="
+            <button type="submit" style="
                 width:100%; 
                 background:#FF6E00;
                 color:white;
@@ -75,13 +95,10 @@
             ">
                 Log in
             </button>
-
         </form>
 
-        {{-- SIGNUP LINK --}}
         <div style="text-align:center; margin-top:20px;">
             <p>Don’t have an account?</p>
-
             <a href="/signup" style="
                 padding:8px 30px; 
                 border:2px solid #FF6E00;
@@ -91,10 +108,8 @@
                 text-decoration:none;
             ">Sign Up</a>
         </div>
-
     </div>
 
-    {{-- RIGHT GALLERY --}}
     <div style="
         width: 55%;
         background: #FFFBE8;

@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('title', 'Sign Up')
 
@@ -29,46 +29,58 @@
                  style="height: 160px;">
         </div>
 
-        {{-- FORM --}}
         <h3 style="font-weight: 700; margin-bottom: 25px;">Sign Up</h3>
 
-        <form>
+        {{-- FORM --}}
+        <form method="POST" action="{{ route('signup.post') }}">
+            @csrf
+
+            {{-- NAME --}}
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Enter Name"
+                style="
+                    width:100%;
+                    padding:10px 15px;
+                    border:2px solid #FF8A3D;
+                    border-radius:10px;
+                    margin-bottom:18px;
+                " required>
 
             {{-- EMAIL --}}
             <label>Email Address</label>
-            <input type="email" placeholder="Enter Email Address"
+            <input type="email" name="email" placeholder="Enter Email Address"
                 style="
                     width:100%;
                     padding:10px 15px;
                     border:2px solid #FF8A3D;
                     border-radius:10px;
                     margin-bottom:18px;
-                ">
+                " required>
 
             {{-- PASSWORD --}}
             <label>Password</label>
-            <input type="password" placeholder="Password must consist of 8 characters"
+            <input type="password" name="password" placeholder="Password must consist of 8 characters"
                 style="
                     width:100%;
                     padding:10px 15px;
                     border:2px solid #FF8A3D;
                     border-radius:10px;
                     margin-bottom:18px;
-                ">
+                " required>
 
             {{-- CONFIRM --}}
             <label>Confirm Password</label>
-            <input type="password" placeholder="Enter Password"
+            <input type="password" name="password_confirmation" placeholder="Enter Password"
                 style="
                     width:100%;
                     padding:10px 15px;
                     border:2px solid #FF8A3D;
                     border-radius:10px;
                     margin-bottom:25px;
-                ">
+                " required>
 
-            {{-- SIGN IN BUTTON --}}
-            <button style="
+            {{-- SUBMIT --}}
+            <button type="submit" style="
                 width:100%; 
                 background:#FF6E00;
                 color:white;
@@ -79,14 +91,13 @@
                 cursor:pointer;
                 margin-bottom:20px;
             ">
-                Sign in
+                Sign up
             </button>
 
         </form>
 
         <div style="text-align:center;">
             <p>Already have an account?</p>
-
             <a href="/login" style="
                 padding:8px 30px; 
                 border:2px solid #FF6E00;
@@ -96,15 +107,9 @@
                 text-decoration:none;
             ">Log in</a>
         </div>
-
-        <p style="margin-top:22px; font-size:14px; text-align:center;">
-            By signing up, you agree to our
-            <a href="#" style="font-weight:bold; color:#000;">Terms & Regulation</a>
-        </p>
-
     </div>
 
-    {{-- RIGHT GALLERY --}}
+    {{-- RIGHT IMAGE --}}
     <div style="
         width: 55%;
         background: #FFFBE8;
