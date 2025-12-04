@@ -15,14 +15,26 @@ class SellerController extends Controller
     // }
 
     /**
-     * Show the Seller Settings page with Store Information tab active.
+     * Show the Seller Settings page. 
+     * Now accepts an optional tab parameter and checks if the user is a seller.
      */
-    public function showSettings()
+    public function showSettings(Request $request, $tab = 'store-info')
     {
-        // Fetch the current seller model instance
-        $seller = Auth::user()->seller; 
+        // 1. Ensure user is authenticated and is a seller
+        $user = Auth::user();
+        if (!$user || !$user->seller) {
+            // Redirect or show an error if they shouldn't be here
+            return redirect()->route('home')->with('error', 'You are not registered as a seller.');
+        }
+        
+        // 2. Prepare data to pass to the view
+        $data = [
+            'seller' => $user->seller,
+            'user' => $user, // Pass the user model for name/photo display
+            'activeTab' => $tab, // Pass the active tab for highlighting the navigation link
+        ];
 
-        return view('seller.settings', compact('seller'));
+        return view('seller.settings', $data);
     }
 
     /**
@@ -46,7 +58,9 @@ class SellerController extends Controller
         // 2. Update the Seller model
         $seller->update($validated);
 
-        return redirect()->route('seller.sellerSettings')->with('success', 'Store Name successfully updated!');
+        // NOTE: I am assuming 'seller.settings' is the correct route name for the settings page.
+        // You had 'seller.sellerSettings' which is likely a typo.
+        return redirect()->route('seller.settings', ['tab' => 'store-info'])->with('success', 'Store Name successfully updated!');
     }
 
     public function showCreateStore()

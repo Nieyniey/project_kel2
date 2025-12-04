@@ -53,6 +53,7 @@ Route::prefix('seller')->group(function () {
 
     // Seller Settings Routes
     Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
+    Route::get('/seller/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
     Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
     
     // Placeholder routes for navigation links
