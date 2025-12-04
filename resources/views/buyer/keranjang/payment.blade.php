@@ -4,6 +4,16 @@
 
 @section('content')
 
+<style>
+    .method-card {
+        transition: 0.2s;
+    }
+    .method-card.selected {
+        border: 2px solid #FF6E00 !important;
+        background: #FFF1E0;
+    }
+</style>
+
 <div style="max-width: 1250px; margin:30px auto; padding:20px;">
 
     {{-- BACK --}}
@@ -73,8 +83,9 @@
 
                     <div style="display:flex; gap:12px; flex-wrap:wrap;">
                         @foreach ($method['icons'] as $icon)
-                            <div onclick="selectMethod('{{ $method['name'] }}')" 
-                                 style="
+                            <div class="method-card"
+                                onclick="selectMethod('{{ strtoupper(pathinfo($icon, PATHINFO_FILENAME)) }}', this)"
+                                style="
                                     padding:10px 15px;
                                     border:1px solid #DDD;
                                     border-radius:8px;
@@ -82,7 +93,7 @@
                                     align-items:center;
                                     gap:10px;
                                     cursor:pointer;
-                                 ">
+                                ">
                                 <img src="{{ asset('icons/'.$icon) }}" 
                                      style="width:40px; height:28px; object-fit:contain;">
                                 <span>{{ strtoupper(pathinfo($icon, PATHINFO_FILENAME)) }}</span>
@@ -128,7 +139,7 @@
                 {{-- PAY BUTTON --}}
                 <form action="{{ route('payment.pay', $order->order_id) }}" method="POST" onsubmit="return validatePayment()">
                     @csrf
-                    <input type="hidden" id="selected-method" name="method" required>
+                    <input type="hidden" id="selected-method" name="method">
 
                     <button type="submit"
                         style="
@@ -156,8 +167,16 @@
 </div>
 
 <script>
-function selectMethod(method) {
+function selectMethod(method, element) {
     document.getElementById('selected-method').value = method;
+
+    // Hapus highlight dari semua kartu
+    document.querySelectorAll('.method-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    // Highlight kartu yang dipilih
+    element.classList.add('selected');
 }
 
 function validatePayment() {
