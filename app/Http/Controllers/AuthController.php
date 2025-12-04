@@ -58,7 +58,7 @@ class AuthController extends Controller
             // REGENERATE SESSION
             $request->session()->regenerate();
 
-            return redirect('/buyer/home');
+            return redirect('/home');
         }
 
         // LOGIN FAILED
