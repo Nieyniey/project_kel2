@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('chat')->name('chat.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
         Route::get('/with/{receiverId}', [ChatController::class, 'show'])->name('show.user');
-        Route::post('/{chat}/{chat}', [ChatController::class, 'show'])->name('show'); // (ini harusnya diperbaiki, nanti jelasin ya)
+        Route::post('/{chat}/{receiver}', [ChatController::class, 'show'])->name('show');
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
 
