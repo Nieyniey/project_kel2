@@ -70,7 +70,7 @@
             {{-- Icons --}}
             <div class="d-flex gap-3 align-items-center">
                 {{-- Settings (Gear) -> Buyer Settings --}}
-                <a href="{{ route('buyer.buyerSettings') }}" class="text-dark">
+                <a href="{{ route('buyer.settings') }}" class="text-dark">
                     <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
                 </a>
                 

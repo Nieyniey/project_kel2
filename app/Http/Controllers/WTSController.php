@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WTSController extends Controller
 {
@@ -17,7 +18,7 @@ class WTSController extends Controller
         $products = Product::all(); 
         $isLoggedIn = Auth::check();
 
-        return view('layouts.buyer.buyerHome', compact('products', 'isLoggedIn'));
+        return view('buyer.buyerHome', compact('products', 'isLoggedIn'));
     }
 
 }

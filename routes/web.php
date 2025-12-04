@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 // Homepage
 Route::get('/', [WTSController::class, 'index'])->name('home');
-Route::get('/', [WTSController::class, 'show'])->name('homeIn');
+Route::get('/home', [WTSController::class, 'show'])->name('homeIn');
 
 // Auth pages
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
@@ -39,6 +39,7 @@ Route::post('/forgot-password/new', [ForgotPasswordController::class, 'updatePas
 // Product detail + search
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('products.search.ajax');
 
 /*
 |--------------------------------------------------------------------------
