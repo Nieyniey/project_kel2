@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 // Homepage
 Route::get('/', [WTSController::class, 'index'])->name('home');
+Route::get('/', [WTSController::class, 'show'])->name('homeIn');
 
 // Auth pages
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');

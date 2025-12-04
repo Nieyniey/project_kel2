@@ -12,4 +12,12 @@ class WTSController extends Controller
         return view('layouts.HomePageMain', compact('products'));
     }
 
+    public function show()
+    {
+        $products = Product::all(); 
+        $isLoggedIn = Auth::check();
+
+        return view('layouts.buyer.buyerHome', compact('products', 'isLoggedIn'));
+    }
+
 }
