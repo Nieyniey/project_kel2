@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Buyer Home')
+
 @section('content')
 
 {{-- HEADER --}}
@@ -12,7 +14,6 @@
     border-bottom:1px solid #d8d3c4;
 ">
     <div style="display:flex; align-items:center; gap:15px;">
-        {{-- SETTINGS ICON --}}
         <a href="{{ route('buyer.settings') }}">
             <img src="/icons/gear.png" style="width:22px; cursor:pointer;">
         </a>
@@ -21,44 +22,38 @@
     <div style="font-size:24px; font-weight:700;">WTS</div>
 
     <div style="display:flex; align-items:center; gap:15px;">
-        {{-- SEARCH ICON --}}
         <img src="/icons/search.png" 
              style="width:20px; cursor:pointer;" 
              onclick="toggleSearchBar()">
 
-        {{-- FAVORITES --}}
         <a href="{{ route('buyer.favorites') }}">
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 
-        {{-- CHAT --}}
         <a href="{{ route('buyer.chat') }}">
             <img src="/icons/chat.png" style="width:20px;">
         </a>
 
-        {{-- CART --}}
         <a href="{{ route('buyer.cart') }}">
             <img src="/icons/bag.png" style="width:20px;">
         </a>
     </div>
 </div>
 
-{{-- HIDDEN SEARCH BAR --}}
+{{-- SEARCH BAR --}}
 <div id="searchBar" style="
     display:none;
     background:#fff;
     padding:10px 18px;
     border-bottom:1px solid #ccc;
 ">
-    <input type="text" placeholder="Search items..." 
-           style="
-                width:100%; 
-                padding:10px; 
-                border:1px solid #cfcfcf;
-                border-radius:6px;
-           ">
+    <input type="text" placeholder="Search items..." style="
+        width:100%; 
+        padding:10px; 
+        border:1px solid #cfcfcf;
+        border-radius:6px;
+    ">
 </div>
-
 
 {{-- CATEGORY NAV --}}
 <div style="
@@ -90,11 +85,10 @@
     </div>
 </div>
 
-{{-- FEATURED BANNER --}}
+{{-- BANNER --}}
 <div style="padding:18px;">
     <img src="/images/banner1.png" style="width:100%; border-radius:10px;">
 </div>
-
 
 {{-- PRODUCT GRID --}}
 <div style="
@@ -111,8 +105,7 @@
             border:1px solid #e5dccb;
         ">
             <a href="{{ route('products.show', $product->product_id) }}">
-                <img src="{{ $product->image }}" 
-                     style="width:100%; border-radius:10px;">
+                <img src="{{ $product->image }}" style="width:100%; border-radius:10px;">
             </a>
 
             <div style="margin-top:8px; font-weight:600; font-size:14px;">
@@ -125,7 +118,6 @@
         </div>
     @endforeach
 </div>
-
 
 <script>
 function toggleSearchBar() {
