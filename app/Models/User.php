@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'DOB',
+        'profile_photo',
     ];
 
     /**
@@ -44,5 +47,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    /**
+     * Get the seller record associated with the user.
+     * user_id di tabel 'sellers' adalah foreign key yang mengarah ke tabel 'users'.
+     */
+    public function seller(): HasOne
+    {
+        // 1. Relasi: HasOne (Satu User memiliki maksimal Satu Seller)
+        // 2. Model: Seller::class (Model tujuan)
+        // 3. Foreign Key: 'user_id' (Kolom FK di tabel 'sellers')
+        // 4. Local Key: 'id' (Primary key di tabel 'users')
+        return $this->hasOne(Seller::class, 'user_id', 'id');
     }
 }

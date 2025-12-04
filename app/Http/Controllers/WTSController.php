@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class WTSController extends Controller
 {
     public function index()
     {
-        return view('layouts.HomePageMain');
+        $products = Product::all();  // Read logic from `products` table
+        return view('HomePageMain', compact('products'));
     }
 
 }

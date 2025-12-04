@@ -2,35 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    // View Cart
     public function index()
     {
-        $items = [
-            [
-                'image' => 'item1.jpg',
-                'name' => 'Sepeda BMX 16 Inch – Black Edition',
-                'desc' => 'Kondisi: 95% mulus',
-                'price' => 2000000,
-                'qty' => 1
-            ],
-            [
-                'image' => 'item2.jpg',
-                'name' => 'Sepeda Fixie 700C – Matte Grey',
-                'desc' => 'Ringan dan cepat',
-                'price' => 1500000,
-                'qty' => 1
-            ],
-        ];
+        $cart = Cart::where('user_id', Auth::id())
+                    ->with('items.product')
+                    ->first();
 
+        if (!$cart) {
+            return view('cart.index', ['items' => [], 'summary' => null]);
+        }
+
+        $items = $cart->items;
+
+        $subtotal = $items->sum(fn($item) => $item->product->price * $item->qty);
+        $shipping = 10000;
         $summary = [
-            'subtotal' => 3500000,
-            'shipping' => 10000,
-            'total' => 3510000
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'total' => $subtotal + $shipping,
         ];
 
-        return view('layouts.cart', compact('items', 'summary'));
+        return view('cart.index', compact('items', 'summary'));
+    }
+
+    // Add to cart
+    public function add(Request $request)
+    {
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+
+        $item = CartItem::updateOrCreate(
+            ['cart_id' => $cart->id, 'product_id' => $request->product_id],
+            ['qty' => \DB::raw('qty + 1')]
+        );
+
+        return redirect()->route('cart.index')->with('success', 'Added to Cart');
     }
 }

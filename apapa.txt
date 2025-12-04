@@ -1,1 +1,4 @@
-dhfahfal;h
+daftar fixing : 
+- buyerController masih dummy
+- authController masih ga ada logic
+- 
