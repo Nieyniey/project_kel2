@@ -30,7 +30,7 @@
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 
-        <a href="{{ route('buyer.chat') }}">
+        <a href="{{ route('chat.index') }}">
             <img src="/icons/chat.png" style="width:20px;">
         </a>
 

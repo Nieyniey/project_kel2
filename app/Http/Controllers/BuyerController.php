@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+use App\Models\Order;
 
 class BuyerController extends Controller
 {
@@ -34,9 +38,51 @@ class BuyerController extends Controller
     }
 
 
-    public function settings()
+    public function settings(Request $request, $tab = 'personal-info')
     {
-        return view('buyer.buyerSettings');
+        $user = Auth::user();
+        $isSeller = $user->seller()->exists();
+
+        $data = [
+            'user' => $user,
+            'isSeller' => $isSeller,
+            'activeTab' => $tab,
+        ];
+
+        if ($tab === 'orders') {
+            $orders = Order::where('user_id', $user->id)
+                           ->orderBy('created_at', 'desc') 
+                           ->with('items.product.seller') 
+                           ->get();
+                           
+            $data['orders'] = $orders;
+        }
+
+        return view('buyer.buyerSettings', $data);
+    }
+
+    public function updatePersonalInfo(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            // 'name' is used as 'Username' in the form
+            'name' => 'required|string|max:255', 
+            // Email must be unique, ignoring the current user's ID
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone' => 'nullable|string|max:20', 
+            // DOB field from the image (assuming date format is DD/MM/YYYY)
+            'DOB' => 'nullable|date_format:d/m/Y', 
+            'gender' => ['nullable', 'string', Rule::in(['Male', 'Female'])], // Assuming a 'gender' field exists or can be added
+        ]);
+
+        if (isset($validated['DOB'])) {
+            $validated['DOB'] = Carbon::createFromFormat('d/m/Y', $validated['DOB'])->format('Y-m-d');
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('buyer.settings')->with('success', 'Personal Information successfully updated!');
     }
 
 
