@@ -26,7 +26,7 @@
              style="width:20px; cursor:pointer;" 
              onclick="toggleSearchBar()">
 
-        <a href="{{ route('buyer.favorites') }}">
+        <a href="{{ route('wishlist.index') }}">
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 

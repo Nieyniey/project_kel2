@@ -17,7 +17,7 @@
     }
 
     .wishlist-content-area {
-        margin-top: 60px; 
+        margin-top: 20px; 
     }
 
     body {
@@ -86,7 +86,7 @@
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
-                <a href="{{ route('home') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
                 <h5 class="fw-bold mb-0" style="color: #6C2207;">

@@ -42,8 +42,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // PRODUCT PAGES
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
-Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('products.search.ajax');
-
 
 /*
 |--------------------------------------------------------------------------

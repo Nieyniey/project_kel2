@@ -5,9 +5,8 @@
 @section('content')
 <div class="container-fluid py-5">
     <div class="row g-0">
-        {{-- Chat List Panel (Same as index.blade.php) --}}
         <div class="col-12 col-md-4 border-end" style="background-color: #f7e6d1; max-height: 80vh; overflow-y: auto;">
-            <div class="d-flex align-items-center p-3 border-bottom" style="background-color: #f79471;">
+            <div class="d-flex align-items-center p-3 border-bottom" style="background-color: #FFFBE8;">
                 <a href="{{ route('chat.index') }}" class="text-white me-3" style="font-size: 1.5rem;">
                     <i class="bi bi-arrow-left"></i> 
                 </a>
@@ -58,7 +57,7 @@
         {{-- Main Chat Content (Right Panel) --}}
         <div class="col-12 col-md-8" style="background-color: #fff9f0;">
             {{-- Chat Header --}}
-            <div class="d-flex align-items-center p-3 border-bottom" style="background-color: #f7e6d1;">
+            <div class="d-flex align-items-center p-3 border-bottom" style="background-color: #E8E0BB;">
                 <h5 class="fw-bold mb-0">{{ $receiver->name }}</h5>
             </div>
 
@@ -85,7 +84,7 @@
                         <div class="d-flex {{ $isSender ? 'justify-content-end' : 'justify-content-start' }} mb-2">
                             <div class="p-2 rounded-3 text-break" 
                                  style="max-width: 75%; 
-                                        background-color: {{ $isSender ? '#f79471' : '#e5d8c6' }};
+                                        background-color: {{ $isSender ? '#FFFBE8' : '#E8E0BB' }};
                                         color: {{ $isSender ? 'white' : 'black' }};">
                                 {{ $message->content }}
                                 <small class="text-end d-block mt-1" style="font-size: 0.75em; color: {{ $isSender ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)' }};">

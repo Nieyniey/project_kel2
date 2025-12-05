@@ -6,10 +6,10 @@
 
 <style>
     /* STYLES FOR THE FIXED HEADER CONTAINER (Copied from Wishlist) */
-    .chat-header-fixed {
-        background-color: #FFFEF7; /* The desired color, assuming the wishlist color */
+    .header-fixed {
+        background-color: #FFFEF7; /* Navigation and Right Square Background */
         width: 100%;
-        position: fixed; 
+        position: sticky; 
         top: 0;
         left: 0;
         z-index: 1000; 
@@ -19,8 +19,6 @@
 
     /* STYLE FOR THE MAIN CHAT CONTENT PUSH */
     .chat-content-area {
-        /* Add margin-top equal to the height of the fixed header (approx 60px) */
-        margin-top: 60px; 
         /* Set max height for the chat body to enable scrolling within the panel */
         max-height: calc(100vh - 60px); 
         overflow: hidden; /* Prevent the entire body from scrolling unnecessarily */
@@ -57,21 +55,19 @@
     }
 </style>
 
-{{-- === 1. THE FULL-WIDTH FIXED HEADER === --}}
-<div class="chat-header-fixed">
-    <div class="container-fluid"> {{-- Use container-fluid for full width if possible, or standard container for alignment --}}
-        <div class="d-flex align-items-center">
-            <a href="{{ url()->previous() }}" class="text-dark me-3" style="font-size: 1.5rem; color:#FF6E00!important; text-decoration:none!important">
-                ←
-            </a>
-            {{-- Title changes based on user role (Buyer or Seller) --}}
-            <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                {{ Auth::user()->is_seller ? 'Chat Buyer' : 'Chat Seller' }}
-            </h5>
+{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+    <div class="header-fixed">
+        <div class="container"> 
+            <div class="d-flex align-items-center">
+                <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+                </a>
+                <h5 class="fw-bold mb-0" style="color: #6C2207;">
+                    {{ Auth::user()->is_seller ? 'Chat Buyer' : 'Chat Seller' }}
+                </h5>
+            </div>
         </div>
     </div>
-</div>
-{{-- =================================== --}}
 
 {{-- === 2. THE MAIN SCROLLABLE CONTENT AREA === --}}
 <div class="container-fluid chat-content-area p-0">

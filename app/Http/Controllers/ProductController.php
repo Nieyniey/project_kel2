@@ -20,28 +20,9 @@ class ProductController extends Controller
         $keyword = $request->input('q');
 
         $products = Product::where('name', 'LIKE', "%$keyword%")
-                           ->orWhere('desc', 'LIKE', "%$keyword%")
-                           ->get();
+                           ->orWhere('description', 'LIKE', "%$keyword%")
+                           ->paginate(12);
 
         return view('buyer.buyerHome', compact('products', 'keyword'));
-    }
-
-    public function searchAjax(Request $request)
-    {
-        // 1. Get the search query (q is the parameter name from your JavaScript)
-        $keyword = $request->input('q');
-
-        // 2. Perform the search query
-        $products = Product::where('name', 'LIKE', "%$keyword%")
-                        ->orWhere('desc', 'LIKE', "%$keyword%")
-                        ->get([
-                            'product_id', 
-                            'name', 
-                            'price', 
-                            'image_path' // Ensure essential fields are selected
-                        ]);
-
-        // 3. Return the results as JSON
-        return response()->json($products);
     }
 }

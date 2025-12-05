@@ -144,7 +144,7 @@
                 </a>
 
             {{-- Logo (Central Element) --}}
-            <a href="{{ route('home') }}" class="wts-logo mx-auto">
+            <a href="{{ route('homeIn') }}" class="wts-logo mx-auto">
                 <img src="{{ asset('Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
             </a>
 
@@ -152,7 +152,7 @@
             <div class="d-flex gap-3 align-items-center position-absolute end-0 me-3"> 
                 
                 {{-- Search Icon Button --}}
-                <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <button type="button" class="btn p-0" id="search-icon-btn">
                     <i class="bi bi-search" style="font-size: 1.5rem; color: #6C2207;"></i>
                 </button>
                 
@@ -174,6 +174,26 @@
         </div>
     </div>
     {{-- END HEADER REVISION --}}
+
+    {{-- NEW TOGGLED SEARCH BAR CONTAINER --}}
+{{-- We check if $keyword exists (meaning a search was just executed) --}}
+<div id="toggled-search-bar" class="container p-3 {{ request()->has('q') ? '' : 'd-none' }}" style="padding-top: 15px !important;">
+    <div class="d-flex align-items-center w-100">
+        {{-- Close button ('x') --}}
+        <button type="button" class="btn-close fs-4 me-3" id="close-search-bar" aria-label="Close" style="color: #5c4a3e;"></button>
+
+        {{-- Search Form --}}
+        <form action="{{ route('products.search') }}" method="GET" class="w-100 d-flex">
+            <input type="search" 
+                id="search-input" 
+                name="q" 
+                class="form-control rounded-pill p-2" 
+                placeholder="Search product..." 
+                value="{{ request('q') }}" {{-- FIX: Insert the current query here --}}
+                style="background-color: #FFFEF7; border: 1px solid #d8c8b4;">
+        </form>
+    </div>
+</div>
 
     {{-- CATEGORIES (Constraint 1: Placeholder, no filtering yet) --}}
     {{-- REVISION 1: Changed background color to match the main content body (#E8E0BB) --}}
@@ -210,80 +230,82 @@
     {{-- END CATEGORIES --}}
 
     {{-- BLACK FRIDAY SALE BANNER --}}
-    <div class="p-4" style="background-color: #E8E0BB;">
-        <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
-        <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
-        
-        @php
-            // Placeholder Sale Products (Used for demonstration/looping capability)
-            $saleProducts = [
-                (object)['product_id' => 101, 'name' => 'Blazer Prabowo', 'price' => 600000, 'image_path' => null],
-                (object)['product_id' => 102, 'name' => 'Celana Jokowi', 'price' => 1500000, 'image_path' => null],
-                (object)['product_id' => 103, 'name' => 'Tas Syahroni', 'price' => 1000000, 'image_path' => null],
-                (object)['product_id' => 104, 'name' => 'Topi Bohel', 'price' => 500000, 'image_path' => null],
-                (object)['product_id' => 105, 'name' => 'Extra Item 5', 'price' => 200000, 'image_path' => null],
-                (object)['product_id' => 106, 'name' => 'Extra Item 6', 'price' => 300000, 'image_path' => null],
-            ];
-            $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
-        @endphp
-
-        <div class="horizontal-scroll-wrapper">
-            <div class="d-flex flex-nowrap align-items-stretch g-3">
-                @foreach ($saleProducts as $product)
-                    <div class="scrollable-product-item px-2"> 
-                        <div class="product-card" style="background-color: #E8E0BB !important;">
-                            <div class="product-image-container product-image-shadow">
-                                <a href="#" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
-                                    @if ($product->image_path)
-                                        <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                            alt="{{ $product->name }}" 
-                                            class="img-fluid" 
-                                            style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                                    @else
-                                        {{-- Placeholder for image --}}
-                                        <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                                        </div>
-                                    @endif
-                                </a>
-                            </div>
-
-                            <div class="p-2 text-center">
-                                <a href="#" class="text-dark text-decoration-none">
-                                    <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
-                                    <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                </a>
-                                
-                                {{-- Product Actions: Cart/Wishlist Buttons --}}
-                                <div class="d-flex justify-content-center gap-3 mt-2">
-                                    @php
-                                        $is_in_cart = $user->inCart($product->product_id);
-                                        $is_in_wishlist = $user->inWishlist($product->product_id);
-                                    @endphp
+    @unless (request()->has('q'))
+        <div class="p-4" style="background-color: #E8E0BB;">
+            <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
+            <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
             
-                                    <button type="button" 
-                                        class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
-                                        data-product-id="{{ $product->product_id }}"
-                                        data-action-url="{{ route('cart.add-ajax') }}" 
-                                        title="Add to Cart">
-                                        <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
-                                    </button>
-            
-                                    <button type="button" 
-                                        class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
-                                        data-product-id="{{ $product->product_id }}"
-                                        data-action-url="{{ route('wishlist.add-ajax') }}" 
-                                        title="Add to Wishlist">
-                                        <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
-                                    </button>
+            @php
+                // Placeholder Sale Products (Used for demonstration/looping capability)
+                $saleProducts = [
+                    (object)['product_id' => 101, 'name' => 'Blazer Prabowo', 'price' => 600000, 'image_path' => null],
+                    (object)['product_id' => 102, 'name' => 'Celana Jokowi', 'price' => 1500000, 'image_path' => null],
+                    (object)['product_id' => 103, 'name' => 'Tas Syahroni', 'price' => 1000000, 'image_path' => null],
+                    (object)['product_id' => 104, 'name' => 'Topi Bohel', 'price' => 500000, 'image_path' => null],
+                    (object)['product_id' => 105, 'name' => 'Extra Item 5', 'price' => 200000, 'image_path' => null],
+                    (object)['product_id' => 106, 'name' => 'Extra Item 6', 'price' => 300000, 'image_path' => null],
+                ];
+                $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
+            @endphp
+
+            <div class="horizontal-scroll-wrapper">
+                <div class="d-flex flex-nowrap align-items-stretch g-3">
+                    @foreach ($saleProducts as $product)
+                        <div class="scrollable-product-item px-2"> 
+                            <div class="product-card" style="background-color: #E8E0BB !important;">
+                                <div class="product-image-container product-image-shadow">
+                                    <a href="#" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                                        @if ($product->image_path)
+                                            <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                                alt="{{ $product->name }}" 
+                                                class="img-fluid" 
+                                                style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                        @else
+                                            {{-- Placeholder for image --}}
+                                            <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                            </div>
+                                        @endif
+                                    </a>
+                                </div>
+
+                                <div class="p-2 text-center">
+                                    <a href="#" class="text-dark text-decoration-none">
+                                        <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
+                                        <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                    </a>
+                                    
+                                    {{-- Product Actions: Cart/Wishlist Buttons --}}
+                                    <div class="d-flex justify-content-center gap-3 mt-2">
+                                        @php
+                                            $is_in_cart = $user->inCart($product->product_id);
+                                            $is_in_wishlist = $user->inWishlist($product->product_id);
+                                        @endphp
+                
+                                        <button type="button" 
+                                            class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
+                                            data-product-id="{{ $product->product_id }}"
+                                            data-action-url="{{ route('cart.add-ajax') }}" 
+                                            title="Add to Cart">
+                                            <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
+                                        </button>
+                
+                                        <button type="button" 
+                                            class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
+                                            data-product-id="{{ $product->product_id }}"
+                                            data-action-url="{{ route('wishlist.add-ajax') }}" 
+                                            title="Add to Wishlist">
+                                            <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
+    @endunless
     {{-- END BLACK FRIDAY SALE --}}
 
     {{-- RECOMMENDED PRODUCTS --}}
@@ -362,147 +384,33 @@
     {{-- END RECOMMENDED PRODUCTS --}}
 
 </div>
-{{-- Search Modal --}}
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content" style="background-color: #f8f8f8;">
-            <div class="modal-header wts-header border-0 pb-0">
-                <div class="d-flex align-items-center w-100">
-                    {{-- Back button to close modal --}}
-                    <button type="button" class="btn-close fs-4 me-3" data-bs-dismiss="modal" aria-label="Close" style="color: #5c4a3e;"></button>
-
-                    {{-- Search Input inside Modal --}}
-                    <input type="search" 
-                           id="search-input" 
-                           class="form-control rounded-pill p-2" 
-                           placeholder="Search product..." 
-                           autofocus
-                           style="background-color: #ffffff; border: 1px solid #d8c8b4;">
-                </div>
-            </div>
-
-            <div class="modal-body pt-0">
-                <h4 class="fw-bold my-4" style="color: #5c4a3e;">Search Results</h4>
-                
-                {{-- Dynamic Search Results will be loaded here --}}
-                <div class="row g-4" id="search-results-container">
-                    {{-- Results will appear here --}}
-                </div>
-
-                {{-- Message if no results are found --}}
-                <div id="no-results-message" class="alert alert-warning d-none" role="alert">
-                    No products found matching your search term.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{{-- End Search Modal --}}
 
 @push('scripts')
 <script>
-    // 1. **NEW:** Store the static Blade output into a JS variable here.
-    const STORAGE_BASE_URL = '{{ asset('storage') }}';
-
-    function debounce(func, timeout = 300) {
-        // ... (debounce function remains the same) ...
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => { func.apply(this, args); }, timeout);
-        };
-    }
-
-    const fetchSearchResults = debounce(function (query) {
-        const resultsContainer = $('#search-results-container');
-        const noResultsMessage = $('#no-results-message');
-
-        resultsContainer.empty();
-        noResultsMessage.addClass('d-none');
+    $(document).ready(function() {
+        const searchBar = $('#toggled-search-bar');
+        const searchInput = $('#search-input');
+        const searchIconBtn = $('#search-icon-btn'); 
         
-        // Only send request if query is not empty
-        if (query.length < 2) return; // Optional: Only search if 2 or more characters are typed
+        function showSearchBar() {
+            searchBar.removeClass('d-none');
+        }
 
-        $.ajax({
-            url: '{{ route('products.search.ajax') }}',
-            method: 'GET',
-            data: { q: query },
-            success: function(response) {
-                if (response.length > 0) {
-                    let html = '';
-                    response.forEach(function(product) {
-                        
-                        // 2. **FIX:** Ensure the path is correct by trimming leading/trailing slashes 
-                        //    and explicitly concatenating with the stored base URL.
-                        const imagePath = product.image_path ? product.image_path.replace(/^\/+|\/+$/g, '') : '';
-                        const imageUrl = imagePath ? `${STORAGE_BASE_URL}/${imagePath}` : '';
-                        
-                        html += `
-                        <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                            <div class="product-card shadow-sm">
-                                <a href="/products/${product.product_id}" class="text-dark text-decoration-none">
-                                    <div class="product-image-container">
-                                        ${product.image_path 
-                                            // **FIXED LINE:** Use the clean imageUrl variable
-                                            ? `<img src="${imageUrl}" alt="${product.name}" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">`
-                                            : `<i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>`}
-                                    </div>
-                                </a>
-                                <div class="p-2">
-                                    <a href="/products/${product.product_id}" class="text-dark text-decoration-none">
-                                        <p class="mb-1 fw-bold text-truncate">${product.name}</p>
-                                        <p class="mb-2" style="color: #f79471;">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</p>
-                                    </a>
-                                    {{-- NOTE: For AJAX results, you should use the AJAX action routes (cart.add-ajax) 
-                                        and replicate the JS handler (sendProductAction) or rebuild the server-side forms. 
-                                        I'll keep the server-side forms for now but this will cause full page reloads. --}}
-                                    <div class="d-flex gap-2">
-                                        <form action="{{ route('cart.add') }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="${product.product_id}">
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="btn btn-sm p-0 bg-transparent border-0" title="Add to Cart">
-                                                <i class="bi bi-bag-plus product-action-icon" style="font-size: 1.2rem;"></i>
-                                            </button>
-                                        </form>
+        function hideSearchBar() {
+            searchBar.addClass('d-none');
+        }
 
-                                        <form action="{{ route('wishlist.add') }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="${product.product_id}">
-                                            <button type="submit" class="btn btn-sm p-0 bg-transparent border-0" title="Add to Wishlist">
-                                                <i class="bi bi-heart product-action-icon" style="font-size: 1.2rem;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        `;
-                    });
-                    resultsContainer.html(html);
-                } else {
-                    noResultsMessage.removeClass('d-none');
-                }
-            },
-            error: function(xhr) {
-                console.error("Search failed:", xhr.responseText);
+        searchIconBtn.on('click', function(e) {
+            e.preventDefault(); 
+            if (searchBar.hasClass('d-none')) {
+                showSearchBar();
             }
         });
-    }, 300); // 300ms debounce time
 
-    // ... (rest of the script remains the same) ...
-    // Attach event listener to the search input field
-    $('#search-input').on('keyup', function() {
-        const query = $(this).val().trim();
-        fetchSearchResults(query);
-    });
+        $('#close-search-bar').on('click', function() {
+            hideSearchBar();
+        });
 
-    $('#searchModal').on('shown.bs.modal', function () {
-        $('#search-input').focus();
-    });
-
-    // ... (document.ready function for add-to-cart/wishlist remains the same) ...
-    $(document).ready(function() {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
