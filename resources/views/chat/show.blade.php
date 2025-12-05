@@ -1,4 +1,4 @@
-@extends('layouts.Main') 
+@extends('layouts.app') 
 
 @section('title', 'Chat with ' . $receiver->name)
 

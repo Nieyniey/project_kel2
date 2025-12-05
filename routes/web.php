@@ -50,7 +50,14 @@ Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('produ
 | BUYER PUBLIC PAGES
 |--------------------------------------------------------------------------
 */
+/*
+|--------------------------------------------------------------------------
+| BUYER PUBLIC PAGES
+|--------------------------------------------------------------------------
+*/
+// This route handles the base URL: /buyer/settings
 Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
+Route::get('/buyer/settings/{tab}', [BuyerController::class, 'settings'])->name('buyer.settings.tab');
 //Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 

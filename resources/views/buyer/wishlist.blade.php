@@ -5,10 +5,10 @@
 @section('content')
 
 <style>
-    .wishlist-header-fixed {
-        background-color: #FFFEF7; 
+    .header-fixed {
+        background-color: #FFFEF7; /* Navigation and Right Square Background */
         width: 100%;
-        position: fixed; 
+        position: sticky; 
         top: 0;
         left: 0;
         z-index: 1000; 
@@ -23,7 +23,7 @@
     body {
             background-color: #FFFBE8; 
         }
-    /* Base Card Styling */
+    
     .product-card {
         background-color: #FFFBE8; 
         border: none;
@@ -82,18 +82,21 @@
     }
 </style>
 
-<div class="wishlist-header-fixed">
-    <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
-                <span style="font-weight:600; font-size:20px;">Wishlist</span>
+{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+    <div class="header-fixed">
+        <div class="container"> 
+            <div class="d-flex align-items-center">
+                <a href="{{ route('home') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+                </a>
+                <h5 class="fw-bold mb-0" style="color: #6C2207;">
+                    Wishlist
+                </h5>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container wishlist-content-area py-5">
+<div class="container wishlist-content-area py-5" style="padding-top: 0px !important;">
     
     <h3 class="fw-bold mb-4" style="color: #6C2207;">My Favorites</h3>
 

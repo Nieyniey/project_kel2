@@ -1,4 +1,4 @@
-@extends('layouts.Main') 
+@extends('layouts.app') 
 
 @section('title', 'User Settings - ' . Str::title(str_replace('-', ' ', $activeTab)))
 
@@ -6,243 +6,323 @@
     $user = $user ?? Auth::user(); 
     $isSeller = $isSeller ?? $user->seller()->exists();
     
-    $formattedDOB = $user->DOB ? \Carbon\Carbon::parse($user->DOB)->format('d/m/Y') : '';
+    // REVISION: Date input requires YYYY-MM-DD format for pre-filling.
+    $formattedDOB = $user->DOB ? \Carbon\Carbon::parse($user->DOB)->format('Y-m-d') : '';
     
     $profileImageUrl = $user->profile_photo 
-                       ? asset('storage/' . $user->profile_photo) 
-                       : asset('placeholder.jpg'); 
+                        ? asset('storage/' . $user->profile_photo) 
+                        : asset('placeholder.jpg'); 
 @endphp
 
 @section('content')
-<div class="container py-5" style="background-color: #f8f8f8;">
-    {{-- Header: Back Button and Title --}}
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('home') }}" class="text-dark me-3" style="font-size: 1.5rem;">
-            <i class="bi bi-arrow-left"></i> 
-        </a>
-        <h2 class="fw-bold mb-0">Settings</h2>
+<style>
+    /* New styling for the main container and fixed header */
+    .header-fixed {
+        background-color: #FFFEF7; /* Navigation and Right Square Background */
+        width: 100%;
+        position: sticky; 
+        top: 0;
+        left: 0;
+        z-index: 1000; 
+        padding: 15px 0; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    }
+    .settings-active-link {
+        /* FC5801 with 40% opacity */
+        background-color: rgba(252, 88, 1, 0.4) !important;
+        color: #6C2207 !important; 
+        border-radius: 8px;
+    }
+    
+    /* REVISION: Custom size between btn-sm and default */
+    .btn-custom-med {
+        padding: 0.375rem 0.8rem; /* Slightly bigger padding */
+        font-size: 0.95rem;      /* Slightly larger font */
+        border-radius: 0.25rem;  
+    }
+
+    /* Custom styling for the Seller Mode "Yes" button */
+    .btn-seller-mode {
+        background-color: transparent;
+        color: #FC5801 !important; /* Text color is the main orange */
+        border-color: #FC5801 !important; /* Border is the main orange */
+        transition: all 0.2s ease;
+    }
+    .btn-seller-mode:hover {
+        /* On hover, background fills with 40% opacity orange */
+        background-color: rgba(252, 88, 1, 0.4) !important;
+        color: #6C2207 !important; /* Text color turns dark brown on hover */
+        border-color: rgba(252, 88, 1, 0.4) !important; /* Border color changes */
+    }
+    
+    /* Style for the date input to match the background of the form control */
+    .custom-form-control {
+        background-color: #e5d8c6 !important; 
+        border-color: #d8c8b4 !important; 
+        color: #6C2207 !important; /* Applied brown text/picker color */
+    }
+
+    /* REMOVED: .input-group-text-custom is no longer needed */
+</style>
+
+{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+    <div class="header-fixed">
+        <div class="container"> 
+            <div class="d-flex align-items-center">
+                <a href="{{ route('home') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+                </a>
+                <h5 class="fw-bold mb-0" style="color: #6C2207;">
+                    Settings
+                </h5>
+            </div>
+        </div>
     </div>
 
-    <div class="row g-4">
-        {{-- Left Panel: Navigation --}}
-        <div class="col-md-4 col-lg-3">
-            <div class="card shadow-sm border-0" style="background-color: #f7e6d1;">
-                <div class="card-body p-4">
-                    {{-- User Info Header --}}
-                    <div class="d-flex flex-column align-items-center mb-4">
-                        <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
-                            <img src="{{ $profileImageUrl }}" 
-                                 alt="{{ $user->name }}'s Profile Picture" 
-                                 class="w-100 h-100 object-fit-cover rounded-circle">
+{{-- Main Container with new background color --}}
+<div class="container-fluid py-4" style="background-color: #E8E0BB; color: #6C2207; min-height: 100vh; padding-top: 20px !important;">
+    
+    <div class="container mt-4">
+        <div class="row g-4">
+            {{-- Left Panel: Navigation --}}
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
+                    <div class="card-body p-4">
+                        {{-- User Info Header --}}
+                        <div class="d-flex flex-column align-items-center mb-4">
+                            <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
+                                <img src="{{ $profileImageUrl }}" 
+                                            alt="{{ $user->name }}'s Profile Picture" 
+                                            class="w-100 h-100 object-fit-cover rounded-circle">
+                            </div>
+                            <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
+                            <small class="text-muted">General User</small>
                         </div>
-                        <h5 class="fw-bold mb-0">{{ $user->name ?? 'General User' }}</h5>
-                        <small class="text-muted">General User</small>
-                    </div>
 
-                    {{-- Navigation Links --}}
-                    <div class="list-group list-group-flush">
-                        {{-- 1. Personal Information --}}
-                        <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
-                           class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'active shadow-sm' : '' }}" 
-                           style="{{ $activeTab == 'personal-info' ? 'background-color: #f79471; color: white; border-radius: 8px;' : 'background-color: transparent;' }}">
-                            <i class="bi bi-person-fill me-2"></i> Personal Information
-                        </a>
-                        {{-- 2. Your Orders --}}
-                        <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
-                           class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'active shadow-sm' : '' }}" 
-                           style="{{ $activeTab == 'orders' ? 'background-color: #f79471; color: white; border-radius: 8px;' : 'background-color: transparent;' }}">
-                            <i class="bi bi-box-seam-fill me-2"></i> Your Orders
-                        </a>
-                        {{-- 3. Seller Page --}}
-                        @if($isSeller)
-                            <a href="{{ route('seller.products') }}" class="list-group-item list-group-item-action border-0" style="background-color: transparent;">
+                        {{-- Navigation Links --}}
+                        <div class="list-group list-group-flush">
+                            {{-- 1. Personal Information --}}
+                            <a href="{{ route('buyer.settings.tab', ['tab' => 'personal-info']) }}" 
+                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'settings-active-link shadow-sm' : '' }}" 
+                                style="background-color: transparent; color: #6C2207;">
+                                <i class="bi bi-person-fill me-2"></i> Personal Information
+                            </a>
+                            {{-- 2. Your Orders --}}
+                            <a href="{{ route('buyer.settings.tab', ['tab' => 'orders']) }}" 
+                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'settings-active-link shadow-sm' : '' }}" 
+                                style="background-color: transparent; color: #6C2207;">
+                                <i class="bi bi-box-seam-fill me-2"></i> Your Orders
+                            </a>
+                            {{-- 3. Seller Page --}}
+                            <a href="{{ route('buyer.settings.tab', ['tab' => 'seller-mode']) }}" 
+                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'seller-mode' ? 'settings-active-link shadow-sm' : '' }}" 
+                                style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-shop me-2"></i> Seller Page
                             </a>
-                        @endif
-                        
-                        {{-- Log Out --}}
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent;">
-                            <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                        </a>
+                            
+                            {{-- Log Out --}}
+                            <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
+                                <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Right Panel: Dynamic Content --}}
-        <div class="col-md-8 col-lg-9">
-            <div class="card shadow-sm border-0 p-4" style="background-color: #f7e6d1;">
-                
-                @if ($activeTab == 'personal-info')
-                    {{-- ---------------------------------------- --}}
-                    {{-- CONTENT: PERSONAL INFORMATION --}}
-                    {{-- ---------------------------------------- --}}
-                    <h3 class="fw-bold mb-4">Personal Information</h3>
-
-                    {{-- Feedback Messages --}}
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-                    @if($errors->any())
-                        <div class="alert alert-danger">Please check the form for errors.</div>
-                    @endif
-
-                    <form action="{{ route('buyer.settings.update.personal') }}" method="POST">
-                        @csrf
-
-                        {{-- Username (Mapped to 'name') --}}
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-bold">Username</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" name="name" 
-                                   value="{{ old('name', $user->name) }}" style="background-color: #e5d8c6; border-color: #d8c8b4;">
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Email --}}
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">Email</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" 
-                                   value="{{ old('email', $user->email) }}" style="background-color: #e5d8c6; border-color: #d8c8b4;">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Phone Number --}}
-                        <div class="mb-3">
-                            <label for="phone" class="form-label fw-bold">Phone Number</label>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                   id="phone" name="phone" 
-                                   value="{{ old('phone', $user->phone) }}" style="background-color: #e5d8c6; border-color: #d8c8b4;">
-                            @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Date of Birth (DOB) --}}
-                        <div class="mb-4">
-                            <label for="DOB" class="form-label fw-bold">Date Of Birth</label>
-                            <input type="text" class="form-control @error('DOB') is-invalid @enderror" 
-                                   id="DOB" name="DOB" placeholder="DD/MM/YYYY"
-                                   value="{{ old('DOB', $formattedDOB) }}" style="background-color: #e5d8c6; border-color: #d8c8b4;">
-                            @error('DOB')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="d-flex justify-content-end gap-3 pt-3">
-                            <button type="reset" class="btn btn-outline-secondary px-4">Discard Changes</button>
-                            <button type="submit" class="btn btn-primary px-4" style="background-color: #f79471; border-color: #f79471;">Save Changes</button>
-                        </div>
-                    </form>
-
-                @elseif ($activeTab == 'orders')
-                    {{-- ---------------------------------------- --}}
-                    {{-- CONTENT: YOUR ORDERS --}}
-                    {{-- ---------------------------------------- --}}
-                    <h3 class="fw-bold mb-4">Order List</h3>
+            {{-- Right Panel: Dynamic Content --}}
+            <div class="col-md-8 col-lg-9">
+                <div class="card shadow-sm border-0 p-4" style="background-color: #FFFEF7;">
                     
-                    @if ($orders->isEmpty())
-                        <div class="alert alert-info">You have no orders yet.</div>
-                    @else
-                        @foreach ($orders as $order)
-                        <div class="card mb-3 shadow-sm border-0">
-                            <div class="card-body">
+                    @if ($activeTab == 'personal-info')
+                        {{-- ---------------------------------------- --}}
+                        {{-- CONTENT: PERSONAL INFORMATION --}}
+                        {{-- ---------------------------------------- --}}
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Personal Information</h3>
+
+                        {{-- Feedback Messages --}}
+                        @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        @if($errors->any())
+                            <div class="alert alert-danger">Please check the form for errors.</div>
+                        @endif
+
+                        <form action="{{ route('buyer.settings.update.personal') }}" method="POST">
+                            @csrf
+                            
+                            {{-- Username (Mapped to 'name') --}}
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-bold" style="color: #6C2207;">Username</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror custom-form-control" 
+                                            id="name" name="name" 
+                                            value="{{ old('name', $user->name) }}">
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Email --}}
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold" style="color: #6C2207;">Email</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror custom-form-control" 
+                                            id="email" name="email" 
+                                            value="{{ old('email', $user->email) }}">
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Phone Number --}}
+                            <div class="mb-3">
+                                <label for="phone" class="form-label fw-bold" style="color: #6C2207;">Phone Number</label>
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror custom-form-control" 
+                                            id="phone" name="phone" 
+                                            value="{{ old('phone', $user->phone) }}">
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Date of Birth (DOB) - REVISED to use a date picker (no custom icon) --}}
+                            <div class="mb-4">
+                                <label for="DOB" class="form-label fw-bold" style="color: #6C2207;">Date Of Birth</label>
+                                {{-- REVISION: Removed input-group wrapper and custom icon --}}
+                                <input type="date" class="form-control @error('DOB') is-invalid @enderror custom-form-control" 
+                                            id="DOB" name="DOB" 
+                                            value="{{ old('DOB', $formattedDOB) }}">
                                 
-                                {{-- Get Seller Name and ID from the first item in the order --}}
-                                @php
-                                    $firstItem = $order->items->first();
-                                    $seller = $firstItem->product->seller ?? null;
-                                    $sellerName = $seller->store_name ?? 'Seller Not Found';
-                                    $sellerId = $seller->user_id ?? 0; // Seller's user ID for chat
-                                @endphp
+                                @error('DOB')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="fw-bold mb-0">{{ $sellerName }}</h5> 
-                                    <span class="badge rounded-pill text-bg-warning text-dark">{{ $order->status ?? 'Pending' }}</span>
-                                </div>
-                                
-                                <hr class="my-2">
-                                
-                                {{-- Loop through all items in this specific order --}}
-                                @foreach ($order->items as $item)
-                                    @php $product = $item->product; @endphp {{-- Assuming $item has a relationship to $product --}}
+                            {{-- Action Buttons --}}
+                            <div class="d-flex justify-content-end gap-3 pt-3">
+                                <button type="reset" class="btn btn-outline-secondary px-4" style="color: #6C2207; border-color: #6C2207;">Discard Changes</button>
+                                <button type="submit" class="btn btn-primary px-4" style="background-color: rgba(252, 88, 1, 0.4); border-color: rgba(252, 88, 1, 0.4); color: #6C2207;">Save Changes</button>
+                            </div>
+                        </form>
 
-                                    <div class="d-flex mb-3">
-                                        {{-- Product Image Section --}}
-                                        <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #fff; border-radius: 5px; overflow: hidden; border: 1px solid #eee;" class="me-3 d-flex align-items-center justify-content-center">
-                                            @if ($product->image_path)
-                                                <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                                    alt="{{ $product->name }}" 
-                                                    class="img-fluid"
-                                                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                                            @else
-                                                <i class="bi bi-image" style="font-size: 1.5rem; color: #ccc;"></i>
-                                            @endif
-                                        </div>
-
-                                        {{-- Product Info Section --}}
-                                        <div>
-                                            <strong class="d-block">{{ $product->name }}</strong>
-                                            <small class="text-muted">{{ $item->description_or_variant }}</small>
-                                            <small class="d-block">x {{ $item->quantity }}</small>
-                                        </div>
-                                    </div>
-                                @endforeach
-
-                                <hr class="my-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    {{-- Chat button linked to the seller's user ID --}}
-                                    <a href="{{ route('chat.show', ['receiverId' => $sellerId]) }}" class="btn btn-sm btn-outline-secondary">Chat Penjual</a>
+                    @elseif ($activeTab == 'orders')
+                        {{-- ---------------------------------------- --}}
+                        {{-- CONTENT: YOUR ORDERS --}}
+                        {{-- ---------------------------------------- --}}
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Order List</h3>
+                        
+                        @if (isset($orders) && $orders->isEmpty())
+                            <div class="alert alert-info" style="color: #6C2207; background-color: #e5d8c6; border-color: #d8c8b4;">You have no orders yet.</div>
+                        @elseif(isset($orders))
+                            @foreach ($orders as $order)
+                            <div class="card mb-3 shadow-sm border-0">
+                                <div class="card-body">
                                     
-                                    {{-- Total price from the Order model --}}
-                                    <p class="mb-0 fw-bold">Total: <span class="text-danger">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></p>
+                                    {{-- Get Seller Name and ID from the first item in the order --}}
+                                    @php
+                                        $firstItem = $order->items->first();
+                                        $seller = $firstItem->product->seller ?? null;
+                                        $sellerName = $seller->store_name ?? 'Seller Not Found';
+                                        $sellerId = $seller->user_id ?? 0; // Seller's user ID for chat
+                                    @endphp
+
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $sellerName }}</h5> 
+                                        <span class="badge rounded-pill text-dark" style="background-color: rgba(252, 88, 1, 0.4) !important; color: #6C2207 !important;">{{ $order->status ?? 'Pending' }}</span>
+                                    </div>
+                                    
+                                    <hr class="my-2" style="border-color: #d8c8b4;">
+                                    
+                                    {{-- Loop through all items in this specific order --}}
+                                    @foreach ($order->items as $item)
+                                        @php $product = $item->product; @endphp {{-- Assuming $item has a relationship to $product --}}
+
+                                        <div class="d-flex mb-3">
+                                            {{-- Product Image Section --}}
+                                            <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #fff; border-radius: 5px; overflow: hidden; border: 1px solid #eee;" class="me-3 d-flex align-items-center justify-content-center">
+                                                @if ($product->image_path)
+                                                    <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                                         alt="{{ $product->name }}" 
+                                                         class="img-fluid"
+                                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                @else
+                                                    <i class="bi bi-image" style="font-size: 1.5rem; color: #ccc;"></i>
+                                                @endif
+                                            </div>
+
+                                            {{-- Product Info Section --}}
+                                            <div>
+                                                <strong class="d-block" style="color: #6C2207;">{{ $product->name }}</strong>
+                                                <small class="text-muted">{{ $item->description_or_variant }}</small>
+                                                <small class="d-block" style="color: #6C2207;">x {{ $item->quantity }}</small>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <hr class="my-3" style="border-color: #d8c8b4;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        {{-- Chat button linked to the seller's user ID --}}
+                                        <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}" class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">Chat Penjual</a>
+                                        
+                                        {{-- Total price from the Order model --}}
+                                        <p class="mb-0 fw-bold" style="color: #6C2207;">Total: <span style="color: #FC5801 !important;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @endforeach
-                    @endif
+                            @endforeach
+                        @endif
 
-                @elseif ($activeTab == 'seller-mode')
-                    {{-- ---------------------------------------- --}}
-                    {{-- CONTENT: SELLER MODE HANDLER (NEW LOGIC) --}}
-                    {{-- ---------------------------------------- --}}
-                    <h3 class="fw-bold mb-4">Change to Seller Mode</h3>
+                    @elseif ($activeTab == 'seller-mode')
+                        {{-- ---------------------------------------- --}}
+                        {{-- CONTENT: SELLER MODE HANDLER --}}
+                        {{-- ---------------------------------------- --}}
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Change to Seller Mode</h3>
 
-                    @if($isSeller)
-                        {{-- NEW: If the user IS a seller, show the confirmation prompt (image_772f9b.jpg) --}}
-                        @php
-                            $storeName = $user->seller->store_name ?? 'Your Store';
-                        @endphp
-                        
-                        <p class="lead">Transform into **{{ $storeName }}** Seller?</p>
-                        
-                        {{-- The 'Yes' button should be a link/form that redirects to the seller settings --}}
-                        <form action="{{ route('seller.settings') }}" method="GET">
-                            <button type="submit" class="btn btn-light btn-lg border px-5" style="border-color: #d8c8b4;">Yes</button>
-                        </form>
+                        @if($isSeller)
+                            {{-- If the user IS a seller, show the confirmation prompt --}}
+                            @php
+                                $storeName = $user->seller->store_name ?? 'Your Store';
+                            @endphp
+                            
+                            <p class="lead" style="color: #6C2207;">Transform into **{{ $storeName }}** Seller?</p>
+                            
+                            {{-- Redirects to the seller's main settings/dashboard --}}
+                            <form action="{{ route('seller.settings') }}" method="GET">
+                                {{-- Applied custom size and color classes --}}
+                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Yes</button>
+                            </form>
+                        @else
+                            {{-- If the user is NOT a seller, show the registration prompt --}}
+                            <p class="lead" style="color: #6C2207;">You don't have a store yet. Would you like to become a seller?</p>
+                            <form action="{{ route('seller.create.form') }}" method="GET">
+                                {{-- Applied custom size and color classes --}}
+                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Yes</button>
+                            </form>
+                        @endif
+                    
                     @else
-                        {{-- OLD: If the user is NOT a seller, show the registration prompt (image_8133a9.jpg) --}}
-                        <p class="lead">You don't have a store yet. Would you like to become a seller?</p>
-                        <form action="{{ route('seller.create.form') }}" method="GET">
-                            <button type="submit" class="btn btn-light btn-lg border px-5" style="border-color: #d8c8b4;">Yes</button>
-                        </form>
+                        {{-- Fallback for an unrecognized tab --}}
+                        <div class="alert alert-warning" style="color: #6C2207; background-color: #e5d8c6; border-color: #d8c8b4;">
+                            Could not load settings content. Please select a valid tab.
+                        </div>
                     @endif
-                
-                @else
-                    {{-- Fallback for an unrecognized tab --}}
-                    <div class="alert alert-warning">
-                        Could not load settings content. Please select a valid tab.
-                    </div>
-                @endif
-                
+                    
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const dobInput = document.getElementById('DOB');
+    if (dobInput.value) {
+        // dobInput.value is YYYY-MM-DD (e.g., 2005-09-30)
+        const dateParts = dobInput.value.split('-'); 
+        // Reformat to DD/MM/YYYY
+        dobInput.value = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+    }
+    // Form submission continues with the newly formatted date.
+});
+</script>
+@endpush
 @endsection

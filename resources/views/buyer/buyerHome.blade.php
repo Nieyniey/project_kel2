@@ -330,7 +330,11 @@
 
 @push('scripts')
 <script>
+    // 1. **NEW:** Store the static Blade output into a JS variable here.
+    const STORAGE_BASE_URL = '{{ asset('storage') }}';
+
     function debounce(func, timeout = 300) {
+        // ... (debounce function remains the same) ...
         let timer;
         return (...args) => {
             clearTimeout(timer);
@@ -338,22 +342,16 @@
         };
     }
 
-    // Function to perform the product search via AJAX
     const fetchSearchResults = debounce(function (query) {
         const resultsContainer = $('#search-results-container');
         const noResultsMessage = $('#no-results-message');
 
-        // Clear previous results and hide message
         resultsContainer.empty();
         noResultsMessage.addClass('d-none');
-
-        if (query.length < 3) {
-            // Optional: require at least 3 characters
-            return;
-        }
-
-        // Show a loading spinner if necessary (omitted for brevity)
         
+        // Only send request if query is not empty
+        if (query.length < 2) return; // Optional: Only search if 2 or more characters are typed
+
         $.ajax({
             url: '{{ route('products.search.ajax') }}',
             method: 'GET',
@@ -362,14 +360,20 @@
                 if (response.length > 0) {
                     let html = '';
                     response.forEach(function(product) {
-                        // Replicate the product card structure from the recommended section
+                        
+                        // 2. **FIX:** Ensure the path is correct by trimming leading/trailing slashes 
+                        //    and explicitly concatenating with the stored base URL.
+                        const imagePath = product.image_path ? product.image_path.replace(/^\/+|\/+$/g, '') : '';
+                        const imageUrl = imagePath ? `${STORAGE_BASE_URL}/${imagePath}` : '';
+                        
                         html += `
                         <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
                             <div class="product-card shadow-sm">
                                 <a href="/products/${product.product_id}" class="text-dark text-decoration-none">
                                     <div class="product-image-container">
                                         ${product.image_path 
-                                            ? `<img src="{{ asset('storage') }}/${product.image_path}" alt="${product.name}" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">`
+                                            // **FIXED LINE:** Use the clean imageUrl variable
+                                            ? `<img src="${imageUrl}" alt="${product.name}" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">`
                                             : `<i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>`}
                                     </div>
                                 </a>
@@ -378,7 +382,9 @@
                                         <p class="mb-1 fw-bold text-truncate">${product.name}</p>
                                         <p class="mb-2" style="color: #f79471;">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</p>
                                     </a>
-                                    {{-- Product Actions (simplified for client-side rendering) --}}
+                                    {{-- NOTE: For AJAX results, you should use the AJAX action routes (cart.add-ajax) 
+                                        and replicate the JS handler (sendProductAction) or rebuild the server-side forms. 
+                                        I'll keep the server-side forms for now but this will cause full page reloads. --}}
                                     <div class="d-flex gap-2">
                                         <form action="{{ route('cart.add') }}" method="POST" style="display: inline;">
                                             @csrf
@@ -413,77 +419,69 @@
         });
     }, 300); // 300ms debounce time
 
+    // ... (rest of the script remains the same) ...
     // Attach event listener to the search input field
     $('#search-input').on('keyup', function() {
-        const query = $(this).val();
+        const query = $(this).val().trim();
         fetchSearchResults(query);
     });
 
-    // Optional: Focus the input when the modal opens
     $('#searchModal').on('shown.bs.modal', function () {
         $('#search-input').focus();
     });
 
-$(document).ready(function() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    
-    // Helper function for sending AJAX request
-    function sendProductAction(button, url, productId) {
-        // Get CSRF token from meta tag
-        const csrfToken = $('meta[name="csrf-token"]').attr('content');
-        
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                product_id: productId
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    // Success! Toggle the color class based on the new state
-                    if (response.is_active) {
-                        button.addClass('active');
-                        // Optional: Show a small success message like "Added to cart"
-                    } else {
-                        button.removeClass('active');
-                        // Optional: Show a small success message like "Removed from cart"
-                    }
-                } else {
-                    // Handle server-side errors (e.g., product not found)
-                    alert('Action failed: ' + response.message);
-                }
-            },
-            error: function(xhr) {
-                // Handle network errors or 401/403 errors
-                if (xhr.status === 401) {
-                    alert('Please log in to use this feature.');
-                } else {
-                    alert('An unknown error occurred.');
-                }
+    // ... (document.ready function for add-to-cart/wishlist remains the same) ...
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    }
+        
+        function sendProductAction(button, url, productId) {
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    product_id: productId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        if (response.is_active) {
+                            button.addClass('active');
+                        } else {
+                            button.removeClass('active');
+                        }
+                    } else {
+                        alert('Action failed: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        alert('Please log in to use this feature.');
+                    } else {
+                        alert('An unknown error occurred.');
+                    }
+                }
+            });
+        }
 
-    // Event handler for Add to Cart button
-    $('.add-to-cart-btn').on('click', function() {
-        const button = $(this);
-        const productId = button.data('product-id');
-        const url = button.data('action-url');
-        sendProductAction(button, url, productId);
-    });
+        $('.add-to-cart-btn').on('click', function() {
+            const button = $(this);
+            const productId = button.data('product-id');
+            const url = button.data('action-url');
+            sendProductAction(button, url, productId);
+        });
 
-    // Event handler for Add to Wishlist button
-    $('.add-to-wishlist-btn').on('click', function() {
-        const button = $(this);
-        const productId = button.data('product-id');
-        const url = button.data('action-url');
-        sendProductAction(button, url, productId);
+        $('.add-to-wishlist-btn').on('click', function() {
+            const button = $(this);
+            const productId = button.data('product-id');
+            const url = button.data('action-url');
+            sendProductAction(button, url, productId);
+        });
     });
-});
 </script>
 @endpush
 @endsection

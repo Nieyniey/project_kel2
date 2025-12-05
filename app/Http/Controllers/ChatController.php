@@ -10,11 +10,6 @@ use Illuminate\Validation\Rule;
 
 class ChatController extends Controller
 {
-    // Pastikan hanya user yang terautentikasi yang bisa mengakses fitur chat
-    public function __construct()
-    {
-        $this->middleware('auth'); 
-    }
 
     /**
      * 1. Menampilkan daftar semua chat room user yang sedang login.
