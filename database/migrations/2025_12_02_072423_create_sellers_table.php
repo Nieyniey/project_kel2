@@ -16,8 +16,12 @@ return new class extends Migration
             // Foreign Key ke tabel users
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('store_name', 100);
-            $table->timestamps();
+            $table->text('description')->nullable();
+            $table->string('instagram')->nullable(); // Link atau username instagram
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
+
+            $table->timestamps();
             // Tambahkan unique constraint
             $table->unique('user_id');
         });

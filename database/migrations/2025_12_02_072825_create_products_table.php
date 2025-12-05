@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id('product_id');
             // Foreign Key ke tabel sellers
             $table->foreignId('seller_id')->constrained('sellers', 'seller_id')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('categories', 'category_id')->onDelete('set null');
             $table->string('name', 100);
             $table->text('description');
             $table->decimal('price', 10, 2);
             $table->integer('stock');
+            $table->boolean('is_sale')->default(false);
             $table->string('image_path')->nullable();
             
             $table->timestamps();

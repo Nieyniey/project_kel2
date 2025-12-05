@@ -14,6 +14,14 @@ class Seller extends Model
     // Tetapkan primary key
     protected $primaryKey = 'seller_id';
 
+    protected $fillable = [
+        'user_id',
+        'store_name',
+        'description',
+        'instagram',
+        'status',
+    ];
+
     // Relasi Seller ke User (One-to-One)
     public function user()
     {
