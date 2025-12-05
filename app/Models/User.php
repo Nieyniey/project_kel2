@@ -61,4 +61,32 @@ class User extends Authenticatable
         // 4. Local Key: 'id' (Primary key di tabel 'users')
         return $this->hasOne(Seller::class, 'user_id', 'id');
     }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function wishlist()
+    {
+        return $this->hasOne(Wishlist::class);
+    }
+
+    public function inCart(int $productId): bool
+    {
+        // Check if the user's cart header exists, and if so, check its items.
+        return $this->carts
+                    ?->items() // Accesses the items() method on the Cart model
+                    ->where('product_id', $productId)
+                    ->exists() ?? false; // Safely check if the cart exists
+    }
+
+    public function inWishlist(int $productId): bool
+    {
+        // Check if the user's wishlist header exists, and if so, check its items.
+        return $this->wishlist
+                    ?->items() // Accesses the items() method on the Wishlist model
+                    ->where('product_id', $productId)
+                    ->exists() ?? false; // Safely check if the wishlist exists
+    }
 }

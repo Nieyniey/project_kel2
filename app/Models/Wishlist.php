@@ -11,6 +11,11 @@ class Wishlist extends Model
     use HasFactory;
     
     protected $primaryKey = 'wishlist_id';
+    protected $table = 'wishlists';
+
+    protected $fillable = [
+        'user_id', // <<< WAJIB ADA AGAR BISA DIISI LEWAT CREATE()
+    ];
 
     public function items()
     {

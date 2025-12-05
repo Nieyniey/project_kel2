@@ -55,4 +55,40 @@ class WishlistController extends Controller
         
         return back()->with('error', 'Product was not found in your Wishlist.');
     }
+
+    public function addAjax(Request $request)
+    {
+        $productId = $request->product_id;
+        
+        // 1. Get/Create the wishlist header
+        $wishlist = Wishlist::firstOrCreate(['user_id' => Auth::id()]);
+        
+        // 2. Explicitly check for the WishlistItem
+        $wishlistItem = WishlistItem::where('wishlist_id', $wishlist->id)
+                                    ->where('product_id', $productId)
+                                    ->first();
+
+        $isCurrentlyInWishlist = (bool) $wishlistItem;
+
+        if ($isCurrentlyInWishlist) {
+            // --- REMOVAL PATH (Second Click) ---
+            // If item exists, delete it.
+            $wishlistItem->delete(); 
+            $action = 'removed';
+        } else {
+            // --- ADDITION PATH (First Click) ---
+            WishlistItem::create([
+                'wishlist_id' => $wishlist->id,
+                'product_id' => $productId,
+            ]);
+            $action = 'added';
+        }
+
+        // 3. Return the new state
+        return response()->json([
+            'status' => 'success', 
+            'action' => $action,
+            'is_active' => !$isCurrentlyInWishlist // New state is the opposite of the old state
+        ]);
+    }
 }

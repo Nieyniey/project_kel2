@@ -15,7 +15,7 @@ class WTSController extends Controller
 
     public function show()
     {
-        $products = Product::all(); 
+        $products = Product::inRandomOrder()->get(); 
         $isLoggedIn = Auth::check();
 
         return view('buyer.buyerHome', compact('products', 'isLoggedIn'));

@@ -170,26 +170,30 @@
                                 <hr class="my-2">
                                 
                                 {{-- Loop through all items in this specific order --}}
-                                @foreach ($order->items as $item) 
-                                    @php
-                                        $product = $item->product; 
-                                        $itemSubtotal = $item->quantity * $product->price; 
-                                    @endphp
-                                    <div class="row align-items-center mb-2">
-                                        <div class="col-3 col-lg-2">
-                                            {{-- Display Product Image (placeholder for now) --}}
-                                            [Image of {{ $product->name ?? 'Product' }}]
+                                @foreach ($order->items as $item)
+                                    @php $product = $item->product; @endphp {{-- Assuming $item has a relationship to $product --}}
 
+                                    <div class="d-flex mb-3">
+                                        {{-- Product Image Section --}}
+                                        <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #fff; border-radius: 5px; overflow: hidden; border: 1px solid #eee;" class="me-3 d-flex align-items-center justify-content-center">
+                                            @if ($product->image_path)
+                                                <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                                    alt="{{ $product->name }}" 
+                                                    class="img-fluid"
+                                                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                            @else
+                                                <i class="bi bi-image" style="font-size: 1.5rem; color: #ccc;"></i>
+                                            @endif
                                         </div>
-                                        <div class="col-9 col-lg-7">
-                                            <p class="mb-1 fw-bold">{{ $product->name ?? 'Product Not Found' }}</p>
-                                            <small class="text-muted">x {{ $item->quantity }}</small>
-                                        </div>
-                                        <div class="col-12 col-lg-3 text-lg-end pt-2 pt-lg-0">
-                                            <p class="mb-0 text-dark">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+
+                                        {{-- Product Info Section --}}
+                                        <div>
+                                            <strong class="d-block">{{ $product->name }}</strong>
+                                            <small class="text-muted">{{ $item->description_or_variant }}</small>
+                                            <small class="d-block">x {{ $item->quantity }}</small>
                                         </div>
                                     </div>
-                                @endforeach {{-- End of Order Items loop --}}
+                                @endforeach
 
                                 <hr class="my-3">
                                 <div class="d-flex justify-content-between align-items-center">

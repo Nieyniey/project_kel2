@@ -145,4 +145,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
 
+    Route::post('/cart/add-ajax', [CartController::class, 'addAjax'])->name('cart.add-ajax');
+    Route::post('/wishlist/add-ajax', [WishlistController::class, 'addAjax'])->name('wishlist.add-ajax');
+
 });
