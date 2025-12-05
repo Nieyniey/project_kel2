@@ -11,8 +11,10 @@ class SellerFactory extends Factory
     public function definition(): array
     {
         return [
-            'store_name' => $this->faker->company,
-            // 'user_id' diisi di Seeder
+            'store_name' => $this->faker->company . ' Store',
+            'description' => $this->faker->catchPhrase,
+            'instagram' => '@' . $this->faker->userName,
+            'status' => $this->faker->randomElement(['active', 'active', 'active', 'inactive']), // Kebanyakan aktif
         ];
     }
 }
