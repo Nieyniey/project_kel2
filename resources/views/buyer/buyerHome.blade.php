@@ -89,6 +89,49 @@
     .product-action-circle:hover {
         background-color: #5c4a3e; 
     }
+
+    .horizontal-scroll-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .horizontal-scroll-wrapper {
+        -ms-overflow-style: none; 
+    }
+
+    .horizontal-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; 
+        white-space: nowrap; 
+        padding-bottom: 10px; 
+    }
+
+    .scrollable-product-item {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 25%; 
+    }
+
+    .pagination .page-item:not(.active) .page-link {
+        color: #6C2207;
+        border-color: #6C2207; 
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #6C2207; 
+        border-color: #6C2207; 
+        color: #FFFBE8; 
+    }
+
+    .pagination .page-item:not(.active) .page-link:hover {
+        color: #FFFBE8; 
+        background-color: #7d3319;
+        border-color: #7d3319;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #a0a0a0; 
+        border-color: #d1d1d1;
+    }
 </style>
 
 <div class="container-fluid p-0">
@@ -133,7 +176,8 @@
     {{-- END HEADER REVISION --}}
 
     {{-- CATEGORIES (Constraint 1: Placeholder, no filtering yet) --}}
-    <div class="py-3 bg-white shadow-sm">
+    {{-- REVISION 1: Changed background color to match the main content body (#E8E0BB) --}}
+    <div class="py-3" style="background-color: #FFFBE8; box-shadow: none;"> 
         <div class="category-scroll-container px-3" >
             {{-- NEW WRAPPER FOR CENTERING --}}
             <div class="category-flex-wrapper">
@@ -165,72 +209,90 @@
     </div>
     {{-- END CATEGORIES --}}
 
-    {{-- BLACK FRIDAY SALE BANNER (Placeholder, ignoring miscellaneous pictures) --}}
+    {{-- BLACK FRIDAY SALE BANNER --}}
     <div class="p-4" style="background-color: #E8E0BB;">
-        <h3 class="text-white fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
-        <p class="text-light" style="color: #6C2207;">Get up to 70% off on selected items.</p>
-        <div class="row g-3">
-            {{-- Sale Product Placeholder 1 --}}
-            <div class="col-6 col-md-3">
-                <div class="product-card">
-                    <div class="product-image-container p-2">
-                                            </div>
-                    <div class="p-2">
-                        <small class="text-muted">Blazer Prabowo</small><br>
-                        <strong style="color: #f79471;">Rp 600.000</strong>
+        <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
+        <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
+        
+        @php
+            // Placeholder Sale Products (Used for demonstration/looping capability)
+            $saleProducts = [
+                (object)['product_id' => 101, 'name' => 'Blazer Prabowo', 'price' => 600000, 'image_path' => null],
+                (object)['product_id' => 102, 'name' => 'Celana Jokowi', 'price' => 1500000, 'image_path' => null],
+                (object)['product_id' => 103, 'name' => 'Tas Syahroni', 'price' => 1000000, 'image_path' => null],
+                (object)['product_id' => 104, 'name' => 'Topi Bohel', 'price' => 500000, 'image_path' => null],
+                (object)['product_id' => 105, 'name' => 'Extra Item 5', 'price' => 200000, 'image_path' => null],
+                (object)['product_id' => 106, 'name' => 'Extra Item 6', 'price' => 300000, 'image_path' => null],
+            ];
+            $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
+        @endphp
+
+        <div class="horizontal-scroll-wrapper">
+            <div class="d-flex flex-nowrap align-items-stretch g-3">
+                @foreach ($saleProducts as $product)
+                    <div class="scrollable-product-item px-2"> 
+                        <div class="product-card" style="background-color: #E8E0BB !important;">
+                            <div class="product-image-container product-image-shadow">
+                                <a href="#" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                                    @if ($product->image_path)
+                                        <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                            alt="{{ $product->name }}" 
+                                            class="img-fluid" 
+                                            style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                    @else
+                                        {{-- Placeholder for image --}}
+                                        <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                            <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                        </div>
+                                    @endif
+                                </a>
+                            </div>
+
+                            <div class="p-2 text-center">
+                                <a href="#" class="text-dark text-decoration-none">
+                                    <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
+                                    <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                </a>
+                                
+                                {{-- Product Actions: Cart/Wishlist Buttons --}}
+                                <div class="d-flex justify-content-center gap-3 mt-2">
+                                    @php
+                                        $is_in_cart = $user->inCart($product->product_id);
+                                        $is_in_wishlist = $user->inWishlist($product->product_id);
+                                    @endphp
+            
+                                    <button type="button" 
+                                        class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
+                                        data-product-id="{{ $product->product_id }}"
+                                        data-action-url="{{ route('cart.add-ajax') }}" 
+                                        title="Add to Cart">
+                                        <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
+                                    </button>
+            
+                                    <button type="button" 
+                                        class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
+                                        data-product-id="{{ $product->product_id }}"
+                                        data-action-url="{{ route('wishlist.add-ajax') }}" 
+                                        title="Add to Wishlist">
+                                        <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            {{-- Sale Product Placeholder 2 --}}
-            <div class="col-6 col-md-3">
-                <div class="product-card">
-                    <div class="product-image-container p-2">
-                                            </div>
-                    <div class="p-2">
-                        <small class="text-muted">Celana Jokowi</small><br>
-                        <strong style="color: #f79471;">Rp 1.500.000</strong>
-                    </div>
-                </div>
-            </div>
-            {{-- Sale Product Placeholder 3 --}}
-            <div class="col-6 col-md-3">
-                <div class="product-card">
-                    <div class="product-image-container p-2">
-                                            </div>
-                    <div class="p-2">
-                        <small class="text-muted">Tas Syahroni</small><br>
-                        <strong style="color: #f79471;">Rp 1.000.000</strong>
-                    </div>
-                </div>
-            </div>
-            {{-- Sale Product Placeholder 4 --}}
-            <div class="col-6 col-md-3">
-                <div class="product-card">
-                    <div class="product-image-container p-2">
-                                            </div>
-                    <div class="p-2">
-                        <small class="text-muted">Topi Bohel</small><br>
-                        <strong style="color: #f79471;">Rp 500.000</strong>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
     {{-- END BLACK FRIDAY SALE --}}
 
-    {{-- RECOMMENDED PRODUCTS (Constraint 5: Iterate through all products) --}}
+    {{-- RECOMMENDED PRODUCTS --}}
     <div class="container py-5">
         <h3 class="fw-bold mb-4" style="color: #6C2207;">Recommended Products</h3>
         <div class="row g-4">
             @forelse ($products as $product)
-            
-            {{-- REV 6: Grid change for 4 products per row --}}
             <div class="col-6 col-md-3 col-xl-3"> 
-                
-                {{-- REV 1: Removed 'shadow-sm' class from here --}}
                 <div class="product-card">
-                    
-                    {{-- REV 3: Add new class for hover animation/shadow --}}
                     <div class="product-image-container product-image-shadow">
                         <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
                             @if ($product->image_path)
@@ -250,30 +312,34 @@
                             <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                         </a>
                         
-                        {{-- Product Actions: Centered and using custom circular class --}}
+                        {{-- Product Actions: Cart/Wishlist Buttons --}}
                         <div class="d-flex justify-content-center gap-3 mt-2">
 
                             @php
                                 $user = Auth::user(); 
-                                
-                                $is_in_cart = $user->inCart($product->product_id);
-                                $is_in_wishlist = $user->inWishlist($product->product_id);
+                                if ($user) {
+                                    $is_in_cart = $user->inCart($product->product_id);
+                                    $is_in_wishlist = $user->inWishlist($product->product_id);
+                                } else {
+                                    $is_in_cart = false;
+                                    $is_in_wishlist = false;
+                                }
                             @endphp
-    
-                            {{-- Add to Cart (Bag) - NO FORM, just a button --}}
+
+                            {{-- Add to Cart (Bag) --}}
                             <button type="button" 
                                 class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
                                 data-product-id="{{ $product->product_id }}"
-                                data-action-url="{{ route('cart.add-ajax') }}" {{-- Use a new AJAX route --}}
+                                data-action-url="{{ route('cart.add-ajax') }}" 
                                 title="Add to Cart">
                                 <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
                             </button>
 
-                            {{-- Add to Wishlist (Heart) - NO FORM, just a button --}}
+                            {{-- Add to Wishlist (Heart) --}}
                             <button type="button" 
                                 class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
                                 data-product-id="{{ $product->product_id }}"
-                                data-action-url="{{ route('wishlist.add-ajax') }}" {{-- Use a new AJAX route --}}
+                                data-action-url="{{ route('wishlist.add-ajax') }}" 
                                 title="Add to Wishlist">
                                 <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
                             </button>
@@ -287,6 +353,11 @@
             </div>
             @endforelse
         </div>
+        
+        <div class="d-flex justify-content-center mt-5" style="color: #6C2207">
+            {{ $products->links('pagination::bootstrap-4') }}
+        </div>
+        
     </div>
     {{-- END RECOMMENDED PRODUCTS --}}
 
