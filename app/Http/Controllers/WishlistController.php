@@ -11,15 +11,22 @@ class WishlistController extends Controller
 {
     public function index()
     {
-        // Use 'first()' instead of 'firstOrFail()' if a user might not have a wishlist yet
+        // 1. Initialize $wishlistItems as an empty collection
+        $wishlistItems = collect();
+
+        // 2. Fetch the user's wishlist
+        // We use with('items.product') to load the related items and products efficiently
         $wishlist = Wishlist::where('user_id', Auth::id())
                             ->with('items.product')
                             ->first();
 
-        // Pass an empty collection if wishlist doesn't exist yet
-        $items = $wishlist ? $wishlist->items : collect();
+        // 3. If a wishlist is found, assign its items to the variable
+        if ($wishlist) {
+            // Note: $wishlist->items will be a Collection of WishlistItem models
+            $wishlistItems = $wishlist->items; 
+        }
         
-        return view('buyer.wishlist', compact('items')); 
+        return view('buyer.wishlist', compact('wishlistItems')); 
     }
 
     public function add(Request $request)

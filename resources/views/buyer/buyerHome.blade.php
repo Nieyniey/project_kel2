@@ -119,12 +119,12 @@
                 </a>
 
                 {{-- Wishlist (Heart) -> Buyer Favorites --}}
-                <a href="{{ route('buyer.favorites') }}" style="color: #6C2207;">
+                <a href="{{ route('wishlist.index') }}" style="color: #6C2207;">
                     <i class="bi bi-heart-fill" style="font-size: 1.5rem;"></i>
                 </a>
 
                 {{-- Cart (Bag) -> Buyer Cart --}}
-                <a href="{{ route('buyer.cart') }}" style="color: #6C2207;">
+                <a href="{{ route('cart.index') }}" style="color: #6C2207;">
                     <i class="bi bi-bag-fill" style="font-size: 1.5rem;"></i>
                 </a>
             </div>

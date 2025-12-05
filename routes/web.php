@@ -51,7 +51,7 @@ Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('produ
 |--------------------------------------------------------------------------
 */
 Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
-Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
+//Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
 

@@ -1,0 +1,241 @@
+@extends('layouts.app') 
+
+@section('title', 'Wishlist')
+
+@section('content')
+
+<style>
+    .wishlist-header-fixed {
+        background-color: #FFFEF7; 
+        width: 100%;
+        position: fixed; 
+        top: 0;
+        left: 0;
+        z-index: 1000; 
+        padding: 15px 0; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    }
+
+    .wishlist-content-area {
+        margin-top: 60px; 
+    }
+
+    body {
+            background-color: #FFFBE8; 
+        }
+    /* Base Card Styling */
+    .product-card {
+        background-color: #FFFBE8; 
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* Image Container */
+    .product-image-container {
+        background-color: #D9D9D9; 
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px; 
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .product-image-shadow:hover {
+        transform: translateY(-5px); 
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
+    }
+
+    /* Action Circle/Button Styling */
+    .product-action-circle {
+        background-color: #6C2207; /* Dark Circle Background */
+        width: 32px;
+        height: 32px;
+        border-radius: 50%; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        transition: background-color 0.2s;
+    }
+    
+    /* Icon default color */
+    .product-action-circle i {
+        color: #FFFBE8; /* White/Cream Icon Default */
+        font-size: 1.1rem;
+    }
+
+    /* Active State: Heart will be yellow */
+    .product-action-circle.active {
+        background-color: #6C2207; /* Keep the background dark */
+    }
+
+    /* Active Icon Color (The key fix for yellow icon) */
+    .product-action-circle.active i {
+        color: #F3D643 !important; /* Yellow/Gold Icon Color */
+    }
+
+    .product-action-circle:hover {
+        background-color: #5c4a3e; 
+    }
+</style>
+
+<div class="wishlist-header-fixed">
+    <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
+                <span style="font-weight:600; font-size:20px;">Wishlist</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container wishlist-content-area py-5">
+    
+    <h3 class="fw-bold mb-4" style="color: #6C2207;">My Favorites</h3>
+
+    <div class="row g-4">
+        @forelse ($wishlistItems as $item)
+            @php
+                $product = $item->product; // Assuming the WishlistItem model has a 'product' relationship
+            @endphp
+            <div class="col-6 col-md-3 col-xl-3"> 
+                <div class="product-card">
+                    <div class="product-image-container product-image-shadow">
+                        <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                            @if ($product->image_path)
+                                <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                    alt="{{ $product->name }}" 
+                                    class="img-fluid" 
+                                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                            @else
+                                {{-- Fallback: Display an icon if no image path exists --}}
+                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                            @endif
+                        </a>
+                    </div>
+
+                    <div class="p-2 text-center">
+                         <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none">
+                            <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
+                            <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        </a>
+                        
+                        <div class="d-flex justify-content-center gap-3 mt-2">
+                             @php
+                                 $user = Auth::user(); 
+                                 $is_in_cart = $user->inCart($product->product_id); 
+                             @endphp
+
+                             {{-- Add to Cart (Bag) --}}
+                             <button type="button" 
+                                 class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
+                                 data-product-id="{{ $product->product_id }}"
+                                 data-action-url="{{ route('cart.add-ajax') }}"
+                                 title="Add to Cart">
+                                 <i class="bi bi-bag-fill"></i> 
+                             </button>
+
+                             {{-- Add to Wishlist (Heart) - ALWAYS ACTIVE HERE --}}
+                             <button type="button" 
+                                 class="product-action-circle add-to-wishlist-btn active" 
+                                 data-product-id="{{ $product->product_id }}"
+                                 data-action-url="{{ route('wishlist.add-ajax') }}" 
+                                 title="Remove from Wishlist">
+                                 <i class="bi bi-heart-fill"></i>
+                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        @empty
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info" style="color: #6C2207; background-color: #FFFBE8; border-color: #FFFBE8;">
+                    You have no items in your Wishlist yet.
+                </div>
+            </div>
+        @endforelse
+    </div>
+</div>
+
+@endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    // Re-use your global CSRF setup (if you haven't placed it in your main layout script)
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    // Helper function for sending AJAX request (copied from buyerHome)
+    function sendProductAction(button, url, productId) {
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: {
+                product_id: productId
+            },
+            success: function(response) {
+                // Determine if the item is now active/inactive
+                const isActive = response.is_active;
+
+                if (response.action === 'added') {
+                    // Action: Added
+                    button.addClass('active');
+                    toastr.success('Item added to ' + (url.includes('wishlist') ? 'Wishlist' : 'Cart'));
+                } else {
+                    // Action: Removed
+                    button.removeClass('active');
+                    toastr.warning('Item removed from ' + (url.includes('wishlist') ? 'Wishlist' : 'Cart'));
+                }
+
+                // If on the Wishlist page and the item was removed, remove the card from the DOM
+                if (url.includes('wishlist') && response.action === 'removed') {
+                    // Find the parent column and fade it out/remove it
+                    button.closest('.col-6').fadeOut(300, function() {
+                        $(this).remove();
+                        // Check if the list is now empty
+                        if ($('.product-card').length === 0) {
+                            // Simple reload or show the empty state message
+                            window.location.reload(); 
+                        }
+                    });
+                }
+            },
+            error: function(xhr) {
+                // Use a standard error handler
+                let message = 'An unknown error occurred.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = 'Action failed: ' + xhr.responseJSON.message;
+                }
+                toastr.error(message);
+            }
+        });
+    }
+
+    // Attach event listeners to the buttons
+    // Listener for Wishlist button (Heart)
+    $(document).on('click', '.add-to-wishlist-btn', function() {
+        const button = $(this);
+        const productId = button.data('product-id');
+        const url = button.data('action-url');
+        sendProductAction(button, url, productId);
+    });
+
+    // Listener for Cart button (Bag)
+    $(document).on('click', '.add-to-cart-btn', function() {
+        const button = $(this);
+        const productId = button.data('product-id');
+        const url = button.data('action-url');
+        sendProductAction(button, url, productId);
+    });
+});
+</script>
+@endpush
