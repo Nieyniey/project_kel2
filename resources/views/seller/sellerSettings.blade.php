@@ -3,140 +3,190 @@
 @section('title', 'Seller Settings')
 
 @php
-    // Ensure $seller is available
-    $user = Auth::user();
-    $seller = $seller ?? $user->seller;
-    // Update: Check for 'pickup-addresses' as the default if a specific tab is requested
-    $activeTab = $activeTab ?? 'store-info'; 
+    // --- Data Initialization ---
+    // Ensure $seller is available (using the relationship from the authenticated user)
+    $user = Auth::user();
+    // Use optional() chaining for safety, though the controller should guarantee $seller exists
+    $seller = optional($user)->seller; 
+    
+    // Set a default profile image for the seller/user header
+    $profileImageUrl = $user->profile_photo 
+                        ? asset('storage/' . $user->profile_photo) 
+                        : asset('placeholder.jpg');
+    
+    // Determine the active tab from the query string or default to 'store-info'
+    $activeTab = request('tab') ?? 'store-info'; 
 @endphp
 
 @section('content')
+<style>
+    /* Custom style for the active tab link */
+    .seller-active-link {
+        background-color: #f79471 !important; 
+        color: white !important;
+        border-radius: 8px;
+    }
+    .custom-form-control {
+        background-color: #e5d8c6; 
+        border-color: #d8c8b4; 
+        color: #6C2207;
+    }
+</style>
+
 <div class="container py-5" style="background-color: #f8f8f8;">
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('home') }}" class="text-dark me-3" style="font-size: 1.5rem;">
-            <i class="bi bi-arrow-left"></i> 
-        </a>
-        <h2 class="fw-bold mb-0">Seller Settings</h2>
-    </div>
+    <div class="d-flex align-items-center mb-4">
+        <a href="{{ route('home') }}" class="text-dark me-3" style="font-size: 1.5rem;">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h2 class="fw-bold mb-0">Seller Settings</h2>
+    </div>
 
     <div class="row g-4">
-        {{-- Left Panel: Navigation (Styled with light brown background) --}}
+        {{-- Left Panel: Navigation --}}
         <div class="col-md-4 col-lg-3">
             <div class="card shadow-sm border-0" style="background-color: #f7e6d1;">
                 <div class="card-body p-4">
                     {{-- Store Info Header --}}
                     <div class="d-flex flex-column align-items-center mb-4">
-                        {{-- Profile Picture Placeholder --}}
                         <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
-                            {{-- Placeholder for a store logo --}}
-                            @php
-                                $profileImageUrl = Auth::user()->profile_photo 
-                                                  ? Auth::user()->profile_photo 
-                                                  : asset('placeholder.jpg'); 
-                            @endphp
+                            <img src="{{ $profileImageUrl }}" 
+                                alt="{{ $seller->store_name ?? 'Your Store' }} Logo" 
+                                class="w-100 h-100 object-fit-cover rounded-circle">
                         </div>
                         <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
                         <small class="text-muted">Seller</small>
                     </div>
 
-                    {{-- Navigation Links --}}
-                    <div class="list-group list-group-flush">
-                        {{-- Store Information --}}
-                        <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'active shadow-sm' : '' }}" 
-                          style="{{ $activeTab == 'store-info' ? 'background-color: #f79471; color: white; border-radius: 8px;' : 'background-color: transparent;' }}"
-                          aria-current="{{ $activeTab == 'store-info' ? 'true' : 'false' }}">
-                            <i class="bi bi-shop me-2"></i> Store Information
-                        </a>
-                        
-                        {{-- Pick Up Addresses (UPDATED LINK) --}}
-                        <a href="{{ route('seller.settings.tab', ['tab' => 'pickup-addresses']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'pickup-addresses' ? 'active shadow-sm' : '' }}" 
-                          style="{{ $activeTab == 'pickup-addresses' ? 'background-color: #f79471; color: white; border-radius: 8px;' : 'background-color: transparent;' }}"
-                          aria-current="{{ $activeTab == 'pickup-addresses' ? 'true' : 'false' }}">
-                            <i class="bi bi-geo-alt-fill me-2"></i> Pick Up Addresses
-                        </a>
-                        
-                        {{-- Your Orders (Placeholder) --}}
-                        <a href="{{ route('seller.settings.tab', ['tab' => 'orders']) }}" class="list-group-item list-group-item-action border-0" style="background-color: transparent;">
-                            <i class="bi bi-box-seam-fill me-2"></i> Your Orders
-                        </a>
-                        {{-- User Page (Active) --}}
-                        <a href="{{ route('seller.settings.tab', ['tab' => 'user-page']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'active shadow-sm' : '' }}" 
-                          style="{{ $activeTab == 'user-page' ? 'background-color: #f79471; color: white; border-radius: 8px;' : 'background-color: transparent;' }}"
-                          aria-current="{{ $activeTab == 'user-page' ? 'true' : 'false' }}">
-                            <i class="bi bi-person-circle me-2"></i> User Page
-                        </a>
-                        {{-- Log Out --}}
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent;">
-                            <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    {{-- Navigation Links --}}
+                    <div class="list-group list-group-flush">
+                        
+                        {{-- 1. Store Information (Default Tab) --}}
+                        <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
+                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'seller-active-link shadow-sm' : '' }}" 
+                          style="background-color: transparent;">
+                            <i class="bi bi-shop me-2"></i> Store Information
+                        </a>
+                        
+                        {{-- 2. Seller Orders --}}
+                        <a href="{{ route('seller.settings', ['tab' => 'orders']) }}" 
+                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'seller-active-link shadow-sm' : '' }}" 
+                          style="background-color: transparent;">
+                            <i class="bi bi-box-seam-fill me-2"></i> Seller Orders
+                        </a>
+                        
+                        {{-- 3. User Page (Switch to Buyer Settings) --}}
+                        <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
+                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
+                          style="background-color: transparent;">
+                            <i class="bi bi-person-circle me-2"></i> User Page
+                        </a>
+                        
+                        {{-- Log Out --}}
+                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent;">
+                            <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        {{-- Right Panel: Dynamic Content --}}
-        <div class="col-md-8 col-lg-9">
-            <div class="card shadow-sm border-0 p-4" style="background-color: #f7e6d1;">
-                
-                @if ($activeTab == 'store-info')
-                    {{-- Store Information Content (Omitted for brevity) --}}
-                    @include('seller.settings.store-info')
-                
-                @elseif ($activeTab == 'pickup-addresses')
-                    {{-- ---------------------------------------- --}}
-                    {{-- NEW CONTENT: PICK UP ADDRESSES --}}
-                    {{-- ---------------------------------------- --}}
-                    <h3 class="fw-bold mb-4">Pick Up Addresses</h3>
+        {{-- Right Panel: Dynamic Content --}}
+        <div class="col-md-8 col-lg-9">
+            <div class="card shadow-sm border-0 p-4" style="background-color: #f7e6d1;">
+                 
+                {{-- Global Feedback Messages --}}
+                @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
 
-                    {{-- Add New Address Button --}}
-                    <div class="d-grid mb-4">
-                        <button class="btn btn-lg fw-bold" style="background-color: #e5d8c6; border-color: #d8c8b4; color: #5c4a3e;">
-                            <i class="bi bi-plus-circle me-2"></i> Add New Pick Up Address
-                        </button>
-                    </div>
+                {{-- ====================================== --}}
+                {{-- 1. STORE INFORMATION TAB CONTENT --}}
+                {{-- ====================================== --}}
+                @if ($activeTab == 'store-info')
+                    <h3 class="fw-bold mb-4">Store Information</h3>
 
-                    {{-- Example Address Card 1 (Placeholder data) --}}
-                    <div class="card mb-3 border-0 shadow-sm" style="background-color: #e5d8c6;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Main Warehouse (Primary)</h5>
-                            <p class="card-text text-muted mb-1">Jl. Sudirman No. 12, Kav. 5</p>
-                            <p class="card-text text-muted mb-3">Jakarta Pusat, DKI Jakarta, 10220</p>
-                            <div class="d-flex gap-2">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Example Address Card 2 (Placeholder data) --}}
-                    <div class="card mb-3 border-0 shadow-sm" style="background-color: #e5d8c6;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">Store Branch B</h5>
-                            <p class="card-text text-muted mb-1">Ruko Emerald No. 88, Blok A</p>
-                            <p class="card-text text-muted mb-3">Bandung, Jawa Barat, 40111</p>
-                            <div class="d-flex gap-2">
-                                <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-                @elseif ($activeTab == 'user-page')
-                    {{-- User Page Content (Omitted for brevity) --}}
-                    @include('seller.settings.user-page')
-                
-                @else
-                    {{-- Placeholder for Orders tab or an invalid tab --}}
-                    <div class="alert alert-warning">
-                        Content for the '{{ $activeTab }}' tab is not yet implemented.
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
+                    <form action="{{ route('seller.settings.update.store') }}" method="POST">
+                        @csrf
+                    
+                        {{-- Store Name --}}
+                        <div class="mb-4">
+                            <label for="store_name" class="form-label fw-bold">Store Name</label>
+                            <input type="text" class="form-control @error('store_name') is-invalid @enderror custom-form-control" 
+                                    id="store_name" name="store_name" 
+                                    value="{{ old('store_name', $seller->store_name) }}" 
+                                    placeholder="Enter your store name">
+                            @error('store_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        {{-- Description --}}
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">Store Description</label>
+                            <textarea class="form-control @error('description') is-invalid @enderror custom-form-control" 
+                                    id="description" name="description" rows="4"
+                                    placeholder="Tell buyers about your store and products.">{{ old('description', $seller->description) }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        {{-- Instagram @ --}}
+                        <div class="mb-4">
+                            <label for="instagram" class="form-label fw-bold">Instagram @</label>
+                            <input type="text" class="form-control @error('instagram') is-invalid @enderror custom-form-control" 
+                                    id="instagram" name="instagram" 
+                                    value="{{ old('instagram', $seller->instagram) }}"
+                                    placeholder="@your_instagram_handle">
+                            @error('instagram')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    
+                        {{-- Status (Display only - set in backend) --}}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Status</label>
+                            <p class="form-control-static fw-bold text-success">{{ ucfirst($seller->status ?? 'pending') }}</p>
+                            <small class="text-muted">Your store status is managed by the system.</small>
+                        </div>
+                    
+                        <div class="d-flex justify-content-end pt-3">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                
+                {{-- ====================================== --}}
+                {{-- 2. SELLER ORDERS TAB CONTENT --}}
+                {{-- ====================================== --}}
+                @elseif ($activeTab == 'orders')
+                    <h3 class="fw-bold mb-4">Seller Orders</h3>
+                    <div class="alert alert-info">
+                        This section is where you would list and manage all orders placed by customers, showing their status (Pending, Packing, Shipped, etc.).
+                    </div>
+                    
+                {{-- ====================================== --}}
+                {{-- 3. USER PAGE TAB CONTENT --}}
+                {{-- ====================================== --}}
+                @elseif ($activeTab == 'user-page')
+                    <h3 class="fw-bold mb-4">Switch to User (Buyer) Mode</h3>
+                    <div class="alert alert-warning">
+                        This tab serves as a direct link back to your **Buyer Settings**. Click the button below to manage your personal information, addresses, and buyer orders.
+                    </div>
+                    <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" class="btn btn-lg" style="background-color: #f79471; color: white;">
+                        Go to Buyer Settings
+                    </a>
+                
+                @else
+                    {{-- Fallback for invalid tab --}}
+                    <div class="alert alert-warning">
+                        The requested tab content is not available.
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

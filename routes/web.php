@@ -55,7 +55,7 @@ Route::get('/search', [ProductController::class, 'search'])->name('products.sear
 */
 // This route handles the base URL: /buyer/settings
 Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
-Route::get('/buyer/settings/{tab}', [BuyerController::class, 'settings'])->name('buyer.settings.tab');
+//Route::get('/buyer/settings/{tab}', [BuyerController::class, 'settings'])->name('buyer.settings.tab');
 //Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
@@ -76,7 +76,7 @@ Route::prefix('seller')->group(function () {
 
     // SETTINGS
     Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
-    Route::get('/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
+    //Route::get('/settings/{tab}', [SellerController::class, 'showSettings'])->name('seller.settings.tab');
     Route::post('/settings/store-info', [SellerController::class, 'updateStoreInfo'])->name('seller.settings.update.store');
 });
 

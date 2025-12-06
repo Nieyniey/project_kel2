@@ -102,19 +102,19 @@
                         {{-- Navigation Links --}}
                         <div class="list-group list-group-flush">
                             {{-- 1. Personal Information --}}
-                            <a href="{{ route('buyer.settings.tab', ['tab' => 'personal-info']) }}" 
+                            <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
                                 class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'settings-active-link shadow-sm' : '' }}" 
                                 style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-person-fill me-2"></i> Personal Information
                             </a>
                             {{-- 2. Your Orders --}}
-                            <a href="{{ route('buyer.settings.tab', ['tab' => 'orders']) }}" 
+                            <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
                                 class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'settings-active-link shadow-sm' : '' }}" 
                                 style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-box-seam-fill me-2"></i> Your Orders
                             </a>
                             {{-- 3. Seller Page --}}
-                            <a href="{{ route('buyer.settings.tab', ['tab' => 'seller-mode']) }}" 
+                            <a href="{{ route('buyer.settings', ['tab' => 'seller-mode']) }}" 
                                 class="list-group-item list-group-item-action border-0 {{ $activeTab == 'seller-mode' ? 'settings-active-link shadow-sm' : '' }}" 
                                 style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-shop me-2"></i> Seller Page
@@ -144,39 +144,90 @@
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
                         @if($errors->any())
+                            {{-- Show a general error message if there are any validation issues --}}
                             <div class="alert alert-danger">Please check the form for errors.</div>
                         @endif
 
                         <form action="{{ route('buyer.settings.update.personal') }}" method="POST">
                             @csrf
                             
-                            {{-- Username (Mapped to 'name') --}}
+                            {{-- 1. Username (Mapped to 'name') --}}
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-bold" style="color: #6C2207;">Username</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror custom-form-control" 
-                                            id="name" name="name" 
-                                            value="{{ old('name', $user->name) }}">
+                                        id="name" name="name" 
+                                        value="{{ old('name', $user->name) }}">
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                                <hr class="my-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    {{-- Chat button linked to the seller's user ID --}}
-                                    <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}"
-                                        class="btn btn-sm btn-outline-secondary">
-                                        Chat Penjual
-                                    </a>
-                                    
-                                    {{-- Get Seller Name and ID from the first item in the order --}}
-                                    @php
-                                        $firstItem = $order->items->first();
-                                        $seller = $firstItem->product->seller ?? null;
-                                        $sellerName = $seller->store_name ?? 'Seller Not Found';
-                                        $sellerId = $seller->user_id ?? 0; // Seller's user ID for chat
-                                    @endphp
+                            {{-- 2. Email --}}
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold" style="color: #6C2207;">Email</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror custom-form-control" 
+                                        id="email" name="email" 
+                                        value="{{ old('email', $user->email) }}">
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            {{-- 3. Phone Number --}}
+                            <div class="mb-3">
+                                <label for="phone" class="form-label fw-bold" style="color: #6C2207;">Phone Number</label>
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror custom-form-control" 
+                                        id="phone" name="phone" 
+                                        value="{{ old('phone', $user->phone) }}">
+                                @error('phone')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
+                            {{-- 4. Date of Birth (DOB) --}}
+                            <div class="mb-3">
+                                <label for="DOB" class="form-label fw-bold" style="color: #6C2207;">Date of Birth</label>
+                                
+                                {{-- Set input type to 'date' for the native picker --}}
+                                <input type="date" class="form-control @error('DOB') is-invalid @enderror custom-form-control" 
+                                        id="DOB" name="DOB_temp" 
+                                        {{-- Use name="DOB_temp" to prevent it from being submitted directly --}}
+                                        
+                                        {{-- Default value must be YYYY-MM-DD for the date picker to display correctly --}}
+                                        value="{{ old('DOB', $user->DOB) }}">
+                                @error('DOB')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                
+                                {{-- Hidden field to hold the correctly formatted date (DD/MM/YYYY) for Laravel --}}
+                                <input type="hidden" name="DOB" id="DOB_formatted">
+                            </div>
+                            <button type="submit" class="btn border px-4 btn-custom-med" style="background-color: #f79471; color: white;">Save Changes</button>
+                        </form>
+                        
+                        
+                    @elseif ($activeTab == 'orders')
+                        {{-- ---------------------------------------- --}}
+                        {{-- CONTENT: ORDER HISTORY --}}
+                        {{-- ---------------------------------------- --}}
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">My Orders</h3>
+
+                        @if ($orders->isEmpty())
+                            <p class="text-muted">You have no past orders.</p>
+                        @else
+                            @foreach ($orders as $order)
+                                {{-- DEFINE VARIABLES HERE to avoid "Undefined variable $sellerId" --}}
+                                @php
+                                    $firstItem = $order->items->first();
+                                    // Assumes 'product' relates to a product, and 'seller' relates to the Seller model, 
+                                    // which has a 'user' relationship to get the seller's user ID. Adjust relationship as needed.
+                                    $seller = $firstItem->product->seller ?? null;
+                                    $sellerName = $seller->store_name ?? 'Seller Not Found';
+                                    // This is the variable used in the chat link
+                                    $sellerId = $seller->user_id ?? 0; 
+                                @endphp
+
+                                <div class="card p-3 mb-4" style="border-color: #d8c8b4;">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $sellerName }}</h5> 
                                         <span class="badge rounded-pill text-dark" style="background-color: rgba(252, 88, 1, 0.4) !important; color: #6C2207 !important;">{{ $order->status ?? 'Pending' }}</span>
@@ -186,16 +237,16 @@
                                     
                                     {{-- Loop through all items in this specific order --}}
                                     @foreach ($order->items as $item)
-                                        @php $product = $item->product; @endphp {{-- Assuming $item has a relationship to $product --}}
+                                        @php $product = $item->product; @endphp
 
                                         <div class="d-flex mb-3">
                                             {{-- Product Image Section --}}
                                             <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #fff; border-radius: 5px; overflow: hidden; border: 1px solid #eee;" class="me-3 d-flex align-items-center justify-content-center">
                                                 @if ($product->image_path)
                                                     <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                                         alt="{{ $product->name }}" 
-                                                         class="img-fluid"
-                                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                        alt="{{ $product->name }}" 
+                                                        class="img-fluid"
+                                                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                                 @else
                                                     <i class="bi bi-image" style="font-size: 1.5rem; color: #ccc;"></i>
                                                 @endif
@@ -213,13 +264,16 @@
                                     <hr class="my-3" style="border-color: #d8c8b4;">
                                     <div class="d-flex justify-content-between align-items-center">
                                         {{-- Chat button linked to the seller's user ID --}}
-                                        <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}" class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">Chat Penjual</a>
+                                        @if ($sellerId)
+                                            <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}" class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">Chat Penjual</a>
+                                        @else
+                                            <span class="text-muted fst-italic">Seller chat unavailable</span>
+                                        @endif
                                         
                                         {{-- Total price from the Order model --}}
                                         <p class="mb-0 fw-bold" style="color: #6C2207;">Total: <span style="color: #FC5801 !important;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></p>
                                     </div>
                                 </div>
-                            </div>
                             @endforeach
                         @endif
 
@@ -239,18 +293,16 @@
                             
                             {{-- Redirects to the seller's main settings/dashboard --}}
                             <form action="{{ route('seller.settings') }}" method="GET">
-                                {{-- Applied custom size and color classes --}}
-                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Yes</button>
+                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med" style="background-color: #f79471; color: white;">Yes</button>
                             </form>
                         @else
                             {{-- If the user is NOT a seller, show the registration prompt --}}
                             <p class="lead" style="color: #6C2207;">You don't have a store yet. Would you like to become a seller?</p>
                             <form action="{{ route('seller.create.form') }}" method="GET">
-                                {{-- Applied custom size and color classes --}}
-                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Yes</button>
+                                <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med" style="background-color: #f79471; color: white;">Yes</button>
                             </form>
                         @endif
-                    
+
                     @else
                         {{-- Fallback for an unrecognized tab --}}
                         <div class="alert alert-warning" style="color: #6C2207; background-color: #e5d8c6; border-color: #d8c8b4;">

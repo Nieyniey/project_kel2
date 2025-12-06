@@ -12,50 +12,46 @@
 
 @section('content')
 <style>
-    /* New styling for the main container and fixed header */
+    /* ... (Your existing styles here) ... */
     .header-fixed {
-        background-color: #FFFEF7; /* Navigation and Right Square Background */
+        background-color: #FFFEF7;
         width: 100%;
-        /* REVISION 1: Ensure header is fixed */
         position: fixed; 
         top: 0;
         left: 0;
         z-index: 1000; 
         padding: 15px 0; 
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-        height: 60px; /* Define height to calculate content padding */
+        height: 60px;
     }
     .settings-active-link {
-        /* FC5801 with 40% opacity */
         background-color: rgba(252, 88, 1, 0.4) !important;
         color: #6C2207 !important; 
         border-radius: 8px;
     }
-    
-    /* Custom size between btn-sm and default */
     .btn-custom-med {
-        padding: 0.375rem 0.8rem; /* Slightly bigger padding */
-        font-size: 0.95rem;      /* Slightly larger font */
-        border-radius: 0.25rem;  
+        padding: 0.375rem 0.8rem;
+        font-size: 0.95rem;
+        border-radius: 0.25rem;
     }
-
-    /* REVISION 3: Custom styling for the "Yes"/"Create" button */
     .btn-seller-mode {
         background-color: transparent;
-        color: #FC5801 !important; /* Text color is the main orange */
-        border-color: #FC5801 !important; /* Border is the main orange */
+        color: #FC5801 !important;
+        border-color: #FC5801 !important;
         transition: all 0.2s ease;
     }
     .btn-seller-mode:hover {
-        /* On hover, background fills with 40% opacity orange */
         background-color: rgba(252, 88, 1, 0.4) !important;
-        color: #6C2207 !important; /* Text color turns dark brown on hover */
-        border-color: rgba(252, 88, 1, 0.4) !important; /* Border color changes */
+        color: #6C2207 !important;
+        border-color: rgba(252, 88, 1, 0.4) !important;
     }
-    
-    /* REVISION 2: Class for the yellow checkmark */
     .text-active-yellow {
         color: #F3D643 !important;
+    }
+    .custom-form-control {
+        background-color: #e5d8c6; 
+        border-color: #d8c8b4; 
+        color: #6C2207;
     }
 
 </style>
@@ -75,7 +71,6 @@
     </div>
 
 {{-- Main Container with new background color --}}
-{{-- REVISION 1: Added necessary padding-top to compensate for the fixed header height (60px + 20px margin) --}}
 <div class="container-fluid py-4" style="background-color: #E8E0BB; color: #6C2207; min-height: 100vh; padding-top: 80px !important;">
     <div class="container mt-4">
         <div class="row g-4">
@@ -87,8 +82,8 @@
                         <div class="d-flex flex-column align-items-center mb-4">
                             <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
                                 <img src="{{ $profileImageUrl }}" 
-                                        alt="{{ $user->name }}'s Profile Picture" 
-                                        class="w-100 h-100 object-fit-cover rounded-circle">
+                                            alt="{{ $user->name }}'s Profile Picture" 
+                                            class="w-100 h-100 object-fit-cover rounded-circle">
                             </div>
                             <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
                             <small class="text-muted">General User</small>
@@ -97,13 +92,13 @@
                         {{-- Navigation Links --}}
                         <div class="list-group list-group-flush">
                             {{-- 1. Personal Information --}}
-                            <a href="{{ route('buyer.settings.tab', ['tab' => 'personal-info']) }}" 
+                            <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
                                 class="list-group-item list-group-item-action border-0" 
                                 style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-person-fill me-2"></i> Personal Information
                             </a>
                             {{-- 2. Your Orders --}}
-                            <a href="{{ route('buyer.settings.tab', ['tab' => 'orders']) }}" 
+                            <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
                                 class="list-group-item list-group-item-action border-0" 
                                 style="background-color: transparent; color: #6C2207;">
                                 <i class="bi bi-box-seam-fill me-2"></i> Your Orders
@@ -134,38 +129,49 @@
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
 
-                    {{-- Form to create the seller profile (simplified) --}}
+                    {{-- Form to create the seller profile --}}
                     <form action="{{ route('seller.register') }}" method="POST">
                         @csrf
 
-                        {{-- Store Name (The only required field) --}}
+                        {{-- 1. Store Name --}}
                         <div class="mb-4">
-                            <label for="store_name" class="form-label fw-bold" style="color: #6C2207;">Store Name</label>
-                            <input type="text" class="form-control @error('store_name') is-invalid @enderror" 
+                            <label for="store_name" class="form-label fw-bold" style="color: #6C2207;">Store Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('store_name') is-invalid @enderror custom-form-control" 
                                 id="store_name" name="store_name" 
                                 value="{{ old('store_name') }}" 
-                                placeholder="e.g., {{ $user->name }} Store"
-                                style="background-color: #e5d8c6; border-color: #d8c8b4; color: #6C2207;">
+                                placeholder="e.g., {{ $user->name }} Store">
                             @error('store_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        {{-- Placeholder: Store Descriptions --}}
+                        {{-- 2. Description (Now a functional textarea) --}}
                         <div class="mb-4">
-                            <label for="store_description_ph" class="form-label fw-bold" style="color: #6C2207;">Store Descriptions</label>
-                            <textarea class="form-control" id="store_description_ph" rows="6" disabled style="background-color: #e5d8c6; border-color: #d8c8b4; color: #6C2207;">(This field is currently omitted from database storage.)</textarea>
+                            <label for="description" class="form-label fw-bold" style="color: #6C2207;">Store Description</label>
+                            <textarea class="form-control @error('description') is-invalid @enderror custom-form-control" 
+                                id="description" name="description" rows="4"
+                                placeholder="Tell buyers a little about your store, products, and mission.">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        {{-- Placeholder: Instagram @ --}}
+                        {{-- 3. Instagram @ (Now a functional input) --}}
                         <div class="mb-4">
-                            <label for="instagram_ph" class="form-label fw-bold" style="color: #6C2207;">Instagram @</label>
-                            <input type="text" class="form-control" id="instagram_ph" value="@prabroroJualGinjai" disabled style="background-color: #e5d8c6; border-color: #d8c8b4; color: #6C2207;">
+                            <label for="instagram" class="form-label fw-bold" style="color: #6C2207;">Instagram @ (Optional)</label>
+                            <input type="text" class="form-control @error('instagram') is-invalid @enderror custom-form-control" 
+                                id="instagram" name="instagram" 
+                                value="{{ old('instagram') }}"
+                                placeholder="@your_instagram_handle">
+                            @error('instagram')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+                        
+                        {{-- NOTE: 'status' is set in the controller, so no form field is needed here. --}}
 
                         {{-- Action Button --}}
                         <div class="d-flex justify-content-end pt-3">
-                            {{-- REVISION 3: Button now uses the 'Yes' button style (orange border, orange hover fill, custom size) --}}
                             <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Create</button>
                         </div>
 
