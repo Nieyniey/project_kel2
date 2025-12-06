@@ -41,25 +41,31 @@ class SellerController extends Controller
      */
     public function updateStoreInfo(Request $request)
     {
+        // Ensure the user is authenticated and has a seller record
+        if (!Auth::check() || !Auth::user()->seller) {
+            return redirect()->route('home')->with('error', 'Authentication required.');
+        }
+        
         $seller = Auth::user()->seller;
 
-        // --- CHANGE 2: Add validation for description and instagram ---
         $validated = $request->validate([
-            // Enforce store name uniqueness, ignoring the current seller's ID
             'store_name' => [
                 'required', 
                 'string', 
                 'max:100', 
-                Rule::unique('sellers')->ignore($seller->id)
+                // Ignore the current seller's ID for uniqueness check
+                Rule::unique('sellers', 'store_name')->ignore($seller->id)
             ],
-            'description' => 'nullable|string|max:500', // NEW
-            'instagram' => 'nullable|string|max:100', // NEW
+            'description' => 'nullable|string|max:500', 
+            'instagram' => 'nullable|string|max:100',
+            
+            // --- NEW: Validation for Status ---
+            'status' => ['required', 'string', Rule::in(['active', 'inactive'])],
         ]);
 
-        // 2. Update the Seller model with all validated data
+        // Update the Seller model with all validated data
         $seller->update($validated);
 
-        // --- CHANGE 3: Fix redirect route name for consistency ---
         return redirect()->route('seller.settings', ['tab' => 'store-info'])
             ->with('success', 'Store Information successfully updated!');
     }
