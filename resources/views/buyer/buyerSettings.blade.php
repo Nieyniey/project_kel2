@@ -194,25 +194,37 @@
 
                             <div class="mb-4 p-3 border rounded" style="background-color: #f7f3ed; border-color: #d8c8b4;">
                                 <label class="form-label fw-bold mb-3" style="color: #6C2207;">Profile Picture</label>
-                                
+
                                 <div class="d-flex align-items-center">
-                                    {{-- Current Profile Picture (use the previously defined $profileImageUrl) --}}
-                                    <div class="rounded-circle me-4" style="width: 80px; height: 80px; overflow: hidden; border: 2px solid #6C2207;">
-                                        <img src="{{ $profileImageUrl }}" 
-                                            alt="Profile Photo" 
-                                            class="w-100 h-100 object-fit-cover">
+                                    
+                                    {{-- 1. Profile Image Area (Circular) --}}
+                                    <div class="rounded-circle me-4 d-flex justify-content-center align-items-center" 
+                                        style="width: 85px; height: 85px; overflow: hidden; border: 3px solid #FC5801; flex-shrink: 0;">
+                                        
+                                        @if($user->profile_photo)
+                                            <img id="profile-image-preview" 
+                                                src="{{ asset('storage/' . $user->profile_photo) }}" 
+                                                alt="Profile Photo" 
+                                                class="w-100 h-100 object-fit-cover">
+                                        @else
+                                            <img src="{{ $profileImageUrl }}" 
+                                                alt="Profile Photo" 
+                                                class="w-100 h-100 object-fit-cover">
+                                        @endif
                                     </div>
 
-                                    {{-- File Input --}}
-                                    <div>
+                                    {{-- 2. File Input Area --}}
+                                    <div class="flex-grow-1">
+                                        
                                         <input type="file" 
-                                            class="form-control @error('profile_photo') is-invalid @enderror custom-form-control" 
-                                            id="profile_photo" 
-                                            name="profile_photo"
-                                            accept="image/*">
-                                        <small class="text-muted mt-1 d-block">Max 2MB. JPG or PNG only.</small>
-                                        @error('profile_photo')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            class="form-control @error('image') is-invalid @enderror custom-form-control" 
+                                            id="profile_photo_input" 
+                                            name="image" 
+                                            accept="image/jpeg, image/png">
+                                        <p class="text-muted mb-2 small">Upload a new photo (Max 2MB, jpeg/png/jpg/gif only).</p>
+
+                                        @error('image') {{-- Changed error check to 'image' for consistency with input name --}}
+                                            <div class="text-danger mt-1 small">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>

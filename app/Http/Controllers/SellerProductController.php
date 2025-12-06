@@ -106,14 +106,11 @@ class SellerProductController extends Controller
 
         $updateData = $validated;
 
-        // 2. Proses Update Gambar (Jika ada file baru)
         if ($request->hasFile('image')) {
-            // A. Hapus gambar lama jika ada
             if ($product->image_path) {
                 Storage::disk('public')->delete($product->image_path);
             }
-
-            // B. Upload gambar baru
+            
             $imagePath = $request->file('image')->store('products', 'public');
             $updateData['image_path'] = $imagePath;
         }
