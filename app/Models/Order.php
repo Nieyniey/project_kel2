@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    use HasFactory;
     protected $primaryKey = 'order_id';
 
     protected $fillable = [
