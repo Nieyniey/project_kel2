@@ -71,8 +71,9 @@ Route::prefix('seller')->group(function () {
     Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');
     Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
     Route::post('/products', [SellerProductController::class, 'store'])->name('seller.products.store');
-    Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
-    Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('seller.products.update');
+    Route::get('/products/{product}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+    Route::put('/products/{product}', [SellerProductController::class, 'update'])->name('seller.products.update');
+    Route::delete('/products/{product}', [SellerProductController::class, 'destroy'])->name('seller.products.destroy');
 
     // SETTINGS
     Route::get('/settings', [SellerController::class, 'showSettings'])->name('seller.settings');
