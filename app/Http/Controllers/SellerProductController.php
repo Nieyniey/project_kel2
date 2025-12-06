@@ -5,15 +5,16 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 use Illuminate\Validation\Rule; //untuk validation
 
 class SellerProductController extends Controller
 {
-    public function __construct()
-    {
-        // Gerbang Pertama: Memastikan hanya user yang sudah login DAN memiliki relasi 'seller' yang boleh masuk.
-        $this->middleware('is_seller'); 
-    }
+    // public function __construct()
+    // {
+    //     // Gerbang Pertama: Memastikan hanya user yang sudah login DAN memiliki relasi 'seller' yang boleh masuk.
+    //     $this->middleware('is_seller'); 
+    // }
 
     /**
      * Tampilkan daftar semua produk yang dijual oleh seller yang sedang login.
@@ -33,18 +34,12 @@ class SellerProductController extends Controller
         return view('seller.sellerProducts', compact('products'));
     }
 
-    /**
-     * Tampilkan form untuk membuat produk baru.
-     */
     public function create()
     {
-        // Anda mengganti view name di sini
-        return view('seller.sellerAddProducts');
+        $categories = Category::all();
+        return view('seller.sellerAddProducts', compact('categories')); 
     }
 
-    /**
-     * Simpan produk baru ke database (termasuk upload gambar).
-     */
     public function store(Request $request)
     {
         // 1. Validasi data
@@ -54,6 +49,8 @@ class SellerProductController extends Controller
             'price' => 'required|numeric|min:0.01',
             'stock' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // ADDED validation for category_id, ensuring it exists in the categories table
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'category_id')], 
         ]);
 
         $seller = Auth::user()->seller; 
@@ -66,9 +63,11 @@ class SellerProductController extends Controller
         }
         
         // 3. Buat produk baru
+        // category_id is now correctly merged from $validated data
         Product::create(array_merge($validated, [
             'seller_id' => $seller->seller_id,
             'image_path' => $imagePath,
+            // 'category_id' is already included in $validated
         ]));
 
         return redirect()->route('seller.products')->with('success', 'Produk berhasil ditambahkan dan siap dijual!');
@@ -79,10 +78,14 @@ class SellerProductController extends Controller
      */
     public function edit(Product $product)
     {
-
+        // 1. Authorize ownership check
         $this->authorizeProductOwnership($product); 
 
-        return view('seller.sellerEditProducts', compact('product'));
+        // 2. Fetch all categories needed for the dropdown
+        $categories = Category::all(); // <--- ADD THIS LINE
+
+        // 3. Pass both the product and the categories to the view
+        return view('seller.sellerEditProducts', compact('product', 'categories'));
     }
 
     /**

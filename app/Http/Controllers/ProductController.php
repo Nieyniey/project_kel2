@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -44,11 +45,13 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $keyword = $request->input('q');
+        $selectedCategorySlug = null;
+        $categories = Category::all();
 
         $products = Product::where('name', 'LIKE', "%$keyword%")
                            ->orWhere('description', 'LIKE', "%$keyword%")
                            ->paginate(12);
 
-        return view('buyer.buyerHome', compact('products', 'keyword'));
+        return view('buyer.buyerHome', compact('products', 'keyword', 'selectedCategorySlug', 'categories'));
     }
 }

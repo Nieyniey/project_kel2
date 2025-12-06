@@ -134,66 +134,66 @@
     }
 </style>
 
-<div class="container-fluid p-0">
-    {{-- HEADER REVISION (FIXED SPACING AND COLOR) --}}
-    <div class="wts-header p-3 sticky-top">
-        <div class="d-flex justify-content-between align-items-center">
-            {{-- Settings (Gear) -> Buyer Settings --}}
-                <a href="{{ route('buyer.settings') }}" style="color: #6C2207;">
-                    <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+    <div class="container-fluid p-0">
+        {{-- HEADER REVISION (FIXED SPACING AND COLOR) --}}
+        <div class="wts-header p-3 sticky-top">
+            <div class="d-flex justify-content-between align-items-center">
+                {{-- Settings (Gear) -> Buyer Settings --}}
+                    <a href="{{ route('buyer.settings') }}" style="color: #6C2207;">
+                        <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+                    </a>
+
+                {{-- Logo (Central Element) --}}
+                <a href="{{ route('homeIn') }}" class="wts-logo mx-auto">
+                    <img src="{{ asset('Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
                 </a>
 
-            {{-- Logo (Central Element) --}}
-            <a href="{{ route('homeIn') }}" class="wts-logo mx-auto">
-                <img src="{{ asset('Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
-            </a>
+                {{-- Icons Container (Right-aligned Group for Action Icons) --}}
+                <div class="d-flex gap-3 align-items-center position-absolute end-0 me-3"> 
+                    
+                    {{-- Search Icon Button --}}
+                    <button type="button" class="btn p-0" id="search-icon-btn">
+                        <i class="bi bi-search" style="font-size: 1.5rem; color: #6C2207;"></i>
+                    </button>
+                    
+                    {{-- Chat -> Buyer Chat Index --}}
+                    <a href="{{ route('chat.index') }}" style="color: #6C2207;">
+                        <i class="bi bi-chat-fill" style="font-size: 1.5rem;"></i>
+                    </a>
 
-            {{-- Icons Container (Right-aligned Group for Action Icons) --}}
-            <div class="d-flex gap-3 align-items-center position-absolute end-0 me-3"> 
-                
-                {{-- Search Icon Button --}}
-                <button type="button" class="btn p-0" id="search-icon-btn">
-                    <i class="bi bi-search" style="font-size: 1.5rem; color: #6C2207;"></i>
-                </button>
-                
-                {{-- Chat -> Buyer Chat Index --}}
-                <a href="{{ route('chat.index') }}" style="color: #6C2207;">
-                    <i class="bi bi-chat-fill" style="font-size: 1.5rem;"></i>
-                </a>
+                    {{-- Wishlist (Heart) -> Buyer Favorites --}}
+                    <a href="{{ route('wishlist.index') }}" style="color: #6C2207;">
+                        <i class="bi bi-heart-fill" style="font-size: 1.5rem;"></i>
+                    </a>
 
-                {{-- Wishlist (Heart) -> Buyer Favorites --}}
-                <a href="{{ route('wishlist.index') }}" style="color: #6C2207;">
-                    <i class="bi bi-heart-fill" style="font-size: 1.5rem;"></i>
-                </a>
-
-                {{-- Cart (Bag) -> Buyer Cart --}}
-                <a href="{{ route('cart.index') }}" style="color: #6C2207;">
-                    <i class="bi bi-bag-fill" style="font-size: 1.5rem;"></i>
-                </a>
+                    {{-- Cart (Bag) -> Buyer Cart --}}
+                    <a href="{{ route('cart.index') }}" style="color: #6C2207;">
+                        <i class="bi bi-bag-fill" style="font-size: 1.5rem;"></i>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-    {{-- END HEADER REVISION --}}
+        {{-- END HEADER REVISION --}}
 
-    {{-- NEW TOGGLED SEARCH BAR CONTAINER --}}
-{{-- We check if $keyword exists (meaning a search was just executed) --}}
-<div id="toggled-search-bar" class="container p-3 {{ request()->has('q') ? '' : 'd-none' }}" style="padding-top: 15px !important;">
-    <div class="d-flex align-items-center w-100">
-        {{-- Close button ('x') --}}
-        <button type="button" class="btn-close fs-4 me-3" id="close-search-bar" aria-label="Close" style="color: #5c4a3e;"></button>
+        {{-- NEW TOGGLED SEARCH BAR CONTAINER --}}
+    {{-- We check if $keyword exists (meaning a search was just executed) --}}
+    <div id="toggled-search-bar" class="container p-3 {{ request()->has('q') ? '' : 'd-none' }}" style="padding-top: 15px !important;">
+        <div class="d-flex align-items-center w-100">
+            {{-- Close button ('x') --}}
+            <button type="button" class="btn-close fs-4 me-3" id="close-search-bar" aria-label="Close" style="color: #5c4a3e;"></button>
 
-        {{-- Search Form --}}
-        <form action="{{ route('products.search') }}" method="GET" class="w-100 d-flex">
-            <input type="search" 
-                id="search-input" 
-                name="q" 
-                class="form-control rounded-pill p-2" 
-                placeholder="Search product..." 
-                value="{{ request('q') }}" {{-- FIX: Insert the current query here --}}
-                style="background-color: #FFFEF7; border: 1px solid #d8c8b4;">
-        </form>
+            {{-- Search Form --}}
+            <form action="{{ route('products.search') }}" method="GET" class="w-100 d-flex">
+                <input type="search" 
+                    id="search-input" 
+                    name="q" 
+                    class="form-control rounded-pill p-2" 
+                    placeholder="Search product..." 
+                    value="{{ request('q') }}" {{-- FIX: Insert the current query here --}}
+                    style="background-color: #FFFEF7; border: 1px solid #d8c8b4;">
+            </form>
+        </div>
     </div>
-</div>
 
     {{-- CATEGORIES (NOW IMPLEMENTING FILTERING) --}}
     <div class="py-3" style="background-color: #FFFBE8; box-shadow: none;"> 
