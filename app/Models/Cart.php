@@ -13,6 +13,7 @@ class Cart extends Model
     // Pastikan Primary Key benar (default 'id'). 
     // Jika di migration Anda menggunakan $table->id('cart_id'), ubah ini jadi 'cart_id'
     protected $primaryKey = 'id'; 
+    protected $table = 'carts';
 
     protected $fillable = [
         'user_id', // <<< WAJIB ADA AGAR BISA DIISI LEWAT CREATE()

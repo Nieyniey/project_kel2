@@ -11,6 +11,7 @@ class CartItem extends Model
 
     // Jika migration cart_items pakai $table->id('cart_item_id'), uncomment baris bawah:
     protected $primaryKey = 'cart_item_id'; 
+    protected $table = 'cart_items';
 
     protected $fillable = [
         'cart_id',      // <<< WAJIB ADA

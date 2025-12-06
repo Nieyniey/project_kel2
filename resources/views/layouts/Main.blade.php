@@ -26,7 +26,7 @@
              style="width:20px; cursor:pointer;" 
              onclick="toggleSearchBar()">
 
-        <a href="{{ route('buyer.favorites') }}">
+        <a href="{{ route('wishlist.index') }}">
             <img src="/icons/heart.png" style="width:20px;">
         </a>
 
@@ -107,7 +107,15 @@
                 border:1px solid #e5dccb;
             ">
                 <a href="{{ route('products.show', $product->product_id) }}">
-                    <img src="{{ $product->image }}" style="width:100%; border-radius:10px;">
+                    @if ($product->image_path)
+                        <img src="{{ asset('storage/' . $product->image_path) }}" 
+                            alt="{{ $product->name }}" 
+                            style="width:100%; border-radius:10px; object-fit: cover; height: 100px;">
+                    @else
+                        <div style="height: 100px; width: 100%; background-color: #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-image" style="font-size: 2rem; color: #a0a0a0;"></i>
+                        </div>
+                    @endif
                 </a>
 
                 <div style="margin-top:8px; font-weight:600; font-size:14px;">
