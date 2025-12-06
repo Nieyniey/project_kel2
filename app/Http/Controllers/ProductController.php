@@ -11,7 +11,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('product.detail', compact('product'));
+        return view('buyer.detailProduct', compact('product'));
     }
 
     // Search products
