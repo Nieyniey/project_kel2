@@ -70,19 +70,24 @@
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;">
             
             @foreach($similarProducts as $similar)
-            <a href="{{ route('detailProduct', $similar['id']) }}" 
-               style="text-decoration:none; color:black;">
+            <a href="{{ route('products.show', $similar->product_id) }}" 
+                style="text-decoration:none; color:black;">
+
                 <div style="background:#f5edd1; padding:15px; border-radius:10px; text-align:center;">
-                    <img src="{{ $similar['image'] }}" 
-                         style="width:160px; height:160px; object-fit:cover; border-radius:8px;">
-                    
+
+                    <img src="{{ $similar->image_path }}" 
+                        style="width:160px; height:160px; object-fit:cover; border-radius:8px;">
+
                     <div style="margin-top:8px; font-weight:bold;">
-                        {{ $similar['name'] }}
+                        {{ $similar->name }}
                     </div>
+
                     <div style="color:#ff6f00; margin-top:5px;">
-                        Rp {{ number_format($similar['price'], 0, ',', '.') }}
+                        Rp {{ number_format($similar->price, 0, ',', '.') }}
                     </div>
+
                 </div>
+
             </a>
             @endforeach
 
