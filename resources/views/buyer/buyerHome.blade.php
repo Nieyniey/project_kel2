@@ -195,35 +195,41 @@
     </div>
 </div>
 
-    {{-- CATEGORIES (Constraint 1: Placeholder, no filtering yet) --}}
-    {{-- REVISION 1: Changed background color to match the main content body (#E8E0BB) --}}
+    {{-- CATEGORIES (NOW IMPLEMENTING FILTERING) --}}
     <div class="py-3" style="background-color: #FFFBE8; box-shadow: none;"> 
         <div class="category-scroll-container px-3" >
-            {{-- NEW WRAPPER FOR CENTERING --}}
             <div class="category-flex-wrapper">
                 
-                {{-- Example Categories (Using placeholders from the image design) --}}
-                @php
-                    $categories = [
-                        ['name' => 'Topi', 'icon' => 'bi-sunglasses'],
-                        ['name' => 'Bag', 'icon' => 'bi-handbag-fill'],
-                        ['name' => 'Camera', 'icon' => 'bi-camera-fill'],
-                        ['name' => 'Sepatu', 'icon' => 'bi-shoe-fill'],
-                        ['name' => 'Aksesoris', 'icon' => 'bi-gem'],
-                        ['name' => 'Buku', 'icon' => 'bi-book-fill'],
-                        ['name' => 'Pakaian', 'icon' => 'bi-smartwatch'],
-                        ['name' => 'Lainnya', 'icon' => 'bi-three-dots'],
-                    ];
-                @endphp
+                {{-- Category Filter Links --}}
 
-                @foreach ($categories as $category)
-                    <div class="category-item">
-                        <div class="category-icon">
-                            <i class="bi {{ $category['icon'] }}" style="font-size: 1.2rem; color: #f79471;"></i>
-                        </div>
-                        <small class="text-muted">{{ $category['name'] }}</small>
+                {{-- 1. "All Products" Link --}}
+                {{-- This link removes the category query parameter --}}
+                <a href="{{ route('homeIn', array_merge(request()->except('category', 'page'))) }}" class="category-item text-decoration-none text-dark">
+                    <div class="category-icon" style="{{ is_null($selectedCategorySlug) ? 'background-color: #f79471 !important;' : '' }}">
+                        <i class="bi bi-grid-fill" style="font-size: 1.2rem; color: {{ is_null($selectedCategorySlug) ? 'white' : '#f79471' }};"></i>
                     </div>
+                    <small class="{{ is_null($selectedCategorySlug) ? 'fw-bold' : 'text-muted' }}">All</small>
+                </a>
+
+                {{-- 2. Loop through real categories from the controller --}}
+                @foreach ($categories as $category)
+                    @php
+                        // Check if the current category is the one selected
+                        $isActive = ($selectedCategorySlug == $category->slug);
+                        $iconColor = $isActive ? 'white' : '#f79471';
+                        $bgColor = $isActive ? '#f79471' : '#FFFBE8';
+                    @endphp
+
+                    {{-- Link to filter by this category's slug --}}
+                    <a href="{{ route('homeIn', ['category' => $category->slug]) }}" class="category-item text-decoration-none text-dark">
+                        <div class="category-icon" style="background-color: {{ $bgColor }};">
+                            {{-- Assuming the icon column holds the BI class name (e.g., 'bi-sunglasses') --}}
+                            <i class="bi {{ $category->icon }}" style="font-size: 1.2rem; color: {{ $iconColor }};"></i>
+                        </div>
+                        <small class="{{ $isActive ? 'fw-bold' : 'text-muted' }}">{{ $category->name }}</small>
+                    </a>
                 @endforeach
+                
             </div>
         </div>
     </div>
@@ -231,80 +237,81 @@
 
     {{-- BLACK FRIDAY SALE BANNER --}}
     @unless (request()->has('q'))
-        <div class="p-4" style="background-color: #E8E0BB;">
-            <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
-            <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
-            
-            @php
-                // Placeholder Sale Products (Used for demonstration/looping capability)
-                $saleProducts = [
-                    (object)['product_id' => 101, 'name' => 'Blazer Prabowo', 'price' => 600000, 'image_path' => null],
-                    (object)['product_id' => 102, 'name' => 'Celana Jokowi', 'price' => 1500000, 'image_path' => null],
-                    (object)['product_id' => 103, 'name' => 'Tas Syahroni', 'price' => 1000000, 'image_path' => null],
-                    (object)['product_id' => 104, 'name' => 'Topi Bohel', 'price' => 500000, 'image_path' => null],
-                    (object)['product_id' => 105, 'name' => 'Extra Item 5', 'price' => 200000, 'image_path' => null],
-                    (object)['product_id' => 106, 'name' => 'Extra Item 6', 'price' => 300000, 'image_path' => null],
-                ];
-                $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
-            @endphp
-
-            <div class="horizontal-scroll-wrapper">
-                <div class="d-flex flex-nowrap align-items-stretch g-3">
-                    @foreach ($saleProducts as $product)
-                        <div class="scrollable-product-item px-2"> 
-                            <div class="product-card" style="background-color: #E8E0BB !important;">
-                                <div class="product-image-container product-image-shadow">
-                                    <a href="#" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
-                                        @if ($product->image_path)
-                                            <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                                alt="{{ $product->name }}" 
-                                                class="img-fluid" 
-                                                style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                                        @else
-                                            {{-- Placeholder for image --}}
-                                            <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                                            </div>
-                                        @endif
-                                    </a>
-                                </div>
-
-                                <div class="p-2 text-center">
-                                    <a href="#" class="text-dark text-decoration-none">
-                                        <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
-                                        <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                    </a>
-                                    
-                                    {{-- Product Actions: Cart/Wishlist Buttons --}}
-                                    <div class="d-flex justify-content-center gap-3 mt-2">
-                                        @php
-                                            $is_in_cart = $user->inCart($product->product_id);
-                                            $is_in_wishlist = $user->inWishlist($product->product_id);
-                                        @endphp
+        {{-- Check if there are any products on sale before rendering the banner --}}
+        @if ($saleProducts->count() > 0) 
+            <div class="p-4" style="background-color: #E8E0BB;">
+                <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
+                <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
                 
-                                        <button type="button" 
-                                            class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
-                                            data-product-id="{{ $product->product_id }}"
-                                            data-action-url="{{ route('cart.add-ajax') }}" 
-                                            title="Add to Cart">
-                                            <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
-                                        </button>
-                
-                                        <button type="button" 
-                                            class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
-                                            data-product-id="{{ $product->product_id }}"
-                                            data-action-url="{{ route('wishlist.add-ajax') }}" 
-                                            title="Add to Wishlist">
-                                            <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
-                                        </button>
+                @php
+                    // Use the user model for checking cart/wishlist status, handle guests gracefully
+                    $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
+                @endphp
+
+                <div class="horizontal-scroll-wrapper">
+                    <div class="d-flex flex-nowrap align-items-stretch g-3">
+                        {{-- Loop through the real $saleProducts collection from the Controller --}}
+                        @foreach ($saleProducts as $product)
+                            <div class="scrollable-product-item px-2"> 
+                                <div class="product-card" style="background-color: #E8E0BB !important;">
+                                    <div class="product-image-container product-image-shadow">
+                                        {{-- FIX 1: Use $product->product_id for the product link --}}
+                                        <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                                            @if ($product->image_path)
+                                                <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                                    alt="{{ $product->name }}" 
+                                                    class="img-fluid" 
+                                                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                            @else
+                                                {{-- Placeholder for image --}}
+                                                <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                                    <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                                </div>
+                                            @endif
+                                        </a>
+                                    </div>
+
+                                    <div class="p-2 text-center">
+                                        {{-- FIX 2: Use $product->product_id for the product name link --}}
+                                        <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none">
+                                            <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
+                                            <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                        </a>
+                                        
+                                        {{-- Product Actions: Cart/Wishlist Buttons --}}
+                                        <div class="d-flex justify-content-center gap-3 mt-2">
+                                            @php
+                                                // FIX 3 & 4: Use $product->product_id for cart/wishlist checks
+                                                $is_in_cart = $user->inCart($product->product_id); 
+                                                $is_in_wishlist = $user->inWishlist($product->product_id);
+                                            @endphp
+                        
+                                            <button type="button" 
+                                                class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
+                                                {{-- FIX 5: Use $product->product_id for data-product-id --}}
+                                                data-product-id="{{ $product->product_id }}"
+                                                data-action-url="{{ route('cart.add-ajax') }}" 
+                                                title="Add to Cart">
+                                                <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
+                                            </button>
+                        
+                                            <button type="button" 
+                                                class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
+                                                {{-- FIX 6: Use $product->product_id for data-product-id --}}
+                                                data-product-id="{{ $product->product_id }}"
+                                                data-action-url="{{ route('wishlist.add-ajax') }}" 
+                                                title="Add to Wishlist">
+                                                <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
     @endunless
     {{-- END BLACK FRIDAY SALE --}}
 
