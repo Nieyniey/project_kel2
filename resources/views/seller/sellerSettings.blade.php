@@ -3,24 +3,29 @@
 @section('title', 'Seller Settings')
 
 @php
-    // --- Data Initialization ---
-    // Ensure $seller is available (using the relationship from the authenticated user)
     $user = Auth::user();
-    // Use optional() chaining for safety, though the controller should guarantee $seller exists
     $seller = optional($user)->seller; 
     
-    // Set a default profile image for the seller/user header
     $profileImageUrl = $user->profile_photo 
                         ? asset('storage/' . $user->profile_photo) 
                         : asset('placeholder.jpg');
     
-    // Determine the active tab from the query string or default to 'store-info'
     $activeTab = request('tab') ?? 'store-info'; 
 @endphp
 
 @section('content')
 <style>
-    /* Custom style for the active tab link */
+    .header-fixed {
+        background-color: #FFFEF7; 
+        width: 100%;
+        position: sticky; 
+        top: 0;
+        left: 0;
+        z-index: 1000; 
+        padding: 15px 0; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    }
+
     .seller-active-link {
         background-color: #f79471 !important; 
         color: white !important;
@@ -31,21 +36,46 @@
         border-color: #d8c8b4; 
         color: #6C2207;
     }
+
+    .btn-seller-mode-custom {
+        background-color: #FFFEF7 !important; 
+        color: #f79471 !important; 
+        border: 2px solid #f79471 !important; 
+        transition: all 0.2s ease;
+    }
+
+    .btn-seller-mode-custom:hover {
+        background-color: #f79471 !important; 
+        color: #FFFEF7 !important; 
+        border-color: #f79471 !important; 
+    }
+
+    .save-button-right {
+        float: right;
+    }
 </style>
 
-<div class="container py-5" style="background-color: #f8f8f8;">
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('home') }}" class="text-dark me-3" style="font-size: 1.5rem;">
-            <i class="bi bi-arrow-left"></i>
-        </a>
-        <h2 class="fw-bold mb-0">Seller Settings</h2>
+{{-- Header --}}
+    <div class="header-fixed">
+        <div class="container"> 
+            <div class="d-flex align-items-center">
+                <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+                </a>
+                <h5 class="fw-bold mb-0" style="color: #6C2207;">
+                    Settings
+                </h5>
+            </div>
+        </div>
     </div>
 
+<div class="container-fluid py-4" style="background-color: #E8E0BB; color: #6C2207; min-height: 100vh; padding-top: 20px !important;">
+  <div class="container mt-4">
     <div class="row g-4">
         {{-- Left Panel: Navigation --}}
         <div class="col-md-4 col-lg-3">
-            <div class="card shadow-sm border-0" style="background-color: #f7e6d1;">
-                <div class="card-body p-4">
+            <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
+                <div class="card-body p-4" style="color: #6C2207;">
                     {{-- Store Info Header --}}
                     <div class="d-flex flex-column align-items-center mb-4">
                         <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
@@ -54,6 +84,7 @@
                                 class="w-100 h-100 object-fit-cover rounded-circle">
                         </div>
                         <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
+                        <h5> </h5>
                         <small class="text-muted">Seller</small>
                     </div>
 
@@ -63,26 +94,26 @@
                         {{-- 1. Store Information (Default Tab) --}}
                         <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
                           class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'seller-active-link shadow-sm' : '' }}" 
-                          style="background-color: transparent;">
+                          style="background-color: transparent; color: #6C2207;">
                             <i class="bi bi-shop me-2"></i> Store Information
                         </a>
                         
                         {{-- 2. Seller Orders --}}
                         <a href="{{ route('seller.settings', ['tab' => 'orders']) }}" 
                           class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'seller-active-link shadow-sm' : '' }}" 
-                          style="background-color: transparent;">
+                          style="background-color: transparent; color: #6C2207;">
                             <i class="bi bi-box-seam-fill me-2"></i> Seller Orders
                         </a>
                         
                         {{-- 3. User Page (Switch to Buyer Settings) --}}
-                        <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
-                          style="background-color: transparent;">
-                            <i class="bi bi-person-circle me-2"></i> User Page
+                        <a href="{{ route('seller.settings', ['tab' => 'user-page']) }}" 
+                            class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
+                            style="background-color: transparent; color: #6C2207;">
+                                <i class="bi bi-person-circle me-2"></i> User Page
                         </a>
                         
                         {{-- Log Out --}}
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent;">
+                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
                             <i class="bi bi-box-arrow-right me-2"></i> Log Out
                         </a>
                     </div>
@@ -92,7 +123,7 @@
 
         {{-- Right Panel: Dynamic Content --}}
         <div class="col-md-8 col-lg-9">
-            <div class="card shadow-sm border-0 p-4" style="background-color: #f7e6d1;">
+            <div class="card shadow-sm border-0 p-4" style="background-color: #FFFEF7; color: #6C2207;">
                  
                 {{-- Global Feedback Messages --}}
                 @if(session('success'))
@@ -146,38 +177,60 @@
                             @enderror
                         </div>
                     
-                        {{-- Status (Display only - set in backend) --}}
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Status</label>
-                            <p class="form-control-static fw-bold text-success">{{ ucfirst($seller->status ?? 'pending') }}</p>
-                            <small class="text-muted">Your store status is managed by the system.</small>
+                            <label for="status" class="form-label fw-bold">Store Status</label>
+                            <select class="form-select @error('status') is-invalid @enderror custom-form-control" 
+                                    id="status" 
+                                    name="status"
+                                    aria-describedby="statusHelp">
+                            
+                                @php $currentStatus = old('status', $seller->status ?? 'inactive'); @endphp
+
+                                <option value="active" {{ $currentStatus == 'active' ? 'selected' : '' }}>
+                                    Active (Open for business)
+                                </option>
+                                <option value="inactive" {{ $currentStatus == 'inactive' ? 'selected' : '' }}>
+                                    Closed (Temporarily unavailable)
+                                </option>
+                            </select>
+
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+
+                            <small id="statusHelp" class="form-text text-muted">
+                                Setting your store to Closed will hide all your products from buyers.
+                            </small>
                         </div>
                     
                         <div class="d-flex justify-content-end pt-3">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="btn px-4 btn-seller-mode-custom">Save Changes</button>
                         </div>
                     </form>
                 
-                {{-- ====================================== --}}
-                {{-- 2. SELLER ORDERS TAB CONTENT --}}
-                {{-- ====================================== --}}
                 @elseif ($activeTab == 'orders')
                     <h3 class="fw-bold mb-4">Seller Orders</h3>
                     <div class="alert alert-info">
                         This section is where you would list and manage all orders placed by customers, showing their status (Pending, Packing, Shipped, etc.).
                     </div>
-                    
-                {{-- ====================================== --}}
-                {{-- 3. USER PAGE TAB CONTENT --}}
-                {{-- ====================================== --}}
+                
                 @elseif ($activeTab == 'user-page')
-                    <h3 class="fw-bold mb-4">Switch to User (Buyer) Mode</h3>
-                    <div class="alert alert-warning">
-                        This tab serves as a direct link back to your **Buyer Settings**. Click the button below to manage your personal information, addresses, and buyer orders.
-                    </div>
-                    <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" class="btn btn-lg" style="background-color: #f79471; color: white;">
-                        Go to Buyer Settings
-                    </a>
+                    <h3 class="fw-bold mb-4" style="color: #6C2207;">Switch to Buyer Mode</h3>
+                    
+                    @php
+                        $displayName = $user->name ?? ($user->seller->store_name ?? 'Your User Account');
+                    @endphp
+                    
+                    <p class="lead" style="color: #6C2207;">
+                        You are currently managing your {{ $user->seller->store_name ?? 'Store' }} settings. Click below to switch to managing your personal account and buyer orders.
+</p>
+
+                    <form action="{{ route('buyer.settings') }}" method="GET">
+                        <button type="submit" 
+                            class="btn px-4 btn-seller-mode-custom">
+                            Yes
+                        </button>
+                    </form>
                 
                 @else
                     {{-- Fallback for invalid tab --}}
@@ -188,5 +241,7 @@
             </div>
         </div>
     </div>
+    </div>
+  </div>  
 </div>
 @endsection

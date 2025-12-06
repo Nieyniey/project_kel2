@@ -78,11 +78,20 @@ class BuyerController extends Controller
             'phone' => 'nullable|string|max:20', 
             // DOB field from the image (assuming date format is DD/MM/YYYY)
             'DOB' => 'nullable|date_format:d/m/Y', 
-            'gender' => ['nullable', 'string', Rule::in(['Male', 'Female'])], // Assuming a 'gender' field exists or can be added
+            'profile_photo' => 'nullable|image|mimetypes:image/jpeg,image/png|max:2048',
         ]);
 
         if (isset($validated['DOB'])) {
             $validated['DOB'] = Carbon::createFromFormat('d/m/Y', $validated['DOB'])->format('Y-m-d');
+        }
+
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                    Storage::delete($user->profile_photo);
+                }
+                
+                $path = $request->file('profile_photo')->store('profiles', 'public');
+                $validated['profile_photo'] = $path;
         }
 
         $user->update($validated);
