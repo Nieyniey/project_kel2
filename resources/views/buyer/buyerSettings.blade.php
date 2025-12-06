@@ -276,7 +276,10 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         {{-- Chat button--}}
                                         @if ($sellerId)
-                                            <a href="{{ route('chat.show.user', ['receiverId' => $sellerId]) }}" class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">Chat Penjual</a>
+                                            <a href="{{ route('chat.show', $sellerId) }}" 
+                                                class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">
+                                                Chat Penjual
+                                            </a>
                                         @else
                                             <span class="text-muted fst-italic">Seller chat unavailable</span>
                                         @endif

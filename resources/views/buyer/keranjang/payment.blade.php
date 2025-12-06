@@ -14,7 +14,12 @@
     }
 </style>
 
-<div style="max-width: 1250px; margin:30px auto; padding:20px;">
+<div style="
+    width: 100%;
+    min-height: 100vh;
+    background:#ffffff;
+    padding:30px 40px;
+">
 
     {{-- BACK --}}
     <a href="/cart" style="color:#FF6E00; font-size:18px; text-decoration:none;">
@@ -43,13 +48,11 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <b>Address:</b><br>
-
                 {{ $address->address_text }}
                 {{ $address->city ? ', '.$address->city : '' }}
                 {{ $address->postal_code ? ', '.$address->postal_code : '' }}
             </div>
 
-            {{-- BUTTON CHANGE ADDRESS --}}
             <a href="{{ route('address.change.page', $order->order_id) }}"
                 style="
                     padding:6px 12px;
@@ -65,33 +68,36 @@
         </div>
     </div>
 
-    {{-- MAIN 2 COLUMN WRAPPER --}}
-    <div style="display:flex; gap:35px; align-items:flex-start;">
+    {{-- MAIN TWO COLUMN --}}
+    <div style="display:flex; gap:45px; align-items:flex-start;">
 
-        {{-- LEFT COLUMN – PAYMENT OPTIONS --}}
+        {{-- LEFT COLUMN --}}
         <div style="
-            flex:1; background:white; border-radius:12px; 
-            padding:25px; box-shadow:0 3px 10px rgba(0,0,0,0.08);
+            flex:1;
+            background:white;
+            border-radius:12px; 
+            padding:30px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
         ">
 
             @foreach ($paymentMethods as $method)
-                <div style="margin-bottom:25px;">
+                <div style="margin-bottom:30px;">
 
-                    <label style="font-weight:700; display:block; margin-bottom:10px;">
+                    <label style="font-weight:700; display:block; margin-bottom:12px;">
                         {{ $method['name'] }}
                     </label>
 
-                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <div style="display:flex; gap:15px; flex-wrap:wrap;">
                         @foreach ($method['icons'] as $icon)
                             <div class="method-card"
                                 onclick="selectMethod('{{ strtoupper(pathinfo($icon, PATHINFO_FILENAME)) }}', this)"
                                 style="
-                                    padding:10px 15px;
+                                    padding:12px 15px;
                                     border:1px solid #DDD;
                                     border-radius:8px;
                                     display:flex;
                                     align-items:center;
-                                    gap:10px;
+                                    gap:12px;
                                     cursor:pointer;
                                 ">
                                 <img src="{{ asset('icons/'.$icon) }}" 
@@ -106,20 +112,20 @@
 
         </div>
 
-        {{-- RIGHT COLUMN – SUMMARY --}}
-        <div style="width:380px;">
+        {{-- RIGHT COLUMN --}}
+        <div style="width:400px;">
 
             <div style="
                 background:white;
-                padding:25px;
+                padding:30px;
                 border-radius:12px;
                 box-shadow:0 3px 10px rgba(0,0,0,0.08);
             ">
 
-                <h4 style="font-weight:700; margin-bottom:15px;">Summary</h4>
+                <h4 style="font-weight:700; margin-bottom:20px;">Summary</h4>
 
                 @foreach ($order->items as $item)
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                         <span>{{ $item->product->name }} (x{{ $item->qty }})</span>
                         <span>
                             Rp {{ number_format($item->price_per_item * $item->qty, 0, ',', '.') }}
@@ -127,9 +133,9 @@
                     </div>
                 @endforeach
 
-                <hr style="margin:15px 0;">
+                <hr style="margin:20px 0;">
 
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
                     <b>Total order amount</b>
                     <b style="color:#FF6E00;">
                         Rp {{ number_format($order->total_price, 0, ',', '.') }}
@@ -144,11 +150,11 @@
                     <button type="submit"
                         style="
                             width:100%;
-                            margin-top:20px;
+                            margin-top:25px;
                             background:#FF6E00;
                             color:white;
-                            padding:12px;
-                            font-size:16px;
+                            padding:14px;
+                            font-size:17px;
                             font-weight:600;
                             border:none;
                             border-radius:10px;
@@ -170,12 +176,10 @@
 function selectMethod(method, element) {
     document.getElementById('selected-method').value = method;
 
-    // Hapus highlight dari semua kartu
     document.querySelectorAll('.method-card').forEach(card => {
         card.classList.remove('selected');
     });
 
-    // Highlight kartu yang dipilih
     element.classList.add('selected');
 }
 
