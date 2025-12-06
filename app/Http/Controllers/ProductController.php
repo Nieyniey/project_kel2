@@ -11,7 +11,16 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('buyer.detailProduct', compact('product'));
+
+        $similarProducts = Product::where('category_id', $product->category_id)
+                                    ->where('product_id', '!=', $product->product_id)
+                                    ->limit(6)
+                                    ->get();
+
+        return view('buyer.detailProduct', [
+            'product' => $product,
+            'similarProducts' => $similarProducts
+         ]);
     }
 
     // Search products
