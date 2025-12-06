@@ -14,15 +14,22 @@ class Product extends Model
 
     protected $fillable = [
         'seller_id',
+        'category_id',
         'name',
         'description',
         'price',
         'stock',
+        'is_sale',
         'image_path',
     ];
 
 
     public function seller(){
         return $this->belongsTo(Seller::class, 'seller_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }
