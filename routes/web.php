@@ -154,5 +154,7 @@ Route::middleware('auth')->group(function () {
     // Route::get('/track-order/{id}', [OrderController::class, 'trackDetail'])
     // ->name('track.detail');
 
+    Route::post('/cart/add-ajax', [CartController::class, 'addAjax'])->name('cart.add-ajax');
+    Route::post('/wishlist/add-ajax', [WishlistController::class, 'addAjax'])->name('wishlist.add-ajax');
 
 });
