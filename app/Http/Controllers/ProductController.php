@@ -11,7 +11,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('product.detail', compact('product'));
+        return view('buyer.detailProduct', compact('product'));
     }
 
     // Search products
@@ -20,9 +20,9 @@ class ProductController extends Controller
         $keyword = $request->input('q');
 
         $products = Product::where('name', 'LIKE', "%$keyword%")
-                           ->orWhere('desc', 'LIKE', "%$keyword%")
-                           ->get();
+                           ->orWhere('description', 'LIKE', "%$keyword%")
+                           ->paginate(12);
 
-        return view('product.search', compact('products', 'keyword'));
+        return view('buyer.buyerHome', compact('products', 'keyword'));
     }
 }

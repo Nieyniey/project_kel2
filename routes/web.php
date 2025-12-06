@@ -42,16 +42,21 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // PRODUCT PAGES
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
-Route::get('/api/search', [ProductController::class, 'searchAjax'])->name('products.search.ajax');
-
 
 /*
 |--------------------------------------------------------------------------
 | BUYER PUBLIC PAGES
 |--------------------------------------------------------------------------
 */
+/*
+|--------------------------------------------------------------------------
+| BUYER PUBLIC PAGES
+|--------------------------------------------------------------------------
+*/
+// This route handles the base URL: /buyer/settings
 Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
-Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
+Route::get('/buyer/settings/{tab}', [BuyerController::class, 'settings'])->name('buyer.settings.tab');
+//Route::get('/buyer/favorites', [BuyerController::class, 'favorites'])->name('buyer.favorites');
 Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
 
 
@@ -140,8 +145,8 @@ Route::middleware('auth')->group(function () {
     */
     Route::prefix('chat')->name('chat.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
-        Route::get('/with/{receiverId}', [ChatController::class, 'show'])->name('show.user');
-        Route::post('/{chat}/{receiver}', [ChatController::class, 'show'])->name('show');
+        Route::get('/with/{receiverId}', [ChatController::class, 'show'])->name('show');
+        Route::post('/{chat}/{receiver}', [ChatController::class, 'show'])->name('show.user');
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
 

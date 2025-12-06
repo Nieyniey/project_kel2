@@ -15,7 +15,7 @@
     {{-- HEADER --}}
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div style="display:flex; align-items:center; gap:10px;">
-            <a href="/" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
+            <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
             <span style="font-weight:600; font-size:20px;">Keranjang Belanja</span>
         </div>
     </div>

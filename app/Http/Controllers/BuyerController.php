@@ -151,7 +151,7 @@ class BuyerController extends Controller
             ],
         ];
 
-        return view('buyer.buyerKeranjang', compact('cartItems'));
+        return view('buyer.keranjang.buyerKeranjang', compact('cartItems'));
     }
 
     public function changeAddressPage($order_id)
