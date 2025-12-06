@@ -36,10 +36,12 @@
                     </span>
                 </div>
 
-                <button style="margin-left:auto; padding:6px 12px;
-                               background:#ff8f00; border:none; border-radius:6px; color:white;">
+                <!-- CHAT BUTTON -->
+                <a href="{{ route('chat.show', $product->seller->user_id) }}"
+                    style="margin-left:auto; padding:6px 12px; background:#ff8f00; border:none;
+                           border-radius:6px; color:white; text-decoration:none;">
                     Chat
-                </button>
+                </a>
             </div>
 
             <!-- Description -->
@@ -53,11 +55,14 @@
             <!-- Quantity + Add Cart -->
             <div style="display:flex; align-items:center; margin-top:15px; gap:10px;">
 
+                <!-- Minus -->
                 <button id="qty-minus"
                         style="padding:3px 10px; border-radius:4px; border:1px solid #ccc;">-</button>
 
+                <!-- Number -->
                 <span id="qty-number">1</span>
 
+                <!-- Plus -->
                 <button id="qty-plus"
                         style="padding:3px 10px; border-radius:4px; border:1px solid #ccc;">+</button>
 
@@ -67,9 +72,22 @@
                     Add
                 </button>
 
+                <!-- LOVE BUTTON WITH STATUS COLOR -->
+                <button id="wishlist-btn"
+                    data-product-id="{{ $product->product_id }}"
+                    style="
+                        background:none;
+                        border:none;
+                        font-size:22px;
+                        cursor:pointer;
+                        color:{{ $isFavorite ? '#ff6f00' : '#aaa' }};
+                    ">
+                    ♥
+                </button>
+
             </div>
 
-            <!-- Hidden Form -->
+            <!-- Hidden Add to Cart Form -->
             <form id="add-to-cart-form" method="POST" action="{{ route('cart.add') }}">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->product_id }}">
@@ -86,6 +104,7 @@
             @foreach($similarProducts as $similar)
                 <a href="{{ route('products.show', $similar->product_id) }}"
                    style="text-decoration:none; color:black;">
+
                     <div style="background:#f5edd1; padding:15px; border-radius:10px; text-align:center;">
 
                         <img src="{{ asset($similar->image_path) }}"
@@ -98,7 +117,9 @@
                         <div style="color:#ff6f00; margin-top:5px;">
                             Rp {{ number_format($similar->price, 0, ',', '.') }}
                         </div>
+
                     </div>
+
                 </a>
             @endforeach
         </div>
@@ -110,6 +131,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* ---------------- QTY LOGIC ---------------- */
     let qty = 1;
     const qtyNumber = document.getElementById("qty-number");
     const qtyInput = document.getElementById("qty-input");
@@ -126,11 +148,40 @@ document.addEventListener("DOMContentLoaded", () => {
         qtyInput.value = qty;
     };
 
-    // Add to cart submit
     document.getElementById("add-btn").onclick = () => {
         document.getElementById("add-to-cart-form").submit();
     };
 
+
+    /* ---------------- WISHLIST AJAX ---------------- */
+    const wBtn = document.getElementById("wishlist-btn");
+
+    wBtn.addEventListener("click", function () {
+
+        let productId = this.dataset.productId;
+
+        fetch("{{ route('wishlist.add-ajax') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.status === 'added') {
+                wBtn.style.color = "#ff6f00";   // oren
+            } else {
+                wBtn.style.color = "#aaa";      // abu
+            }
+
+        });
+
+    });
+
 });
 </script>
+
 @endsection

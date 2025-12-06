@@ -163,7 +163,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelectorAll('.cart-item').forEach(item => {
             const checkbox = item.querySelector('.item-check');
-            if (checkbox.checked) {
+
+            if (checkbox && checkbox.checked) {
                 let qty = parseInt(item.querySelector('.qty-number').innerText);
                 let price = parseInt(checkbox.dataset.price);
                 subtotal += qty * price;
@@ -176,33 +177,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (subtotal > 0) {
             checkoutBtn.style.background = "#FF6E00";
+            checkoutBtn.style.pointerEvents = 'auto';
             checkoutBtn.onclick = () => document.getElementById('place-order-form').submit();
         } else {
             checkoutBtn.style.background = "#CCC";
+            checkoutBtn.style.pointerEvents = 'none';
             checkoutBtn.onclick = null;
         }
     }
 
-    // ============ QTY BUTTON LOGIC ============
+    // ⬅⬅⬅ FIX 1: panggil saat pertama dibuka!
+    updateSummary();
+
+    // Checkbox
+    document.querySelectorAll('.item-check').forEach(check => {
+        check.addEventListener('change', updateSummary);
+    });
+
+    // Qty button
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
 
-            let cartItem = this.closest('.cart-item');
-            let itemId = cartItem.dataset.itemId;
-            let number = cartItem.querySelector('.qty-number');
+            let item = this.closest('.cart-item');
+            let itemId = item.dataset.itemId;
+            let number = item.querySelector('.qty-number');
             let qty = parseInt(number.innerText);
 
             if (this.dataset.action === "minus") {
                 if (qty === 1) {
                     if (confirm("Hapus produk dari keranjang?")) {
-                        removeItem(cartItem, itemId);
+                        removeItem(item, itemId);
                     }
                     return;
                 }
                 qty--;
             }
 
-            if (this.dataset.action === "plus") qty++;
+            if (this.dataset.action === "plus") {
+                qty++;
+            }
 
             number.innerText = qty;
 
@@ -219,20 +232,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ============ DELETE BUTTON ============
+    // Delete btn
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
 
-            let cartItem = this.closest('.cart-item');
-            let itemId = cartItem.dataset.itemId;
+            let item = this.closest('.cart-item');
+            let itemId = item.dataset.itemId;
 
             if (!confirm("Hapus produk dari keranjang?")) return;
 
-            removeItem(cartItem, itemId);
+            removeItem(item, itemId);
         });
     });
 
-    function removeItem(cartItem, itemId) {
+    function removeItem(item, itemId) {
         fetch("{{ route('cart.deleteItem') }}", {
             method: "POST",
             headers: {
@@ -241,10 +254,10 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ item_id: itemId })
         }).then(() => {
-            cartItem.remove();
+            item.remove();
             updateSummary();
         });
     }
-
 });
+
 </script>
