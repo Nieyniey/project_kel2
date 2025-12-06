@@ -117,8 +117,7 @@ class CartController extends Controller
             'item_id' => 'required|integer'
         ]);
 
-        $item = CartItem::findOrFail($request->item_id);
-        $item->delete();
+        CartItem::where('cart_item_id', $request->item_id)->delete();
 
         return response()->json(['status' => 'deleted']);
     }

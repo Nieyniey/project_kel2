@@ -36,7 +36,7 @@
     {{-- CART ITEMS --}}
     @foreach ($items as $item)
     <div class="cart-item"
-        data-item-id="{{ $item->id }}"
+        data-item-id="{{ $item->cart_item_id }}"
         style="
             display:flex;
             justify-content:space-between;
