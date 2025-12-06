@@ -96,4 +96,31 @@ class CartController extends Controller
             'is_active' => !$isCurrentlyInCart // New state is the opposite of the old state
         ]);
     }
+
+    public function updateQty(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|integer',
+            'qty' => 'required|integer|min:1'
+        ]);
+
+        $item = CartItem::findOrFail($request->item_id);
+        $item->qty = $request->qty;
+        $item->save();
+
+        return response()->json(['status' => 'success']);
+    }
+
+    public function deleteItem(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|integer'
+        ]);
+
+        $item = CartItem::findOrFail($request->item_id);
+        $item->delete();
+
+        return response()->json(['status' => 'deleted']);
+    }
+
 }

@@ -5,92 +5,99 @@
 @section('content')
 
 <div style="
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #F5EEDC;
-    border-radius: 20px;
+    width: 100%;
+    padding: 30px;
+    background: #FFFBE8;
+    min-height: 100vh;
 ">
 
     {{-- HEADER --}}
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
-            <span style="font-weight:600; font-size:20px;">Keranjang Belanja</span>
-        </div>
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+        <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
+        <span style="font-weight:600; font-size:20px;">Keranjang Belanja</span>
     </div>
 
     {{-- TABLE HEADER --}}
     <div style="
         display:flex;
         justify-content:space-between;
-        font-weight:600;
         padding:10px 15px;
-        background:#FFFBE8;
+        background:#FAEED0;
         border-radius:10px;
+        font-weight:600;
         margin-bottom:20px;
     ">
-        <span style="width:50%;">Product</span>
-        <span style="width:25%;">Price</span>
-        <span style="width:25%;">Quantity</span>
+        <span style="width:45%;">Product</span>
+        <span style="width:20%;">Price</span>
+        <span style="width:20%;">Quantity</span>
+        <span style="width:10%;">Remove</span>
     </div>
 
     {{-- CART ITEMS --}}
     @foreach ($items as $item)
     <div class="cart-item"
+        data-item-id="{{ $item->id }}"
         style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding:15px;
-        background:white;
-        border-radius:15px;
-        margin-bottom:15px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.1);
-    ">
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px;
+            background:white;
+            border-radius:15px;
+            margin-bottom:15px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.1);
+        "
+    >
 
         {{-- CHECKBOX --}}
-        <div style="display:flex; align-items:center; padding-right:10px;">
-            <input type="checkbox"
-                class="item-check"
-                data-price="{{ $item->product->price }}"
-                style="width:20px; height:20px;">
-        </div>
+        <input type="checkbox"
+            class="item-check"
+            data-price="{{ $item->product->price }}"
+            style="width:20px; height:20px; margin-right:15px;">
 
         {{-- IMAGE --}}
-        <div style="width:15%;">
+        <div style="width:12%;">
             <img src="{{ asset($item->product->image) }}"
                 style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
         </div>
 
-        {{-- PRODUCT INFO --}}
+        {{-- INFO --}}
         <div style="width:30%;">
             <div style="font-weight:600;">{{ $item->product->name }}</div>
-            <div style="color:gray;">{{ $item->product->description }}</div>
+            <div style="color:gray; font-size:14px;">
+                {{ $item->product->description }}
+            </div>
         </div>
 
         {{-- PRICE --}}
-        <div style="width:20%; font-weight:600; color:#FF6E00;">
+        <div style="width:15%; font-weight:600; color:#FF6E00;">
             Rp {{ number_format($item->product->price, 0, ',', '.') }}
         </div>
 
         {{-- QTY --}}
-        <div style="width:20%; display:flex; align-items:center; gap:10px;">
+        <div style="width:15%; display:flex; align-items:center; gap:10px;">
             <button class="qty-btn" data-action="minus"
-                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#FF6E00;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none;">
                 -
             </button>
 
             <span class="qty-number">{{ $item->qty }}</span>
 
             <button class="qty-btn" data-action="plus"
-                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#FF6E00;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none;">
                 +
             </button>
         </div>
 
+        {{-- DELETE BUTTON (BENAR DI SINI!!) --}}
+        <button class="delete-btn"
+            style="background:none; border:none; cursor:pointer; font-size:22px;">
+            ❌
+        </button>
+
     </div>
     @endforeach
+
 
     {{-- ORDER SUMMARY --}}
     <div style="
@@ -103,24 +110,23 @@
     ">
         <h4 style="font-weight:700; margin-bottom:15px;">Ringkasan Pesanan</h4>
 
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between;">
             <span>Subtotal</span>
             <span id="subtotal">Rp 0</span>
         </div>
 
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between;">
             <span>Ongkir</span>
             <span id="shipping">Rp {{ number_format($summary['shipping'],0,',','.') }}</span>
         </div>
 
         <hr>
 
-        <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; font-weight:700;">
             <span>Total</span>
             <span id="total" style="color:#FF6E00;">Rp 0</span>
         </div>
 
-        {{-- CHECKOUT FORM --}}
         <form id="place-order-form" method="POST" action="{{ route('orders.place') }}">
             @csrf
         </form>
@@ -134,8 +140,7 @@
                 padding:10px;
                 color:white;
                 border-radius:10px;
-                font-size:16px;
-                text-decoration:none;
+                margin-top:10px;
             ">
             Checkout
         </a>
@@ -145,7 +150,6 @@
 
 @endsection
 
-{{-- ===================== JS ===================== --}}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -172,40 +176,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (subtotal > 0) {
             checkoutBtn.style.background = "#FF6E00";
-            checkoutBtn.style.pointerEvents = "auto";
-
-            checkoutBtn.onclick = function () {
-                document.getElementById('place-order-form').submit();
-            };
-
+            checkoutBtn.onclick = () => document.getElementById('place-order-form').submit();
         } else {
             checkoutBtn.style.background = "#CCC";
-            checkoutBtn.style.pointerEvents = "none";
+            checkoutBtn.onclick = null;
         }
     }
 
-    // Checkbox event
-    document.querySelectorAll('.item-check').forEach(check => {
-        check.addEventListener('change', updateSummary);
-    });
-
-    // Quantity buttons
+    // ============ QTY BUTTON LOGIC ============
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
-            let container = this.parentElement;
-            let number = container.querySelector('.qty-number');
-            let value = parseInt(number.innerText);
 
-            if (this.dataset.action === "minus" && value > 1) {
-                number.innerText = value - 1;
+            let cartItem = this.closest('.cart-item');
+            let itemId = cartItem.dataset.itemId;
+            let number = cartItem.querySelector('.qty-number');
+            let qty = parseInt(number.innerText);
+
+            if (this.dataset.action === "minus") {
+                if (qty === 1) {
+                    if (confirm("Hapus produk dari keranjang?")) {
+                        removeItem(cartItem, itemId);
+                    }
+                    return;
+                }
+                qty--;
             }
-            if (this.dataset.action === "plus") {
-                number.innerText = value + 1;
-            }
+
+            if (this.dataset.action === "plus") qty++;
+
+            number.innerText = qty;
+
+            fetch("{{ route('cart.updateQty') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ item_id: itemId, qty })
+            });
 
             updateSummary();
         });
     });
+
+    // ============ DELETE BUTTON ============
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+
+            let cartItem = this.closest('.cart-item');
+            let itemId = cartItem.dataset.itemId;
+
+            if (!confirm("Hapus produk dari keranjang?")) return;
+
+            removeItem(cartItem, itemId);
+        });
+    });
+
+    function removeItem(cartItem, itemId) {
+        fetch("{{ route('cart.deleteItem') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ item_id: itemId })
+        }).then(() => {
+            cartItem.remove();
+            updateSummary();
+        });
+    }
 
 });
 </script>
