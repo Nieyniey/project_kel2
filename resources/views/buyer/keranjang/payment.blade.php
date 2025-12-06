@@ -15,10 +15,10 @@
 </style>
 
 <div style="
-    max-width: 1600px;
     width: 100%;
-    margin:30px auto;
-    padding:20px 40px;
+    min-height: 100vh;
+    background:#ffffff;
+    padding:30px 40px;
 ">
 
     {{-- BACK --}}
@@ -48,13 +48,11 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <b>Address:</b><br>
-
                 {{ $address->address_text }}
                 {{ $address->city ? ', '.$address->city : '' }}
                 {{ $address->postal_code ? ', '.$address->postal_code : '' }}
             </div>
 
-            {{-- BUTTON CHANGE ADDRESS --}}
             <a href="{{ route('address.change.page', $order->order_id) }}"
                 style="
                     padding:6px 12px;
@@ -73,7 +71,7 @@
     {{-- MAIN TWO COLUMN --}}
     <div style="display:flex; gap:45px; align-items:flex-start;">
 
-        {{-- LEFT COLUMN – PAYMENT OPTIONS --}}
+        {{-- LEFT COLUMN --}}
         <div style="
             flex:1;
             background:white;
@@ -114,7 +112,7 @@
 
         </div>
 
-        {{-- RIGHT COLUMN – SUMMARY --}}
+        {{-- RIGHT COLUMN --}}
         <div style="width:400px;">
 
             <div style="
