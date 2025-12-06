@@ -163,21 +163,6 @@
                         <label class="fw-semibold form-label" id="price-label">Price (Rp)</label>
                         <input type="number" name="price" id="original-price" class="form-control custom-form-control" required>
                     </div>
-
-                    <label class="fw-semibold form-label">Is it on sale?</label>
-                    <div class="d-flex gap-3" id="sale-toggle-group">
-                        <button type="button" class="btn btn-toggle-active" data-value="no">No</button>
-                        <button type="button" class="btn btn-toggle-inactive" data-value="yes">Yes</button>
-                    </div>
-                    
-                    {{-- Hidden field to track sale status --}}
-                    <input type="hidden" name="on_sale_status" id="on-sale-status" value="no">
-
-                    {{-- Sale Price Field (Request #2: Only appears if sale is toggled) --}}
-                    <div id="sale-price-field" class="mt-3 d-none">
-                        <label class="fw-semibold form-label">Sale Price (Rp)</label>
-                        <input type="number" id="sale-price" class="form-control custom-form-control">
-                    </div>
                 </div>
             </div>
 
@@ -192,47 +177,4 @@
 
     </form>
 </div>
-
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        const productForm = $('#product-form');
-        const saleToggleGroup = $('#sale-toggle-group');
-        const onSaleStatus = $('#on-sale-status');
-        const salePriceField = $('#sale-price-field');
-        const salePriceInput = $('#sale-price');
-        const originalPriceInput = $('#original-price');
-        const priceLabel = $('#price-label');
-
-        // Initial toggle setup
-        function updateToggleState(value) {
-            onSaleStatus.val(value);
-            saleToggleGroup.find('.btn').removeClass('btn-toggle-active').addClass('btn-toggle-inactive');
-            saleToggleGroup.find(`[data-value="${value}"]`).removeClass('btn-toggle-inactive').addClass('btn-toggle-active');
-
-            if (value === 'yes') {
-                salePriceField.removeClass('d-none');
-                salePriceInput.attr('name', 'price'); // Give Sale Price the DB column name
-                originalPriceInput.removeAttr('name'); // Remove DB column name from Original Price
-                priceLabel.text('Original Price (Rp)');
-            } else {
-                salePriceField.addClass('d-none');
-                salePriceInput.removeAttr('name'); // Remove DB column name from Sale Price
-                originalPriceInput.attr('name', 'price'); // Give Original Price the DB column name
-                priceLabel.text('Price (Rp)');
-            }
-        }
-
-        // Sale/No Sale toggle logic
-        saleToggleGroup.on('click', '.btn', function(e) {
-            e.preventDefault(); 
-            const value = $(this).data('value');
-            updateToggleState(value);
-        });
-        
-        // Initial setup to handle browser back/forward consistency
-        updateToggleState('no'); 
-    });
-</script>
-@endpush
 @endsection

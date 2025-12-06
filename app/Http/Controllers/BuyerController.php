@@ -78,7 +78,7 @@ class BuyerController extends Controller
             'phone' => 'nullable|string|max:20', 
             // DOB field from the image (assuming date format is DD/MM/YYYY)
             'DOB' => 'nullable|date_format:d/m/Y', 
-            'profile_photo' => 'nullable|image|mimetypes:image/jpeg,image/png|max:2048',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if (isset($validated['DOB'])) {
@@ -87,11 +87,11 @@ class BuyerController extends Controller
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
-                    Storage::delete($user->profile_photo);
-                }
-                
-                $path = $request->file('profile_photo')->store('profiles', 'public');
-                $validated['profile_photo'] = $path;
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+
+            $profilePhoto = $request->file('image')->store('products', 'public');
+            $updateData['profile_photo'] = $profilePhoto;
         }
 
         $user->update($validated);
