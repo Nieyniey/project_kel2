@@ -102,6 +102,9 @@ Route::middleware('auth')->group(function () {
     */
     Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/order/{order}/cancel', [OrderController::class, 'cancelOrder'])->name('order.cancel');
+    Route::post('/order/{order}/complete', [OrderController::class, 'completeOrder'])->name('order.complete');
+    Route::delete('/order/{order}/delete', [OrderController::class, 'deleteOrder'])->name('order.delete');
 
     /*
     |---------------- PAYMENT ----------------|

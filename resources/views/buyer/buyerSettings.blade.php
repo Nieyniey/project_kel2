@@ -58,6 +58,20 @@
         border-color: #d8c8b4 !important; 
         color: #6C2207 !important; 
     }
+
+    .fixed-panel-left {
+        position: fixed;
+        padding-bottom: 20px;
+        padding-left: 20px;
+        z-index: 1030; 
+        overflow-y: auto; 
+    }
+
+    @media (max-width: 991.98px) {
+        .fixed-panel-left {
+            width: 33.3333%; 
+        }
+    }
 </style>
 
 {{-- Header --}}
@@ -80,43 +94,45 @@
         <div class="row g-4">
             {{-- Left Panel: Navigation --}}
             <div class="col-md-4 col-lg-3">
-                <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
-                    <div class="card-body p-4">
-                        {{-- User Info Header --}}
-                        <div class="d-flex flex-column align-items-center mb-4">
-                            <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
-                                <img src="{{ $profileImageUrl }}" 
+                <div class="fixed-panel-left d-none d-md-block">
+                    <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
+                        <div class="card-body p-4">
+                            {{-- User Info Header --}}
+                            <div class="d-flex flex-column align-items-center mb-4">
+                                <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
+                                    <img src="{{ $profileImageUrl }}" 
                                             class="w-100 h-100 object-fit-cover rounded-circle">
+                                </div>
+                                <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
+                                <small class="text-muted">General User</small>
                             </div>
-                            <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
-                            <small class="text-muted">General User</small>
-                        </div>
 
-                        {{-- Navigation Links --}}
-                        <div class="list-group list-group-flush">
-                            {{-- Personal Information --}}
-                            <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
-                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'settings-active-link shadow-sm' : '' }}" 
-                                style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-person-fill me-2"></i> Personal Information
-                            </a>
-                            {{-- Your Orders --}}
-                            <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
-                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'settings-active-link shadow-sm' : '' }}" 
-                                style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-box-seam-fill me-2"></i> Your Orders
-                            </a>
-                            {{-- Seller Page --}}
-                            <a href="{{ route('buyer.settings', ['tab' => 'seller-mode']) }}" 
-                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'seller-mode' ? 'settings-active-link shadow-sm' : '' }}" 
-                                style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-shop me-2"></i> Seller Page
-                            </a>
-                            
-                            {{-- Log Out --}}
-                            <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                            </a>
+                            {{-- Navigation Links --}}
+                            <div class="list-group list-group-flush">
+                                {{-- Personal Information --}}
+                                <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
+                                    class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'settings-active-link shadow-sm' : '' }}" 
+                                    style="background-color: transparent; color: #6C2207;">
+                                    <i class="bi bi-person-fill me-2"></i> Personal Information
+                                </a>
+                                {{-- Your Orders --}}
+                                <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
+                                    class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'settings-active-link shadow-sm' : '' }}" 
+                                    style="background-color: transparent; color: #6C2207;">
+                                    <i class="bi bi-box-seam-fill me-2"></i> Your Orders
+                                </a>
+                                {{-- Seller Page --}}
+                                <a href="{{ route('buyer.settings', ['tab' => 'seller-mode']) }}" 
+                                    class="list-group-item list-group-item-action border-0 {{ $activeTab == 'seller-mode' ? 'settings-active-link shadow-sm' : '' }}" 
+                                    style="background-color: transparent; color: #6C2207;">
+                                    <i class="bi bi-shop me-2"></i> Seller Page
+                                </a>
+                                
+                                {{-- Log Out --}}
+                                <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -228,21 +244,31 @@
                     @elseif ($activeTab == 'orders')
                         <h3 class="fw-bold mb-4" style="color: #6C2207;">My Orders</h3>
 
+                        {{-- Alert Messages --}}
+                        @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                        @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+                        
+                        {{-- Main Order List --}}
                         @if ($orders->isEmpty())
-                            <p class="text-muted">You have no past orders.</p>
+                            <p class="text-muted">You have no orders.</p>
                         @else
                             @foreach ($orders as $order)
                                 @php
                                     $firstItem = $order->items->first();
                                     $seller = $firstItem->product->seller ?? null;
                                     $sellerName = $seller->store_name ?? 'Seller Not Found';
-                                    $sellerId = $seller->user_id ?? 0; 
+                                    $sellerId = $seller->user_id ?? 0;
                                 @endphp
 
+                                {{-- INDIVIDUAL ORDER CARD (This provides the background/boundary for ONE order) --}}
                                 <div class="card p-3 mb-4" style="border-color: #d8c8b4;">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $sellerName }}</h5> 
-                                        <span class="badge rounded-pill text-dark" style="background-color: rgba(252, 88, 1, 0.4) !important; color: #6C2207 !important;">{{ $order->status ?? 'Pending' }}</span>
+                                        <span class="badge rounded-pill text-dark" style="background-color: rgba(252, 88, 1, 0.4) !important; color: #6C2207 !important;">{{ ucfirst($order->status) ?? 'Pending' }}</span>
                                     </div>
                                     
                                     <hr class="my-2" style="border-color: #d8c8b4;">
@@ -274,18 +300,53 @@
 
                                     <hr class="my-3" style="border-color: #d8c8b4;">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        {{-- Chat button--}}
-                                        @if ($sellerId)
-                                            <a href="{{ route('chat.show', $sellerId) }}" 
-                                                class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">
-                                                Chat Penjual
-                                            </a>
-                                        @else
-                                            <span class="text-muted fst-italic">Seller chat unavailable</span>
-                                        @endif
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if ($sellerId)
+                                                <a href="{{ route('chat.show', $sellerId) }}" 
+                                                    class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">
+                                                    Chat Penjual
+                                                </a>
+                                            @else
+                                                <span class="text-muted fst-italic">Seller chat unavailable</span>
+                                            @endif
+
+                                            {{-- Action Buttons: PENDING/PAID STATUS --}}
+                                            @if ($order->status == 'pending')
+                                                {{-- Button: CANCEL (The only action while pending) --}}
+                                                <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        Cancel
+                                                    </button>
+                                                </form>
+
+                                            @elseif ($order->status == 'paid') 
+                                                {{-- Button: COMPLETED (The only action while paid, before shipping) --}}
+                                                <form action="{{ route('order.complete', $order) }}" method="POST" onsubmit="return confirm('Confirm receipt of order #{{ $order->order_id }}?');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                        Completed
+                                                    </button>
+                                                </form>
+                                            
+                                            {{-- Action Button: COMPLETED/CANCELLED STATUS --}}
+                                            @elseif (in_array($order->status, ['completed', 'cancelled']))
+                                                {{-- Button: DELETE --}}
+                                                <form action="{{ route('order.delete', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order history? This action cannot be undone.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            
+                                        </div>
+                                        {{-- END: Action Button Group --}}
                                         
-                                        {{-- Total price from the Order model --}}
+                                        {{-- Total price (Pushed to the far right using justify-content-between on the parent) --}}
                                         <p class="mb-0 fw-bold" style="color: #6C2207;">Total: <span style="color: #FC5801 !important;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span></p>
+
                                     </div>
                                 </div>
                             @endforeach

@@ -60,14 +60,49 @@ class OrderController extends Controller
         return view('buyer.track.track-list', compact('orders'));
     }
 
-    // public function trackDetail($id)
-    // {
-    //     // Ambil 1 order + itemnya
-    //     $order = Order::with('items.product')
-    //         ->where('user_id', auth()->id())
-    //         ->findOrFail($id);
+    public function cancelOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
+            return back()->with('error', 'Order cannot be cancelled.');
+        }
 
-    //     return view('buyer.track.track-detail', compact('order'));
-    // }
+        $order->status = 'cancelled';
+        $order->save();
+
+        return back()->with('success', 'Order #' . $order->order_id . ' has been cancelled.');
+    }
+
+    public function completeOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'paid') {
+            return back()->with('error', 'Order have not been paid yet.');
+        }
+
+        if ($order->user_id !== Auth::id() || in_array($order->status, ['completed', 'cancelled'])) {
+            return back()->with('error', 'Order is already completed or cancelled.');
+        }
+        
+        $order->status = 'completed';
+        $order->save();
+
+        return back()->with('success', 'Order #' . $order->order_id . ' has been marked as completed. Thank you!');
+    }
+
+    public function deleteOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            return back()->with('error', 'You do not have permission to delete this order.');
+        }
+
+        if (!in_array($order->status, ['completed', 'cancelled'])) {
+            return back()->with('error', 'Only completed or cancelled orders can be deleted.');
+        }
+
+        $order->items()->delete();
+        
+        $order->delete();
+
+        return back()->with('success', 'Order history #' . $order->order_id . ' has been deleted.');
+    }
 
 }

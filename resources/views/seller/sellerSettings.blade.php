@@ -53,6 +53,20 @@
     .save-button-right {
         float: right;
     }
+
+    .fixed-panel-left {
+        position: fixed;
+        padding-bottom: 20px;
+        padding-left: 20px;
+        z-index: 1030; 
+        overflow-y: auto; 
+    }
+
+    @media (max-width: 991.98px) {
+        .fixed-panel-left {
+            width: 33.3333%; 
+        }
+    }
 </style>
 
 {{-- Header --}}
@@ -74,50 +88,45 @@
     <div class="row g-4">
         {{-- Left Panel: Navigation --}}
         <div class="col-md-4 col-lg-3">
-            <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
-                <div class="card-body p-4" style="color: #6C2207;">
-                    {{-- Store Info Header --}}
-                    <div class="d-flex flex-column align-items-center mb-4">
-                        <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
-                            <img src="{{ $profileImageUrl }}" 
-                                class="w-100 h-100 object-fit-cover rounded-circle">
+            <div class="fixed-panel-left d-none d-md-block">
+                <div class="card shadow-sm border-0" style="background-color: #FFFEF7;">
+                    <div class="card-body p-4" style="color: #6C2207;">
+                        {{-- Store Info Header --}}
+                        <div class="d-flex flex-column align-items-center mb-4">
+                            <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
+                                <img src="{{ $profileImageUrl }}" 
+                                    class="w-100 h-100 object-fit-cover rounded-circle">
+                            </div>
+                            <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
+                            <h5> </h5>
+                            <small class="text-muted">Seller</small>
                         </div>
-                        <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
-                        <h5> </h5>
-                        <small class="text-muted">Seller</small>
-                    </div>
 
-                    {{-- Navigation Links --}}
-                    <div class="list-group list-group-flush">
-                        
-                        {{-- 1. Store Information (Default Tab) --}}
-                        <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'seller-active-link shadow-sm' : '' }}" 
-                          style="background-color: transparent; color: #6C2207;">
-                            <i class="bi bi-shop me-2"></i> Store Information
-                        </a>
-                        
-                        {{-- 2. Seller Orders --}}
-                        <a href="{{ route('seller.settings', ['tab' => 'orders']) }}" 
-                          class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'seller-active-link shadow-sm' : '' }}" 
-                          style="background-color: transparent; color: #6C2207;">
-                            <i class="bi bi-box-seam-fill me-2"></i> Seller Orders
-                        </a>
-                        
-                        {{-- 3. User Page (Switch to Buyer Settings) --}}
-                        <a href="{{ route('seller.settings', ['tab' => 'user-page']) }}" 
-                            class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
+                        {{-- Navigation Links --}}
+                        <div class="list-group list-group-flush">
+                            
+                            {{-- 1. Store Information (Default Tab) --}}
+                            <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
+                            class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'seller-active-link shadow-sm' : '' }}" 
                             style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-person-circle me-2"></i> User Page
-                        </a>
-                        
-                        {{-- Log Out --}}
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
-                            <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                        </a>
+                                <i class="bi bi-shop me-2"></i> Store Information
+                            </a>
+                            
+                            {{-- 2. User Page (Switch to Buyer Settings) --}}
+                            <a href="{{ route('seller.settings', ['tab' => 'user-page']) }}" 
+                                class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
+                                style="background-color: transparent; color: #6C2207;">
+                                    <i class="bi bi-person-circle me-2"></i> User Page
+                            </a>
+                            
+                            {{-- Log Out --}}
+                            <a href="{{ route('logout') }}" class="list-group-item list-group-item-action mt-3 border-0" style="background-color: transparent; color: #6C2207;">
+                                <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>    
+            </div>  
         </div>
 
         {{-- Right Panel: Dynamic Content --}}
@@ -205,13 +214,7 @@
                         <div class="d-flex justify-content-end pt-3">
                             <button type="submit" class="btn px-4 btn-seller-mode-custom">Save Changes</button>
                         </div>
-                    </form>
-                
-                @elseif ($activeTab == 'orders')
-                    <h3 class="fw-bold mb-4">Seller Orders</h3>
-                    <div class="alert alert-info">
-                        This section is where you would list and manage all orders placed by customers, showing their status (Pending, Packing, Shipped, etc.).
-                    </div>
+                    </form>            
                 
                 @elseif ($activeTab == 'user-page')
                     <h3 class="fw-bold mb-4" style="color: #6C2207;">Switch to Buyer Mode</h3>
