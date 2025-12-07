@@ -55,19 +55,25 @@
             data-price="{{ $item->product->price }}"
             style="width:20px; height:20px; margin-right:15px;">
 
-        {{-- IMAGE --}}
-        <div style="width:12%;">
-            <img src="{{ asset($item->product->image) }}"
-                style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
-        </div>
+        {{-- CLICKABLE PRODUCT AREA --}}
+        <a href="{{ route('products.show', $item->product->product_id) }}"
+            style="text-decoration:none; color:inherit; display:flex; width:42%; gap:15px;">
 
-        {{-- INFO --}}
-        <div style="width:30%;">
-            <div style="font-weight:600;">{{ $item->product->name }}</div>
-            <div style="color:gray; font-size:14px;">
-                {{ $item->product->description }}
+            {{-- IMAGE --}}
+            <div style="width:40%;">
+                <img src="{{ asset($item->product->image) }}"
+                     style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
             </div>
-        </div>
+
+            {{-- INFO --}}
+            <div style="width:60%;">
+                <div style="font-weight:600;">{{ $item->product->name }}</div>
+                <div style="color:gray; font-size:14px;">
+                    {{ $item->product->description }}
+                </div>
+            </div>
+
+        </a>
 
         {{-- PRICE --}}
         <div style="width:15%; font-weight:600; color:#FF6E00;">
@@ -151,6 +157,7 @@
 
 @endsection
 
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -159,9 +166,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalText = document.getElementById('total');
     const checkoutBtn = document.getElementById('checkout-btn');
 
-    /* ==========================================
-       HITUNG ULANG SUMMARY
-    ========================================== */
+    /* ===========================
+       UPDATE SUMMARY
+    ============================ */
     function updateSummary() {
         let subtotal = 0;
 
@@ -178,28 +185,24 @@ document.addEventListener("DOMContentLoaded", function () {
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
         totalText.innerText = "Rp " + (subtotal > 0 ? subtotal + shipping : 0).toLocaleString('id-ID');
 
-        // Enable / disable button
-        if (subtotal > 0) {
-            checkoutBtn.style.background = "#FF6E00";
-            checkoutBtn.style.pointerEvents = "auto";
-        } else {
-            checkoutBtn.style.background = "#CCC";
-            checkoutBtn.style.pointerEvents = "none";
-        }
+        checkoutBtn.style.background = subtotal > 0 ? "#FF6E00" : "#CCC";
+        checkoutBtn.style.pointerEvents = subtotal > 0 ? "auto" : "none";
     }
 
     updateSummary();
 
-    /* ==========================================
-       EVENT: CENTANG CHECKBOX
-    ========================================== */
+
+    /* ===========================
+       CHECKBOX EVENT
+    ============================ */
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
     });
 
-    /* ==========================================
-       EVENT: QTY BUTTONS
-    ========================================== */
+
+    /* ===========================
+       QTY BUTTONS
+    ============================ */
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
 
@@ -242,12 +245,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 number.innerText = qty;
                 updateSummary();
             });
+
         });
     });
 
-    /* ==========================================
+
+    /* ===========================
        DELETE ITEM
-    ========================================== */
+    ============================ */
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             let item = this.closest('.cart-item');
@@ -274,9 +279,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ==========================================
-       CHECKOUT BUTTON — DI LUAR updateSummary()
-    ========================================== */
+
+    /* ===========================
+       CHECKOUT BUTTON
+    ============================ */
     checkoutBtn.addEventListener("click", function () {
 
         let selected = [];

@@ -62,8 +62,8 @@
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
 
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="Enter Email Address"
+            <label>Alamat Email</label>
+            <input type="email" name="email" placeholder="Masukkan Alamat Email"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -73,7 +73,7 @@
                 " required>
 
             <label>Password</label>
-            <input type="password" name="password" placeholder="Enter Password"
+            <input type="password" name="password" placeholder="Masukan Password"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -86,7 +86,7 @@
             <div style="text-align:right; margin-bottom:10px;">
                 <a href="/forgot-password" 
                 style="color:#FF6E00; font-size:14px; text-decoration:none;">
-                    Forgot password?
+                    Lupa sandi
                 </a>
             </div>
 
@@ -106,7 +106,7 @@
         </form>
 
         <div style="text-align:center; margin-top:20px;">
-            <p>Don’t have an account?</p>
+            <p>Belum punya akun?</p>
             <a href="/signup" style="
                 padding:8px 30px; 
                 border:2px solid #FF6E00;

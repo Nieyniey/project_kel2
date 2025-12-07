@@ -52,18 +52,18 @@
     <div class="card-box">
 
         <h2 style="font-weight:700; font-size:20px; color:#333; margin-bottom:6px;">
-            Forgot Password
+            Reset Sandi
         </h2>
 
         <p style="font-size:14px; color:#555; margin-bottom:20px;">
-            Enter your email address
+            Masukkan alamat email Anda
         </p>
 
         <form method="POST" action="{{ route('forgot.send') }}">
             @csrf
 
             <input type="email" name="email"
-                placeholder="Enter Email Address"
+                placeholder="Masukan Alamat Email"
                 style="
                     width:100%;
                     padding:10px 12px;
@@ -85,13 +85,13 @@
                     font-size:15px;
                     font-weight:600;
                 ">
-                Send
+                kirim
             </button>
         </form>
 
         <div style="margin-top:12px; text-align:center;">
             <a href="/login" style="color:#FF6E00; font-size:14px; text-decoration:none;">
-                Back to log in
+                Kembali ke halaman login
             </a>
         </div>
 
