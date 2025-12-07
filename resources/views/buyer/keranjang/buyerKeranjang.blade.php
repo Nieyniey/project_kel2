@@ -89,7 +89,7 @@
             </button>
         </div>
 
-        {{-- DELETE BUTTON (BENAR DI SINI!!) --}}
+        {{-- DELETE BUTTON --}}
         <button class="delete-btn"
             style="background:none; border:none; cursor:pointer; font-size:22px;">
             ❌
@@ -163,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelectorAll('.cart-item').forEach(item => {
             const checkbox = item.querySelector('.item-check');
-
             if (checkbox && checkbox.checked) {
                 let qty = parseInt(item.querySelector('.qty-number').innerText);
                 let price = parseInt(checkbox.dataset.price);
@@ -186,15 +185,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ⬅⬅⬅ FIX 1: panggil saat pertama dibuka!
     updateSummary();
 
-    // Checkbox
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
     });
 
-    // Qty button
+    // QTY BUTTONS
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
 
@@ -211,31 +208,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
                 qty--;
-            }
-
-            if (this.dataset.action === "plus") {
+            } else {
                 qty++;
             }
 
             number.innerText = qty;
 
+            // FIX: SEND USING FORMDATA
+            let form = new FormData();
+            form.append("item_id", itemId);
+            form.append("qty", qty);
+
             fetch("{{ route('cart.updateQty') }}", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ item_id: itemId, qty })
+                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: form
             });
 
             updateSummary();
         });
     });
 
-    // Delete btn
+    // DELETE BUTTON
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-
             let item = this.closest('.cart-item');
             let itemId = item.dataset.itemId;
 
@@ -246,18 +242,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function removeItem(item, itemId) {
+
+        let fd = new FormData();
+        fd.append('item_id', itemId);
+
         fetch("{{ route('cart.deleteItem') }}", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ item_id: itemId })
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+            body: fd
         }).then(() => {
             item.remove();
             updateSummary();
         });
     }
 });
-
 </script>
