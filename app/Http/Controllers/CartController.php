@@ -79,8 +79,12 @@ class CartController extends Controller
 
             $product = Product::find($productId);
 
+            if (!$product) {
+                return response()->json(['status' => 'error', 'message' => 'Product not found.'], 404);
+            }
+
             CartItem::create([
-                'cart_id' => $cart->cart_id,   // FIX JUGA DI SINI
+                'cart_id' => $cart->cart_id,   
                 'product_id' => $productId,
                 'price_per_item' => $product->price,
                 'qty' => 1,

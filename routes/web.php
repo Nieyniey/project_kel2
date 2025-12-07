@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
     |---------------- BUYER PROFILE ----------------|
     */
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])
-        ->name('buyer.settings');
+        ->name('buyer.settings.update.personal');
 
     /*
     |---------------- CHAT ----------------|
