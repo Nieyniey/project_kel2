@@ -71,74 +71,27 @@ class BuyerController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            // 'name' is used as 'Username' in the form
             'name' => 'required|string|max:255', 
-            // Email must be unique, ignoring the current user's ID
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => 'nullable|string|max:20', 
-            // DOB field from the image (assuming date format is DD/MM/YYYY)
-            'DOB' => 'nullable|date_format:d/m/Y', 
+            'DOB' => 'nullable|date_format:Y-m-d', 
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        if (isset($validated['DOB'])) {
-            $validated['DOB'] = Carbon::createFromFormat('d/m/Y', $validated['DOB'])->format('Y-m-d');
-        }
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
                 Storage::disk('public')->delete($user->profile_photo);
             }
 
-            $profilePhoto = $request->file('image')->store('products', 'public');
-            $updateData['profile_photo'] = $profilePhoto;
+            $profilePhotoPath = $request->file('profile_photo')->store('users', 'public');
+            
+            $validated['profile_photo'] = $profilePhotoPath;
         }
 
         $user->update($validated);
 
         return redirect()->route('buyer.settings')->with('success', 'Personal Information successfully updated!');
     }
-
-
-    public function favorites()
-    {
-        // Example dummy favorites
-        $favorites = [
-            [
-                'id' => 10,
-                'name' => 'Vintage Boots',
-                'price' => 150000,
-                'image' => '/images/boots.png'
-            ]
-        ];
-
-        return view('buyer.buyerFavorites', compact('favorites'));
-    }
-
-
-    public function chat()
-    {
-        // Dummy chat list
-        $chats = [
-            [
-                'id' => 1,
-                'name' => 'Seller A',
-                'last_message' => 'Product masih ada kak?',
-                'time' => '14:20',
-                'image' => '/images/profile1.png'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Seller B',
-                'last_message' => 'Boleh nego ya kak',
-                'time' => 'Yesterday',
-                'image' => '/images/profile2.png'
-            ],
-        ];
-
-        return view('buyer.buyerChat', compact('chats'));
-    }
-
 
     public function cart()
     {

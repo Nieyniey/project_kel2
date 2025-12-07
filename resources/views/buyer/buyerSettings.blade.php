@@ -6,8 +6,6 @@
     $user = $user ?? Auth::user(); 
     $isSeller = $isSeller ?? $user->seller()->exists();
     
-    $formattedDOB = $user->DOB ? \Carbon\Carbon::parse($user->DOB)->format('Y-m-d') : '';
-    
     $profileImageUrl = $user->profile_photo 
                         ? asset('storage/' . $user->profile_photo) 
                         : asset('placeholder.jpg'); 
@@ -88,7 +86,6 @@
                         <div class="d-flex flex-column align-items-center mb-4">
                             <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
                                 <img src="{{ $profileImageUrl }}" 
-                                            alt="{{ $user->name }}'s Profile Picture" 
                                             class="w-100 h-100 object-fit-cover rounded-circle">
                             </div>
                             <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
@@ -140,7 +137,7 @@
                             <div class="alert alert-danger">Please check the form for errors.</div>
                         @endif
 
-                        <form action="{{ route('buyer.settings.update.personal') }}" method="POST">
+                        <form action="{{ route('buyer.settings.update.personal') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             
                             {{-- Username --}}
@@ -180,18 +177,14 @@
                             <div class="mb-3">
                                 <label for="DOB" class="form-label fw-bold" style="color: #6C2207;">Date of Birth</label>
                                 <input type="date" class="form-control @error('DOB') is-invalid @enderror custom-form-control" 
-                                        id="DOB" name="DOB_temp" 
-                                        {{-- Use name="DOB_temp" to prevent it from being submitted directly --}}
-                                        
-                                        {{-- Default value must be YYYY-MM-DD for the date picker to display correctly --}}
+                                        id="DOB" name="DOB" 
                                         value="{{ old('DOB', $user->DOB) }}">
                                 @error('DOB')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-
-                                <input type="hidden" name="DOB" id="DOB_formatted">
                             </div>
 
+                            {{-- Profile Photo --}}
                             <div class="mb-4 p-3 border rounded" style="background-color: #f7f3ed; border-color: #d8c8b4;">
                                 <label class="form-label fw-bold mb-3" style="color: #6C2207;">Profile Picture</label>
 
@@ -204,26 +197,23 @@
                                         @if($user->profile_photo)
                                             <img id="profile-image-preview" 
                                                 src="{{ asset('storage/' . $user->profile_photo) }}" 
-                                                alt="Profile Photo" 
                                                 class="w-100 h-100 object-fit-cover">
                                         @else
                                             <img src="{{ $profileImageUrl }}" 
-                                                alt="Profile Photo" 
                                                 class="w-100 h-100 object-fit-cover">
                                         @endif
                                     </div>
 
                                     {{-- 2. File Input Area --}}
                                     <div class="flex-grow-1">
-                                        
                                         <input type="file" 
-                                            class="form-control @error('image') is-invalid @enderror custom-form-control" 
+                                            class="form-control @error('profile_photo') is-invalid @enderror custom-form-control" 
                                             id="profile_photo_input" 
-                                            name="image" 
-                                            accept="image/jpeg, image/png">
+                                            name="profile_photo" 
+                                            accept="image/jpeg, image/png"> {{-- Corrected accept to 'image/jpeg' --}}
                                         <p class="text-muted mb-2 small">Upload a new photo (Max 2MB, jpeg/png/jpg/gif only).</p>
 
-                                        @error('image') {{-- Changed error check to 'image' for consistency with input name --}}
+                                        @error('profile_photo')
                                             <div class="text-danger mt-1 small">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -267,7 +257,6 @@
                                             <div style="width: 80px; height: 80px; flex-shrink: 0; background-color: #fff; border-radius: 5px; overflow: hidden; border: 1px solid #eee;" class="me-3 d-flex align-items-center justify-content-center">
                                                 @if ($product->image_path)
                                                     <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                                        alt="{{ $product->name }}" 
                                                         class="img-fluid"
                                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                                 @else
@@ -278,8 +267,7 @@
                                             {{-- Product Info Section --}}
                                             <div>
                                                 <strong class="d-block" style="color: #6C2207;">{{ $product->name }}</strong>
-                                                <small class="text-muted">{{ $item->description_or_variant }}</small>
-                                                <small class="d-block" style="color: #6C2207;">x {{ $item->quantity }}</small>
+                                                <small class="d-block" style="color: #6C2207;">x {{ $item->qty }}</small>
                                             </div>
                                         </div>
                                     @endforeach
@@ -332,16 +320,4 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    const dobInput = document.getElementById('DOB');
-    if (dobInput.value) {
-        const dateParts = dobInput.value.split('-'); 
-        dobInput.value = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-    }
-});
-</script>
-@endpush
 @endsection

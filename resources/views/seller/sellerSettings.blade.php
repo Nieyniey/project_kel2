@@ -80,7 +80,6 @@
                     <div class="d-flex flex-column align-items-center mb-4">
                         <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
                             <img src="{{ $profileImageUrl }}" 
-                                alt="{{ $seller->store_name ?? 'Your Store' }} Logo" 
                                 class="w-100 h-100 object-fit-cover rounded-circle">
                         </div>
                         <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
