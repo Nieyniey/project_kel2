@@ -410,12 +410,12 @@ body {
 
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         
         function sendProductAction(button, url, productId) {
-            const csrfToken = $('meta[name="csrf-csrf-token"]').attr('content');
+            //button.prop('disabled', true);
             
             $.ajax({
                 url: url,
