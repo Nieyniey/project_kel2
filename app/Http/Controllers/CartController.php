@@ -47,18 +47,49 @@ class CartController extends Controller
      */
     public function add(Request $request)
     {
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $request->validate([
+            'product_id' => 'required|integer',
+            'qty' => 'required|integer|min:1'
+        ]);
+
         $product = Product::findOrFail($request->product_id);
 
-        CartItem::updateOrCreate(
-            ['cart_id' => $cart->id, 'product_id' => $product->id],
-            [
-                'price_per_item' => $product->price,
-                'qty' => \DB::raw('qty + 1')
-            ]
-        );
+        // CEK STOK
+        if ($request->qty > $product->stock) {
+            return back()->with('error', 'Stock tidak cukup');
+        }
 
-        return redirect()->route('cart.index')->with('success', 'Added to Cart');
+        // GET cart user
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+
+        // Cek kalau item sudah ada
+        $item = CartItem::where('cart_id', $cart->id)
+                        ->where('product_id', $product->product_id)
+                        ->first();
+
+        if ($item) {
+
+            // cek lagi total qty kalau ditambah
+            if ($item->qty + $request->qty > $product->stock) {
+                return back()->with('error', 'Stock tidak cukup untuk jumlah yang diminta');
+            }
+
+            // kalau stok cukup → tambah qty
+            $item->qty += $request->qty;
+            $item->save();
+
+        } else {
+
+            // item belum ada → buat baru
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $product->product_id,
+                'price_per_item' => $product->price,
+                'qty' => $request->qty
+            ]);
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang');
     }
 
 
@@ -75,7 +106,6 @@ class CartController extends Controller
                             ->first();
 
         if ($existing) {
-            // Remove item
             $existing->delete();
             return response()->json([
                 'status' => 'success',
@@ -84,7 +114,6 @@ class CartController extends Controller
             ]);
         }
 
-        // Add item
         $product = Product::findOrFail($productId);
 
         CartItem::create([
@@ -117,6 +146,13 @@ class CartController extends Controller
                             $q->where('user_id', Auth::id());
                         })
                         ->firstOrFail();
+
+        $product = Product::findOrFail($item->product_id);
+
+        // CEK STOK
+        if ($request->qty > $product->stock) {
+            return response()->json(['status' => 'error', 'message' => 'Stock tidak cukup']);
+        }
 
         $item->qty = $request->qty;
         $item->save();
