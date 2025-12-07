@@ -76,11 +76,10 @@
     }
 </style>
 
-{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+{{-- Header --}}
 <div class="header-fixed">
     <div class="container"> 
         <div class="d-flex align-items-center">
-            {{-- Back Arrow --}}
             <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#6C2207 !important;">
                 <i class="bi bi-arrow-left"></i>
             </a>
@@ -93,15 +92,11 @@
 
 {{-- Main Content Area --}}
 <div class="container py-4"> 
-    
-    {{-- Form for Product Update (PUT Method) --}}
     <form method="POST" action="{{ route('seller.products.update', $product) }}" enctype="multipart/form-data" id="product-form">
         @csrf
-        @method('PUT') {{-- Required for Laravel to handle the update route --}}
+        @method('PUT')
 
         <div class="row g-4">
-
-            {{-- LEFT COLUMN: Name and Description --}}
             <div class="col-md-6">
                 <div class="mb-4">
                     <label class="fw-semibold form-label">Product Name</label>

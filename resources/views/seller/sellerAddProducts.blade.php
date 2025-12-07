@@ -4,13 +4,11 @@
 
 @section('content')
 <style>
-    /* Global Background Color (Applied to the whole page) */
     body {
         background-color: #FFFBE8 !important;
         color: #6C2207 !important;
     }
 
-    /* Fixed Header Styling */
     .header-fixed {
         background-color: #FFFEF7; 
         width: 100%;
@@ -22,7 +20,6 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
 
-    /* Custom Form Control Styling (The Bars) */
     .custom-form-control {
         border-radius: 8px;
         border: 1px solid #d8c8b4;
@@ -36,40 +33,36 @@
         background-color: white;
     }
     
-    /* Custom Button Styles for Sale Toggle */
     .btn-toggle-active {
         background-color: #FC5801 !important; 
         color: white !important;
         border-color: #FC5801 !important;
-        font-weight: 500; /* Less bold */
+        font-weight: 500; 
     }
     .btn-toggle-inactive {
         background-color: transparent !important; 
         color: #6C2207 !important;
         border-color: #6C2207 !important;
-        font-weight: 500; /* Less bold */
+        font-weight: 500; 
     }
 
-    /* Add Product Button Hover Effect (Request #4) */
     .btn-add-product {
         background-color: #FC5801 !important; 
         color: white !important;
         border-radius: 8px;
-        font-weight: 500; /* Less bold */
+        font-weight: 500;
         transition: background-color 0.2s;
     }
 
     .btn-add-product:hover {
-        /* FC5801 with 40% opacity */
         background-color: rgba(252, 88, 1, 0.6) !important; 
     }
 </style>
 
-{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+{{-- Header --}}
 <div class="header-fixed">
     <div class="container"> 
         <div class="d-flex align-items-center">
-            {{-- Back Arrow (using bi-arrow-left for consistency) --}}
             <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#6C2207 !important;">
                 <i class="bi bi-arrow-left"></i>
             </a>
@@ -80,10 +73,7 @@
     </div>
 </div>
 
-{{-- Main Content Area: Centered Container (Request #3: Form uses full page background) --}}
 <div class="container py-4"> 
-    {{-- Removed the main card container --}}
-
     <form method="POST" action="{{ route('seller.products.store') }}" enctype="multipart/form-data" id="product-form">
         @csrf
 

@@ -129,11 +129,10 @@
             </div>  
         </div>
 
-        {{-- Right Panel: Dynamic Content --}}
+        {{-- Right Panel: Main Content --}}
         <div class="col-md-8 col-lg-9">
             <div class="card shadow-sm border-0 p-4" style="background-color: #FFFEF7; color: #6C2207;">
                  
-                {{-- Global Feedback Messages --}}
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -141,9 +140,7 @@
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
 
-                {{-- ====================================== --}}
-                {{-- 1. STORE INFORMATION TAB CONTENT --}}
-                {{-- ====================================== --}}
+                {{-- 1. Store Information (Default Tab) --}}
                 @if ($activeTab == 'store-info')
                     <h3 class="fw-bold mb-4">Store Information</h3>
 
@@ -216,6 +213,7 @@
                         </div>
                     </form>            
                 
+                {{-- 2. User Page (Switch to Buyer Settings) --}}
                 @elseif ($activeTab == 'user-page')
                     <h3 class="fw-bold mb-4" style="color: #6C2207;">Switch to Buyer Mode</h3>
                     

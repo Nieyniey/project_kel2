@@ -44,16 +44,13 @@
     }
 </style>
 
+{{-- Header --}}
 <div class="container-fluid p-0" style="background-color: #FFFBE8;">
-    {{-- HEADER REVISION (FIXED SPACING AND COLOR) --}}
     <div class="wts-header p-3 sticky-top">
         <div class="d-flex justify-content-between align-items-center">
-            {{-- Settings (Gear) -> Buyer Settings --}}
             <a href="{{ route('seller.settings') }}" style="color: #6C2207;">
                 <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
             </a>
-
-            {{-- Logo (Central Element) --}}
             <a href="{{ route('seller.products') }}" class="wts-logo mx-auto">
                 <img src="{{ asset('Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
             </a>
@@ -108,10 +105,8 @@
         <div class="row g-4 mb-5">
             @foreach($products as $product)
             <div class="col-6 col-md-3 col-lg-2">
-                {{-- Link the entire card to the edit page --}}
                 <a href="{{ route('seller.products.edit', $product) }}" class="product-card-link">
                     <div class="product-card">
-                        {{-- Image Container (with hover effect) --}}
                         <div class="product-image-container product-image-shadow">
                             @if (isset($product->image_path))
                                 <img src="{{ asset('storage/' . $product->image_path) }}" 
@@ -119,7 +114,6 @@
                                      class="img-fluid" 
                                      style="max-height: 100%; max-width: 100%; object-fit: contain;">
                             @else
-                                {{-- Fallback: Display an icon if no image path exists --}}
                                 <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
                             @endif
                         </div>
@@ -128,8 +122,6 @@
                         <div class="p-2 text-center">
                             <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
                             <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                            
-                            {{-- ** Action Circles (Heart/Bag) are removed as requested ** --}}
                         </div>
                     </div>
                 </a>
