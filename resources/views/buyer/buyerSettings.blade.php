@@ -313,7 +313,7 @@
                                             {{-- Action Buttons: PENDING/PAID STATUS --}}
                                             @if ($order->status == 'pending')
                                                 {{-- Button: CANCEL (The only action while pending) --}}
-                                                <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                                <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin cancel pesanan ini?');">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                                         Cancel
@@ -322,7 +322,7 @@
 
                                             @elseif ($order->status == 'paid') 
                                                 {{-- Button: COMPLETED (The only action while paid, before shipping) --}}
-                                                <form action="{{ route('order.complete', $order) }}" method="POST" onsubmit="return confirm('Confirm receipt of order #{{ $order->order_id }}?');">
+                                                <form action="{{ route('order.complete', $order) }}" method="POST" onsubmit="return confirm('Konfirmasi Pesanan #{{ $order->order_id }}?');">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-success">
                                                         Selesai
@@ -332,7 +332,7 @@
                                             {{-- Action Button: COMPLETED/CANCELLED STATUS --}}
                                             @elseif (in_array($order->status, ['completed', 'cancelled']))
                                                 {{-- Button: DELETE --}}
-                                                <form action="{{ route('order.delete', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order history? This action cannot be undone.');">
+                                                <form action="{{ route('order.delete', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin hapus history pesanan ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary">
