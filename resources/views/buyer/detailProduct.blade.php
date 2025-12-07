@@ -191,6 +191,51 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 });
+
+$(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        function sendProductAction(button, url, productId) {
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    product_id: productId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        if (response.is_active) {
+                            button.addClass('active');
+                        } else {
+                            button.removeClass('active');
+                        }
+                    } else {
+                        alert('Action failed: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        alert('Please log in to use this feature.');
+                    } else {
+                        alert('An unknown error occurred.');
+                    }
+                }
+            });
+        }
+
+        $('.add-to-wishlist-btn').on('click', function() {
+            const button = $(this);
+            const productId = button.data('product-id');
+            const url = button.data('action-url');
+            sendProductAction(button, url, productId);
+        });
+    });
 </script>
 
 @endpush
