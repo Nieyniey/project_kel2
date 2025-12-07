@@ -156,84 +156,104 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const shipping = {{ $summary['shipping'] }};
     const subtotalText = document.getElementById('subtotal');
-    const totalText = document.getElementById('total');
-    const checkoutBtn = document.getElementById('checkout-btn');
+    const totalText    = document.getElementById('total');
+    const checkoutBtn  = document.getElementById('checkout-btn');
 
+    /** ============================
+     *  UPDATE SUMMARY
+     *  ============================ */
     function updateSummary() {
         let subtotal = 0;
 
         document.querySelectorAll('.cart-item').forEach(item => {
             const checkbox = item.querySelector('.item-check');
-
-            if (checkbox.checked) {
-                let qty = parseInt(item.querySelector('.qty-number').innerText);
+            if (checkbox && checkbox.checked) {
+                let qty   = parseInt(item.querySelector('.qty-number').innerText);
                 let price = parseInt(checkbox.dataset.price);
                 subtotal += qty * price;
             }
         });
 
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
-        totalText.innerText = "Rp " + (subtotal > 0 ? subtotal + shipping : 0).toLocaleString('id-ID');
 
-        checkoutBtn.style.background = subtotal > 0 ? "#FF6E00" : "#CCC";
+        let total = subtotal > 0 ? subtotal + shipping : 0;
+        totalText.innerText = "Rp " + total.toLocaleString('id-ID');
+
+        checkoutBtn.style.background    = subtotal > 0 ? "#FF6E00" : "#CCC";
         checkoutBtn.style.pointerEvents = subtotal > 0 ? "auto" : "none";
     }
 
     updateSummary();
 
-    // Checkbox
-    document.querySelectorAll('.item-check')
-        .forEach(check => check.addEventListener('change', updateSummary));
 
-    // Qty
-    document.querySelectorAll('.qty-btn')
-        .forEach(button => {
-            button.addEventListener('click', function () {
-                let item = this.closest('.cart-item');
-                let itemId = item.dataset.itemId;
-                let number = item.querySelector('.qty-number');
-                let oldQty = parseInt(number.innerText);
-                let qty = oldQty;
 
-                if (this.dataset.action === "minus") {
-                    if (qty === 1) {
-                        if (confirm("Hapus produk dari keranjang?")) {
-                            removeItem(item, itemId);
-                        }
-                        return;
+    /** ============================
+     *  CHECKBOX
+     *  ============================ */
+    document.querySelectorAll('.item-check').forEach(check => {
+        check.addEventListener('change', updateSummary);
+    });
+
+
+
+    /** ============================
+     *  QTY BUTTONS
+     *  ============================ */
+    document.querySelectorAll('.qty-btn').forEach(button => {
+        button.addEventListener('click', function () {
+
+            let item   = this.closest('.cart-item');
+            let itemId = item.dataset.itemId;
+            let number = item.querySelector('.qty-number');
+            let oldQty = parseInt(number.innerText);
+            let qty    = oldQty;
+
+            if (this.dataset.action === "minus") {
+                if (qty === 1) {
+                    if (confirm("Hapus produk dari keranjang?")) {
+                        removeItem(item, itemId);
                     }
-                    qty--;
-                } else {
-                    qty++;
+                    return;
+                }
+                qty--;
+            } else {
+                qty++;
+            }
+
+            number.innerText = qty;
+
+            let form = new FormData();
+            form.append("item_id", itemId);
+            form.append("qty", qty);
+
+            fetch("{{ route('cart.updateQty') }}", {
+                method: "POST",
+                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: form
+            })
+            .then(async res => {
+                let data = await res.json();
+
+                if (data.status === 'error') {
+                    alert(data.message || "Stock tidak cukup!");
+                    number.innerText = oldQty;
+                    return;
                 }
 
-                number.innerText = qty;
-
-                fetch("{{ route('cart.updateQty') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ item_id: itemId, qty })
-                }).then(async (res) => {
-
-                    if (!res.ok) {
-                        let data = await res.json();
-                        alert(data.message || "Stock tidak cukup!");
-                        number.innerText = oldQty;
-                        return;
-                    }
-
-                    updateSummary();
-                });
+                updateSummary();
             });
         });
+    });
 
-    // Delete
+
+
+    /** ============================
+     *  DELETE BUTTON
+     *  ============================ */
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-            let item = this.closest('.cart-item');
+
+            let item   = this.closest('.cart-item');
             let itemId = item.dataset.itemId;
 
             if (!confirm("Hapus produk dari keranjang?")) return;
@@ -243,20 +263,24 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function removeItem(item, itemId) {
+        let fd = new FormData();
+        fd.append('item_id', itemId);
+
         fetch("{{ route('cart.deleteItem') }}", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ item_id: itemId })
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+            body: fd
         }).then(() => {
             item.remove();
             updateSummary();
         });
     }
 
-    // CHECKOUT BUTTON
+
+
+    /** ============================
+     *  CHECKOUT
+     *  ============================ */
     checkoutBtn.addEventListener("click", function () {
 
         let selected = [];
@@ -265,8 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
             let checkbox = item.querySelector('.item-check');
             if (checkbox.checked) {
                 selected.push({
-                    id: item.dataset.itemId,
-                    qty: parseInt(item.querySelector('.qty-number').innerText)
+                    id  : item.dataset.itemId,
+                    qty : parseInt(item.querySelector('.qty-number').innerText)
                 });
             }
         });
@@ -277,7 +301,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         document.getElementById('selected-items-input').value = JSON.stringify(selected);
-
         document.getElementById('place-order-form').submit();
     });
 

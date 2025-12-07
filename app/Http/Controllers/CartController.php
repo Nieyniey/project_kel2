@@ -7,11 +7,12 @@ use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    // View Cart
+    /**
+     * Show cart page
+     */
     public function index()
     {
         $cart = Cart::where('user_id', Auth::id())
@@ -21,50 +22,87 @@ class CartController extends Controller
         if (!$cart) {
             return view('buyer.keranjang.buyerKeranjang', [
                 'items' => [],
-                'summary' => ['shipping' => 10000]
+                'summary' => [
+                    'shipping' => 10000,
+                ]
             ]);
         }
 
         $items = $cart->items;
-
         $subtotal = $items->sum(fn($item) => $item->product->price * $item->qty);
-        $shipping = 10000;
+
         $summary = [
             'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'total' => $subtotal + $shipping,
+            'shipping' => 10000,
+            'total' => $subtotal + 10000,
         ];
 
         return view('buyer.keranjang.buyerKeranjang', compact('items', 'summary'));
     }
 
-    // Add to cart
+
+
+    /**
+     * Add item to cart (Non-AJAX)
+     */
     public function add(Request $request)
     {
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $request->validate([
+            'product_id' => 'required|integer',
+            'qty'        => 'required|integer|min:1'
+        ]);
+
         $product = Product::findOrFail($request->product_id);
 
-        CartItem::updateOrCreate(
-            [
-                'cart_id' => $cart->cart_id,   // FIX DI SINI
-                'product_id' => $request->product_id
-            ],
-            [
-                'price_per_item' => $product->price,
-                'qty' => \DB::raw('qty + 1')
-            ]
-        );
+        // CEK STOK
+        if ($request->qty > $product->stock) {
+            return back()->with('error', 'Stock tidak cukup');
+        }
 
-        return redirect()->route('cart.index')->with('success', 'Added to Cart');
+        // GET CART USER
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+
+        // CEK ITEM SUDAH ADA?
+        $item = CartItem::where('cart_id', $cart->cart_id)
+                        ->where('product_id', $product->product_id)
+                        ->first();
+
+        if ($item) {
+
+            // CEK STOCK TOTAL
+            if ($item->qty + $request->qty > $product->stock) {
+                return back()->with('error', 'Stock tidak cukup untuk jumlah yang diminta');
+            }
+
+            $item->qty += $request->qty;
+            $item->save();
+
+        } else {
+
+            CartItem::create([
+                'cart_id'        => $cart->cart_id,
+                'product_id'     => $product->product_id,
+                'price_per_item' => $product->price,
+                'qty'            => $request->qty
+            ]);
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang');
     }
 
+
+
+
+    /**
+     * Add/remove item from cart via AJAX (toggle)
+     */
     public function addAjax(Request $request)
     {
         $productId = $request->product_id;
 
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-        $cartItem = CartItem::where('cart_id', $cart->cart_id)  // FIX DI SINI
+        $cartItem = CartItem::where('cart_id', $cart->cart_id)
                             ->where('product_id', $productId)
                             ->first();
 
@@ -73,59 +111,71 @@ class CartController extends Controller
         if ($isCurrentlyInCart) {
 
             $cartItem->delete();
-            $action = 'removed';
-
-        } else {
-
-            $product = Product::find($productId);
-
-            if (!$product) {
-                return response()->json(['status' => 'error', 'message' => 'Product not found.'], 404);
-            }
-
-            CartItem::create([
-                'cart_id' => $cart->cart_id,   
-                'product_id' => $productId,
-                'price_per_item' => $product->price,
-                'qty' => 1,
+            return response()->json([
+                'status'     => 'success',
+                'action'     => 'removed',
+                'is_active'  => false
             ]);
-
-            $action = 'added';
         }
 
+        // ADD ITEM
+        $product = Product::findOrFail($productId);
+
+        CartItem::create([
+            'cart_id'        => $cart->cart_id,
+            'product_id'     => $productId,
+            'price_per_item' => $product->price,
+            'qty'            => 1,
+        ]);
+
         return response()->json([
-            'status' => 'success',
-            'action' => $action,
-            'is_active' => !$isCurrentlyInCart
+            'status'    => 'success',
+            'action'    => 'added',
+            'is_active' => true
         ]);
     }
 
+
+
+
+    /**
+     * Update quantity
+     */
     public function updateQty(Request $request)
     {
         $request->validate([
             'item_id' => 'required|integer',
-            'qty' => 'required|integer|min:1'
+            'qty'     => 'required|integer|min:1'
         ]);
 
-        $item = CartItem::findOrFail($request->item_id);
+        $item = CartItem::where('cart_item_id', $request->item_id)
+                        ->whereHas('cart', function ($q) {
+                            $q->where('user_id', Auth::id());
+                        })
+                        ->firstOrFail();
 
-        // Ambil stock produk
-        $stock = $item->product->stock;
+        $product = Product::findOrFail($item->product_id);
 
-        if ($request->qty > $stock) {
+        // CEK STOK
+        if ($request->qty > $product->stock) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Stock tidak cukup!'
-            ], 400);
+            ]);
         }
 
-        // Update qty jika valid
         $item->qty = $request->qty;
         $item->save();
 
         return response()->json(['status' => 'success']);
     }
 
+
+
+
+    /**
+     * Delete cart item
+     */
     public function deleteItem(Request $request)
     {
         $request->validate([
@@ -136,5 +186,4 @@ class CartController extends Controller
 
         return response()->json(['status' => 'deleted']);
     }
-
 }

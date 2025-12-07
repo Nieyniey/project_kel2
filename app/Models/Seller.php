@@ -11,6 +11,8 @@ class Seller extends Model
     
     // Primary key
     protected $primaryKey = 'seller_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'user_id',
