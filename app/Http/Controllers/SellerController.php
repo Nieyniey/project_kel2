@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Seller;
+use App\Models\User;
+use App\Models\Product;
 
 class SellerController extends Controller
 {
@@ -104,5 +106,16 @@ class SellerController extends Controller
         ]);
         
         return redirect()->route('seller.settings')->with('success', 'Your store has been successfully created!');
+    }
+
+    public function index($id)
+    {
+        $seller = Seller::findOrFail($id);
+        
+        $products = Product::where('seller_id', $seller->seller_id)
+                        ->latest() 
+                        ->get();
+
+        return view('seller.sellerProfile', compact('seller', 'products'));
     }
 }

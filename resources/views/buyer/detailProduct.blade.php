@@ -24,8 +24,10 @@
 
             <!-- SELLER -->
             <div style="display:flex; align-items:center; margin-bottom:10px;">
-                <img src="/images/profile.png"
+                <a href="{{ route('seller.profile', $product->seller->seller_id) }}" class="flex-shrink-0">
+                    <img src="/images/profile.png"
                      style="width:35px; height:35px; border-radius:50%; margin-right:10px;">
+                </a>
 
                 <div>
                     <span style="font-weight:bold; font-size:14px;">

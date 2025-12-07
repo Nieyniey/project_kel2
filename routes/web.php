@@ -66,6 +66,8 @@ Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.ca
 |--------------------------------------------------------------------------
 */
 Route::prefix('seller')->group(function () {
+    // PROFILE
+    Route::get('/profile/{id}', [SellerController::class, 'index'])->name('seller.profile');
 
     // PRODUCTS
     Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');

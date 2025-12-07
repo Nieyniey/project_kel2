@@ -199,7 +199,7 @@
                                     
                                     {{-- 1. Profile Image Area (Circular) --}}
                                     <div class="rounded-circle me-4 d-flex justify-content-center align-items-center" 
-                                        style="width: 85px; height: 85px; overflow: hidden; border: 3px solid #FC5801; flex-shrink: 0;">
+                                        style="width: 85px; height: 85px; overflow: hidden; border: 1px solid rgba(252, 88, 1, 0.4); flex-shrink: 0;">
                                         
                                         @if($user->profile_photo)
                                             <img id="profile-image-preview" 
