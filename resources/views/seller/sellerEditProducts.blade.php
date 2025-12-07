@@ -80,11 +80,11 @@
 <div class="header-fixed">
     <div class="container"> 
         <div class="d-flex align-items-center">
-            <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#6C2207 !important;">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                Edit Product
+            <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+                </a>
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                Edit Produk
             </h5>
         </div>
     </div>
@@ -99,14 +99,14 @@
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="mb-4">
-                    <label class="fw-semibold form-label">Product Name</label>
+                    <label class="fw-semibold form-label">Nama Produk</label>
                     <input type="text" class="form-control custom-form-control" name="name" 
                            value="{{ old('name', $product->name) }}" required>
                     @error('name')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-4">
-                    <label class="fw-semibold form-label">Product Description</label>
+                    <label class="fw-semibold form-label">Deskripsi Produk</label>
                     <textarea name="description" class="form-control custom-form-control" rows="6" required>{{ old('description', $product->description) }}</textarea>
                     @error('description')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                 </div>
@@ -115,7 +115,7 @@
             {{-- RIGHT COLUMN: Product Image --}}
             <div class="col-md-6 d-flex flex-column">
                 
-                <label class="fw-semibold form-label">Product Image (Current & New)</label>
+                <label class="fw-semibold form-label">Foto Produk (Sekarang & Baru)</label>
 
                 {{-- Image Upload Area --}}
                 <div class="text-center p-4 flex-grow-1 d-flex flex-column justify-content-center align-items-center" 
@@ -127,7 +127,7 @@
                         <i id="current-image-preview-icon" class="bi bi-image-fill mb-3" style="font-size: 2rem; color:#FC5801;"></i>
                     @endif
                     
-                    <span style="color:#7c7c7c; display:block; margin-top:5px;">Upload a new image (optional)</span>
+                    <span style="color:#7c7c7c; display:block; margin-top:5px;">Unggah foto baru (opsional)</span>
                     
                     <input type="file" name="image" class="form-control mt-3 custom-form-control" accept="image/*">
                     @error('image')<div class="text-danger mt-1">{{ $message }}</div>@enderror
@@ -139,13 +139,13 @@
 
             <div class="col-md-6">
                 <div class="p-4" style="background:white; border-radius:10px; border:1px solid #d8c8b4;">
-                    <h6 class="fw-bold mb-3">Product Details</h6>
+                    <h6 class="fw-bold mb-3">Detail Produk</h6>
 
                     <div class="mb-3">
-                        <label class="fw-semibold form-label">Category</label>
+                        <label class="fw-semibold form-label">Kategori</label>
                         {{-- Select dropdown for Category --}}
                         <select name="category_id" class="form-control custom-form-control" required>
-                            <option value="" disabled>Select a Category</option>
+                            <option value="" disabled>Pilih Kategori</option>
                             
                             @foreach($categories as $category)
                                 <option value="{{ $category->category_id }}"
@@ -172,18 +172,18 @@
 
             <div class="col-md-6">
                 <div class="p-4" style="background:white; border-radius:10px; border:1px solid #d8c8b4;">
-                    <h6 class="fw-bold mb-3">Pricing</h6>
+                    <h6 class="fw-bold mb-3">Harga</h6>
 
                     {{-- Original Price / Price Field --}}
                     <div class="mb-3">
-                        <label class="fw-semibold form-label" id="price-label">Price (Rp)</label>
+                        <label class="fw-semibold form-label" id="price-label">Harga (Rp)</label>
                         <input type="number" id="original-price" class="form-control custom-form-control" 
                                value="{{ old('price', $product->is_sale == 0 ? $product->price : $product->original_price) }}" required>
                         @error('price')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                     </div>
 
                     {{-- Sale Toggle --}}
-                    <label class="fw-semibold form-label">Is it on sale?</label>
+                    <label class="fw-semibold form-label">Apakah sedang diskon?</label>
                     <div class="d-flex gap-3" id="sale-toggle-group">
                         <button type="button" class="btn {{ $product->is_sale == 0 ? 'btn-toggle-active' : 'btn-toggle-inactive' }}" data-value="no">No</button>
                         <button type="button" class="btn {{ $product->is_sale == 1 ? 'btn-toggle-active' : 'btn-toggle-inactive' }}" data-value="yes">Yes</button>
@@ -194,7 +194,7 @@
 
                     {{-- Sale Price Field (Only appears if sale is toggled) --}}
                     <div id="sale-price-field" class="mt-3 {{ $product->is_sale == 0 ? 'd-none' : '' }}">
-                        <label class="fw-semibold form-label">Sale Price (Rp)</label>
+                        <label class="fw-semibold form-label">Harga Diskon (Rp)</label>
                         <input type="number" id="sale-price" class="form-control custom-form-control" 
                                value="{{ old('sale_price', $product->is_sale == 1 ? $product->price : null) }}">
                         @error('sale_price')<div class="text-danger mt-1">{{ $message }}</div>@enderror
@@ -209,12 +209,12 @@
             
             {{-- Delete Button (Uses a separate form for DELETE request) --}}
             <button type="button" class="btn px-5 py-2 btn-delete-product" data-bs-toggle="modal" data-bs-target="#deleteProductModal">
-                <i class="bi bi-trash-fill me-1"></i> Delete Product
+                <i class="bi bi-trash-fill me-1"></i> Hapus Produk
             </button>
 
             {{-- Save Changes Button (Submits the main update form) --}}
             <button type="submit" class="btn px-5 py-2 btn-update-product">
-                Save Changes
+                Simpan
             </button>
         </div>
 
@@ -230,7 +230,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="color: #6C2207;">
-                Are you sure you want to permanently delete {{ $product->name }}? This action cannot be undone.
+                Apakah Anda yakin ingin menghapus {{ $product->name }} secara permanen?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -240,7 +240,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-delete-product">
-                        Yes, Delete It
+                        Yes
                     </button>
                 </form>
             </div>

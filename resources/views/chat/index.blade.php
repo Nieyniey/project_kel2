@@ -72,8 +72,8 @@
                 <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
-                <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                    {{ Auth::user()->is_seller ? 'Chat Buyer' : 'Chat Seller' }}
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                    {{ Auth::user()->is_seller ? 'Chat Pembeli' : 'Chat Penjual' }}
                 </h5>
             </div>
         </div>
@@ -87,7 +87,7 @@
             {{-- Content previously here is now in the fixed header --}}
 
             @if ($chats->isEmpty())
-                <p class="text-center p-4 text-muted">You have no active conversations.</p>
+                <p class="text-center p-4 text-muted">Belum ada chat aktif.</p>
             @else
                 <div class="list-group list-group-flush">
                     @foreach ($chats as $chat)
@@ -98,7 +98,7 @@
                             
                             $profileImageUrl = $otherUser->profile_photo 
                                 ? asset('storage/' . $otherUser->profile_photo) 
-                                : asset('default-avatar.jpg'); // Ensure this fallback exists
+                                : asset('default-avatar.jpg'); 
                         @endphp
 
                         {{-- Chat Item --}}
@@ -116,7 +116,7 @@
                                     @if ($lastMessage)
                                         {{ Str::limit($lastMessage->content, 30) }}
                                     @else
-                                        Start a conversation.
+                                        Mulailah sebuah chat.
                                     @endif
                                 </small>
                             </div>
@@ -129,7 +129,7 @@
         {{-- Main Chat Content (Right Panel) - Empty on index page --}}
         <div class="col-12 col-md-8 d-none d-md-block chat-main-panel">
             <div class="d-flex align-items-center justify-content-center h-100">
-                <p class="text-muted">Select a chat to start messaging.</p>
+                <p class="text-muted">Pilih sebuah chat untuk pesan.</p>
             </div>
         </div>
     </div>

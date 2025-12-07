@@ -76,8 +76,8 @@
                 <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
-                <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                    Settings
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                    Pengaturan Penjual
                 </h5>
             </div>
         </div>
@@ -99,7 +99,7 @@
                             </div>
                             <h5 class="fw-bold mb-0">{{ $seller->store_name ?? 'Your Store' }}</h5>
                             <h5> </h5>
-                            <small class="text-muted">Seller</small>
+                            <small class="text-muted">Penjual</small>
                         </div>
 
                         {{-- Navigation Links --}}
@@ -109,14 +109,14 @@
                             <a href="{{ route('seller.settings', ['tab' => 'store-info']) }}" 
                             class="list-group-item list-group-item-action border-0 {{ $activeTab == 'store-info' ? 'seller-active-link shadow-sm' : '' }}" 
                             style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-shop me-2"></i> Store Information
+                                <i class="bi bi-shop me-2"></i> Informasi Toko
                             </a>
                             
                             {{-- 2. User Page (Switch to Buyer Settings) --}}
                             <a href="{{ route('seller.settings', ['tab' => 'user-page']) }}" 
                                 class="list-group-item list-group-item-action border-0 {{ $activeTab == 'user-page' ? 'seller-active-link shadow-sm' : '' }}" 
                                 style="background-color: transparent; color: #6C2207;">
-                                    <i class="bi bi-person-circle me-2"></i> User Page
+                                    <i class="bi bi-person-circle me-2"></i> Mode User
                             </a>
                             
                             {{-- Log Out --}}
@@ -142,14 +142,14 @@
 
                 {{-- 1. Store Information (Default Tab) --}}
                 @if ($activeTab == 'store-info')
-                    <h3 class="fw-bold mb-4">Store Information</h3>
+                    <h3 class="fw-bold mb-4">Informasi Toko</h3>
 
                     <form action="{{ route('seller.settings.update.store') }}" method="POST">
                         @csrf
                     
                         {{-- Store Name --}}
                         <div class="mb-4">
-                            <label for="store_name" class="form-label fw-bold">Store Name</label>
+                            <label for="store_name" class="form-label fw-bold">Nama Toko</label>
                             <input type="text" class="form-control @error('store_name') is-invalid @enderror custom-form-control" 
                                     id="store_name" name="store_name" 
                                     value="{{ old('store_name', $seller->store_name) }}" 
@@ -161,10 +161,10 @@
                     
                         {{-- Description --}}
                         <div class="mb-4">
-                            <label for="description" class="form-label fw-bold">Store Description</label>
+                            <label for="description" class="form-label fw-bold">Deskripsi Toko</label>
                             <textarea class="form-control @error('description') is-invalid @enderror custom-form-control" 
                                     id="description" name="description" rows="4"
-                                    placeholder="Tell buyers about your store and products.">{{ old('description', $seller->description) }}</textarea>
+                                    placeholder="Deskripsikan tokomu.">{{ old('description', $seller->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -176,14 +176,14 @@
                             <input type="text" class="form-control @error('instagram') is-invalid @enderror custom-form-control" 
                                     id="instagram" name="instagram" 
                                     value="{{ old('instagram', $seller->instagram) }}"
-                                    placeholder="@your_instagram_handle">
+                                    placeholder="@username_instagrammu">
                             @error('instagram')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     
                         <div class="mb-4">
-                            <label for="status" class="form-label fw-bold">Store Status</label>
+                            <label for="status" class="form-label fw-bold">Status Toko</label>
                             <select class="form-select @error('status') is-invalid @enderror custom-form-control" 
                                     id="status" 
                                     name="status"
@@ -192,20 +192,16 @@
                                 @php $currentStatus = old('status', $seller->status ?? 'inactive'); @endphp
 
                                 <option value="active" {{ $currentStatus == 'active' ? 'selected' : '' }}>
-                                    Active (Open for business)
+                                    Aktif 
                                 </option>
                                 <option value="inactive" {{ $currentStatus == 'inactive' ? 'selected' : '' }}>
-                                    Closed (Temporarily unavailable)
+                                    Tutup 
                                 </option>
                             </select>
 
                             @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-
-                            <small id="statusHelp" class="form-text text-muted">
-                                Setting your store to Closed will hide all your products from buyers.
-                            </small>
                         </div>
                     
                         <div class="d-flex justify-content-end pt-3">
@@ -222,8 +218,7 @@
                     @endphp
                     
                     <p class="lead" style="color: #6C2207;">
-                        You are currently managing your {{ $user->seller->store_name ?? 'Store' }} settings. Click below to switch to managing your personal account and buyer orders.
-</p>
+                        Anda saat ini sedang mengelola {{ $user->seller->store_name ?? 'Store' }}. Klik di bawah untuk beralih ke pengelolaan akun pribadi dan pesanan pembeli Anda.</p>
 
                     <form action="{{ route('buyer.settings') }}" method="GET">
                         <button type="submit" 

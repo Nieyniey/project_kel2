@@ -89,7 +89,7 @@
                 <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
-                <h5 class="fw-bold mb-0" style="color: #6C2207;">
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
                     Wishlist
                 </h5>
             </div>
@@ -98,12 +98,12 @@
 
 <div class="container wishlist-content-area py-5" style="padding-top: 0px !important;">
     
-    <h3 class="fw-bold mb-4" style="color: #6C2207;">My Favorites</h3>
+    <h3 class="fw-bold mb-4" style="color: #6C2207;">Favoritku</h3>
 
     <div class="row g-4">
         @forelse ($wishlistItems as $item)
             @php
-                $product = $item->product; // Assuming the WishlistItem model has a 'product' relationship
+                $product = $item->product;
             @endphp
             <div class="col-6 col-md-3 col-xl-3"> 
                 <div class="product-card">
@@ -158,7 +158,7 @@
         @empty
             <div class="col-12 text-center py-5">
                 <div class="alert alert-info" style="color: #6C2207; background-color: #FFFBE8; border-color: #FFFBE8;">
-                    You have no items in your Wishlist yet.
+                    Belum ada barang di Wishlist.
                 </div>
             </div>
         @endforelse
@@ -215,8 +215,6 @@ $(document).ready(function() {
         });
     }
 
-    // Attach event listeners to the buttons
-    // Listener for Wishlist button (Heart)
     $(document).on('click', '.add-to-wishlist-btn', function() {
         const button = $(this);
         const productId = button.data('product-id');

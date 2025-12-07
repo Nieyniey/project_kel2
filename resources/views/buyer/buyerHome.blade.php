@@ -236,8 +236,8 @@ body {
         {{-- SALE BANNER --}}
         @if (!request()->has('q') && $saleProducts->count() > 0)
             <div class="p-4" style="background-color: #E8E0BB;">
-                <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
-                <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
+                <h3 class="fw-bold" style="color: #6C2207;">PRODUK DISKON!</h3>
+                <p style="color: #6C2207;">Dapatkan produk-produk ini saat masa diskonnya.</p>
                 <div class="horizontal-scroll-wrapper">
                     <div class="d-flex flex-nowrap align-items-stretch g-3">
                         @foreach ($saleProducts as $product)
@@ -302,7 +302,7 @@ body {
     {{-- RECOMMENDED PRODUCTS --}}
     <div class="container py-5">
         @unless (request()->has('q'))
-            <h3 class="fw-bold mb-4" style="color: #6C2207;">Recommended Products</h3>
+            <h3 class="fw-bold mb-4" style="color: #6C2207;">Rekomendasi untukmu</h3>
         @else
             {{-- Show a title indicating search results --}}
             <h3 class="fw-bold mb-4" style="color: #6C2207;">Search Results for "{{ request('q') }}"</h3>
