@@ -43,20 +43,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
 
-/*
-|--------------------------------------------------------------------------
-| BUYER PUBLIC PAGES
-|--------------------------------------------------------------------------
-*/
-/*
-|--------------------------------------------------------------------------
-| BUYER PUBLIC PAGES
-|--------------------------------------------------------------------------
-*/
-// This route handles the base URL: /buyer/settings
-Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
-Route::get('/buyer/keranjang', [BuyerController::class, 'cart'])->name('buyer.cart');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -96,12 +82,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/update-qty', [CartController::class, 'updateQty'])->name('cart.updateQty');
     Route::post('/cart/delete-item', [CartController::class, 'deleteItem'])->name('cart.deleteItem');
+    Route::post('/cart/add-ajax', [CartController::class, 'addAjax'])->name('cart.add-ajax');
 
     /*
     |---------------- ORDER ----------------|
     */
     Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/order/{order}/cancel', [OrderController::class, 'cancelOrder'])->name('order.cancel');
+    Route::post('/order/{order}/complete', [OrderController::class, 'completeOrder'])->name('order.complete');
+    Route::delete('/order/{order}/delete', [OrderController::class, 'deleteOrder'])->name('order.delete');
 
     /*
     |---------------- PAYMENT ----------------|
@@ -130,18 +120,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::post('/wishlist/remove', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::post('/wishlist/add-ajax', [WishlistController::class, 'addAjax'])->name('wishlist.add-ajax');
 
     /*
     |---------------- BUYER PROFILE ----------------|
     */
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])
         ->name('buyer.settings.update.personal');
-
-    /*
-    |---------------- BUYER → SELLER ----------------|
-    */
-    Route::get('/seller/create', [SellerController::class, 'showCreateStore'])->name('seller.create.form');
-    Route::post('/seller/create', [SellerController::class, 'registerStore'])->name('seller.register');
 
     /*
     |---------------- CHAT ----------------|
@@ -152,12 +137,5 @@ Route::middleware('auth')->group(function () {
         Route::post('/{chat}/{receiver}', [ChatController::class, 'show'])->name('show.user');
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
-
-    // track order detail
-    // Route::get('/track-order/{id}', [OrderController::class, 'trackDetail'])
-    // ->name('track.detail');
-
-    Route::post('/cart/add-ajax', [CartController::class, 'addAjax'])->name('cart.add-ajax');
-    Route::post('/wishlist/add-ajax', [WishlistController::class, 'addAjax'])->name('wishlist.add-ajax');
 
 });

@@ -6,7 +6,7 @@
 
 <style>
     .header-fixed {
-        background-color: #FFFEF7; /* Navigation and Right Square Background */
+        background-color: #FFFEF7; 
         width: 100%;
         position: sticky; 
         top: 0;
@@ -99,7 +99,7 @@
     }
 </style>
 
-{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+{{-- Header --}}
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
@@ -115,7 +115,7 @@
 
 <div class="container py-4">
     
-    {{-- 1. SELLER INFORMATION SECTION (Matches image_fc2d6f.png) --}}
+    {{-- 1. SELLER INFORMATION SECTION --}}
     <div class="seller-info-box mb-5">
         <div class="d-flex align-items-start">
             {{-- Seller Profile Picture --}}
@@ -143,9 +143,7 @@
     <h3 class="fw-bold product-list-title">Products from {{ $seller->name }}</h3>
 
     <div class="row g-4">
-        {{-- Loop through the $products collection fetched in the controller --}}
         @forelse ($products as $product)
-            {{-- The product card structure from your previous code is re-used here --}}
             <div class="col-6 col-md-3 col-xl-3"> 
                 <div class="product-card">
                     <div class="product-image-container product-image-shadow">
@@ -170,7 +168,6 @@
                         {{-- Action buttons (Wishlist/Cart) are shown for buyer interaction --}}
                         <div class="d-flex justify-content-center gap-3 mt-2">
                             @php
-                                // We must check Auth::user() here to see if a BUYER is logged in
                                 $buyer = Auth::user(); 
                                 $is_in_cart = $buyer ? $buyer->inCart($product->product_id) : false; 
                                 $is_in_wishlist = $buyer ? $buyer->inWishlist($product->product_id) : false;

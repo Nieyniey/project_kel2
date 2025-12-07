@@ -93,37 +93,11 @@ class BuyerController extends Controller
         return redirect()->route('buyer.settings')->with('success', 'Personal Information successfully updated!');
     }
 
-    public function cart()
-    {
-        // Dummy cart
-        $cartItems = [
-            [
-                'id' => 1,
-                'name' => 'Black Knit Sweater',
-                'price' => 120000,
-                'qty' => 1,
-                'image' => '/images/sample1.png'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Vintage Jacket',
-                'price' => 250000,
-                'qty' => 1,
-                'image' => '/images/sample2.png'
-            ],
-        ];
-
-        return view('buyer.keranjang.buyerKeranjang', compact('cartItems'));
-    }
-
     public function changeAddressPage($order_id)
     {
         return view('buyer.keranjang.changeaddress', compact('order_id'));
     }
 
-    // -------------------------------
-    // SAVE NEW ADDRESS
-    // -------------------------------
     public function saveAddress(Request $request)
     {
         $request->validate([

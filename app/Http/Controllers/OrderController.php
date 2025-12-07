@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,7 +49,7 @@ class OrderController extends Controller
         $total = $subtotal + $shipping;
 
         // Ambil alamat default user
-        $address = \App\Models\Address::where('user_id', Auth::id())
+        $address = Address::where('user_id', Auth::id())
             ->where('is_default', 1)
             ->first();
 
@@ -88,5 +89,52 @@ class OrderController extends Controller
             ->findOrFail($id);
 
         return view('buyer.order.show', compact('order'));
+    }
+
+    // CANCEL ORDER
+    public function cancelOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
+            return back()->with('error', 'Order cannot be cancelled.');
+        }
+
+        $order->status = 'cancelled';
+        $order->save();
+
+        return back()->with('success', 'Order #' . $order->order_id . ' has been cancelled.');
+    }
+
+    // COMPLETE ORDER
+    public function completeOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'paid') {
+            return back()->with('error', 'Order has not been paid yet.');
+        }
+
+        if (in_array($order->status, ['completed', 'cancelled'])) {
+            return back()->with('error', 'Order is already completed or cancelled.');
+        }
+
+        $order->status = 'completed';
+        $order->save();
+
+        return back()->with('success', 'Order #' . $order->order_id . ' has been marked as completed.');
+    }
+
+    // DELETE ORDER
+    public function deleteOrder(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            return back()->with('error', 'You do not have permission to delete this order.');
+        }
+
+        if (!in_array($order->status, ['completed', 'cancelled'])) {
+            return back()->with('error', 'Only completed or cancelled orders can be deleted.');
+        }
+
+        $order->items()->delete();
+        $order->delete();
+
+        return back()->with('success', 'Order history #' . $order->order_id . ' has been deleted.');
     }
 }

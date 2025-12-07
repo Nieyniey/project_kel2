@@ -12,7 +12,6 @@
 
 @section('content')
 <style>
-    /* ... (Your existing styles here) ... */
     .header-fixed {
         background-color: #FFFEF7;
         width: 100%;
@@ -56,7 +55,7 @@
 
 </style>
 
-{{-- Header: Back Button and Title (Fixed) --}}
+{{-- Header --}}
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
@@ -167,8 +166,6 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        {{-- NOTE: 'status' is set in the controller, so no form field is needed here. --}}
 
                         {{-- Action Button --}}
                         <div class="d-flex justify-content-end pt-3">
