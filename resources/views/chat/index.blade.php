@@ -5,9 +5,8 @@
 @section('content')
 
 <style>
-    /* STYLES FOR THE FIXED HEADER CONTAINER (Copied from Wishlist) */
     .header-fixed {
-        background-color: #FFFEF7; /* Navigation and Right Square Background */
+        background-color: #FFFEF7; 
         width: 100%;
         position: sticky; 
         top: 0;
@@ -17,45 +16,38 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
 
-    /* STYLE FOR THE MAIN CHAT CONTENT PUSH */
     .chat-content-area {
-        /* Set max height for the chat body to enable scrolling within the panel */
         max-height: calc(100vh - 60px); 
-        overflow: hidden; /* Prevent the entire body from scrolling unnecessarily */
+        overflow: hidden; 
     }
     
-    /* Styling for the Left Panel (Chat List) */
     .chat-list-panel {
         background-color: #f7e6d1;
-        max-height: calc(100vh - 60px); /* Adjust max-height based on header height */
-        overflow-y: auto; /* Enable scrolling for the list */
+        max-height: calc(100vh - 60px); 
+        overflow-y: auto; 
     }
 
-    /* Styling for the Right Panel (Default Chat View) */
     .chat-main-panel {
         background-color: #fff9f0;
-        max-height: calc(100vh - 60px); /* Adjust max-height based on header height */
+        max-height: calc(100vh - 60px); 
     }
 
-    /* Custom style for the Chat List Header (Based on image_76cda3.png) */
     .chat-list-header {
-        background-color: #5c4a3e; /* Choose a color that matches your design, this is a placeholder */
+        background-color: #5c4a3e; 
         color: white;
         padding: 15px;
     }
 
-    /* Adjusting the chat list item appearance */
     .list-group-item-action {
         transition: background-color 0.2s;
     }
 
-    /* Ensure active chat item is highlighted */
     .list-group-item.bg-light {
-        background-color: #FFFBE8 !important; /* Lighter shade of background for active */
+        background-color: #FFFBE8 !important; 
     }
 </style>
 
-{{-- Header: Back Button and Title (Fixed/Sticky) --}}
+{{-- Header: Back Button and Title --}}
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
@@ -92,7 +84,7 @@
                         @endphp
 
                         {{-- Chat Item --}}
-                        <a href="{{ route('chat.show.user', $otherUser->id) }}" 
+                        <a href="{{ route('chat.show', $otherUser->id) }}"
                            class="list-group-item list-group-item-action d-flex align-items-center p-3 text-dark border-bottom {{ $isActive ? 'bg-light' : '' }}" 
                            aria-current="{{ $isActive ? 'true' : 'false' }}">
                             

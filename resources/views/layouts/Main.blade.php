@@ -34,7 +34,7 @@
             <img src="/icons/chat.png" style="width:20px;">
         </a>
 
-        <a href="{{ route('buyer.cart') }}">
+        <a href="{{ route('cart.index') }}">
             <img src="/icons/bag.png" style="width:20px;">
         </a>
     </div>

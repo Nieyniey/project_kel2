@@ -4,15 +4,13 @@
 
 @section('content')
 <style>
-    /* 2. Switched Color Definitions */
     :root {
-        --color-page-bg: #FFFBE8; /* Lightest Cream - Page BG / Main Chat Content BG */
-        --color-chat-list-bg: #E8E0BB; /* Medium Cream - Chat List BG / Header BG */
-        --color-brown: #6C2207; /* Brown Text */
-        --color-white: #FFFEF7; /* Header Background / Input Footer BG */
+        --color-page-bg: #FFFBE8; 
+        --color-chat-list-bg: #E8E0BB; 
+        --color-brown: #6C2207; 
+        --color-white: #FFFEF7; 
     }
 
-    /* 5. Page Background & 1. No Side Gap */
     body {
         background-color: var(--color-page-bg);
         color: var(--color-brown);
@@ -20,7 +18,6 @@
         padding: 0;
     }
 
-    /* Header Styling */
     .header-fixed {
         background-color: var(--color-white);
         width: 100%;
@@ -32,12 +29,10 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
     
-    /* Global Brown Text */
     .text-brown {
         color: var(--color-brown) !important;
     }
     
-    /* 2. Chat List Background */
     .chat-list-container {
         background-color: var(--color-chat-list-bg);
         height: calc(100vh - 80px); 
@@ -52,43 +47,34 @@
     .list-group-item {
         background-color: var(--color-chat-list-bg);
         border: none;
-        /* 3. Add border at the bottom of the chat list item */
         border-bottom: 1px solid rgba(108, 34, 7, 0.2);
     }
 
-    /* 4. Main Message Area */
     .message-area {
         background-color: var(--color-page-bg);
-        /* Takes up remaining height before the fixed input bar */
         max-height: calc(100vh - 160px); 
         overflow-y: auto; 
     }
     
-    /* 4. Message Input Footer (Fixed to Bottom) */
     .chat-input-footer {
         background-color: var(--color-white) !important;
         position: fixed;
         bottom: 0;
         z-index: 999; 
         border-top: 1px solid rgba(0, 0, 0, 0.1); 
-        /* Default full width for mobile */
         left: 0;
         right: 0; 
         width: auto; 
     }
 
-    /* FIX: Set both left and right for fixed element on desktop */
     @media (min-width: 768px) {
         .chat-input-footer {
-            /* Start position is the width of col-md-4 (33.333%) */
             left: 33.333333% !important; 
-            /* End position is the right edge of the viewport (no gap on the far right) */
             right: 0 !important; 
             width: auto !important; 
         }
     }
     
-    /* Message bubbles specific styling */
     .message-bubble-sender {
         background-color: #D8C8B4 !important;
         color: var(--color-brown) !important;
@@ -103,14 +89,13 @@
         color: rgba(108, 34, 7, 0.7) !important;
     }
     
-    /* REMOVED: .container-fluid padding override */
 </style>
 
 {{-- Header: Back Button and Title (Fixed/Sticky) --}}
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
-                <a href="{{ route('chat.index') }}" class="text-decoration-none me-3 text-brown" style="font-size: 1.5rem;">
+                <a href="{{ route('homeIn') }}" class="text-decoration-none me-3 text-brown" style="font-size: 1.5rem;">
                     &leftarrow;
                 </a>
                 <h5 class="fw-bold mb-0 text-brown">

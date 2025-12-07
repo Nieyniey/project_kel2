@@ -100,8 +100,8 @@ class ChatController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        // Redirect kembali ke halaman chat room
-        return redirect()->route('chat.show', $chat->id)->with('success', 'Pesan terkirim!');
+        $receiverId = ($chat->user1_id === Auth::id()) ? $chat->user2_id : $chat->user1_id;
+        return redirect()->route('chat.show', $receiverId)->with('success', 'Pesan terkirim!');
     }
     
 }
