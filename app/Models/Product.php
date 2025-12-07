@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'product_id';
+    protected $primaryKey = 'product_id';   // PK sesuai ERD
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'seller_id',
@@ -23,13 +24,13 @@ class Product extends Model
         'image_path',
     ];
 
-
-    public function seller(){
-        return $this->belongsTo(Seller::class, 'seller_id');
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class, 'seller_id', 'seller_id');
     }
 
-    public function category(): BelongsTo
+    public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
     }
 }
