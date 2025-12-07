@@ -8,11 +8,11 @@
 
     <a href="{{ route('payment.page', $order_id) }}"
        style="color:#FF6E00; font-size:20px; text-decoration:none;">
-        ← Back
+        ← Kembali
     </a>
 
-    <h1 style="margin-top:20px; font-weight:700;">Change Address</h1>
-    <p style="color:#555;">Update your shipping address below:</p>
+    <h1 style="margin-top:20px; font-weight:700;">Ubah Alamat</h1>
+    <p style="color:#555;">Perbarui alamat pengiriman Anda di bawah ini:</p>
 
     <form method="POST" action="{{ route('address.change.save') }}"
           style="background:#FFFBE8; padding:25px; border-radius:15px; margin-top:20px;">
@@ -21,16 +21,15 @@
 
         <input type="hidden" name="order_id" value="{{ $order_id }}">
 
-        <label style="font-weight:600;">Full Address</label>
+        <label style="font-weight:600;">Alamat Lengkap</label>
         <textarea name="address" required
             style="width:100%; padding:12px; border-radius:8px; 
             border:2px solid #FF8A3D; margin-bottom:18px; height:80px;"
-            placeholder="Street name, building, etc."></textarea>
-
+            placeholder="Nama jalan, gedung, dll."></textarea>
         <button type="submit"
                 style="width:100%; background:#FF6E00; border:none; padding:14px; 
                 color:white; border-radius:10px; font-size:18px; margin-top:10px;">
-            Save Address
+            Simpan Alamat
         </button>
 
     </form>

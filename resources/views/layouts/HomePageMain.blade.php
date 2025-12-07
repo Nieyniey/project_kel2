@@ -19,11 +19,11 @@
 
     {{-- Description --}}
     <p style="max-width: 820px; margin: 0 auto; font-size: 17px; color: #6b6b6b; line-height: 1.6;">
-        With WantToSell, we aim to provide affordable items in a variety of designs.
-        Here on WantToSell, you can find pieces that truly fit your wish list. 
-        By purchasing second-hand items, we not only help decelerate industrial production 
-        but also encourage a circular economy—contributing to the improvement of our nation’s 
-        overall economic prosperity and the well-being of our global environment.
+        Dengan WantToSell, kami bertujuan untuk menyediakan barang-barang terjangkau dalam berbagai desain.
+        Di WantToSell, Anda dapat menemukan barang-barang yang benar-benar sesuai dengan daftar keinginan Anda.
+        Dengan membeli barang bekas, kami tidak hanya membantu memperlambat produksi industri
+        tetapi juga mendorong ekonomi sirkular—berkontribusi pada peningkatan
+        kemakmuran ekonomi bangsa kita secara keseluruhan dan kesejahteraan lingkungan global kita.
     </p>
 
     {{-- Image Gallery --}}

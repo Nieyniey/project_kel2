@@ -27,10 +27,10 @@
         font-weight:600;
         margin-bottom:20px;
     ">
-        <span style="width:45%;">Product</span>
-        <span style="width:20%;">Price</span>
-        <span style="width:20%;">Quantity</span>
-        <span style="width:10%;">Remove</span>
+        <span style="width:45%;">Produk</span>
+        <span style="width:20%;">Harga</span>
+        <span style="width:20%;">Banyak</span>
+        <span style="width:10%;">Hapus</span>
     </div>
 
     {{-- CART ITEMS --}}

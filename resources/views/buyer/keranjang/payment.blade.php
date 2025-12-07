@@ -23,14 +23,14 @@
 
     {{-- BACK --}}
     <a href="/cart" style="color:#FF6E00; font-size:18px; text-decoration:none;">
-        ← Payment
+        ← Kembali
     </a>
 
     {{-- HEADER --}}
-    <h2 style="margin-top:20px; font-weight:700;">Hi, {{ Auth::user()->name }},</h2>
+    <h2 style="margin-top:20px; font-weight:700;">Hai, {{ Auth::user()->name }},</h2>
 
     <p style="font-size:18px; margin-bottom:20px;">
-        You need to pay 
+        Anda perlu membayar 
         <span style="color:#FF6E00; font-weight:700;">
             Rp {{ number_format($order->total_price, 0, ',', '.') }}
         </span>
@@ -47,7 +47,7 @@
     ">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <b>Address:</b><br>
+                <b>Alamat:</b><br>
                 {{ $address->address_text }}
                 {{ $address->city ? ', '.$address->city : '' }}
                 {{ $address->postal_code ? ', '.$address->postal_code : '' }}
@@ -62,7 +62,7 @@
                     text-decoration:none;
                     font-size:13px;
                 ">
-                Change Address
+                Ubah Alamat
             </a>
 
         </div>
@@ -122,7 +122,7 @@
                 box-shadow:0 3px 10px rgba(0,0,0,0.08);
             ">
 
-                <h4 style="font-weight:700; margin-bottom:20px;">Summary</h4>
+                <h4 style="font-weight:700; margin-bottom:20px;">Ringkasan</h4>
 
                 @foreach ($order->items as $item)
                     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
@@ -136,7 +136,7 @@
                 <hr style="margin:20px 0;">
 
                 <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                    <b>Total order amount</b>
+                    <b>Total pesanan</b>
                     <b style="color:#FF6E00;">
                         Rp {{ number_format($order->total_price, 0, ',', '.') }}
                     </b>
@@ -160,7 +160,7 @@
                             border-radius:10px;
                             cursor:pointer;
                         ">
-                        Pay
+                        Bayar
                     </button>
                 </form>
 

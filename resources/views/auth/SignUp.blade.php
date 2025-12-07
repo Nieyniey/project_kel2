@@ -36,7 +36,7 @@
             @csrf
 
             {{-- NAME --}}
-            <label>Name</label>
+            <label>Nama</label>
             <input type="text" name="name" placeholder="Enter Name"
                 style="
                     width:100%;
@@ -47,7 +47,7 @@
                 " required>
 
             {{-- EMAIL --}}
-            <label>Email Address</label>
+            <label>Alamat Email</label>
             <input type="email" name="email" placeholder="Enter Email Address"
                 style="
                     width:100%;
@@ -58,8 +58,8 @@
                 " required>
 
             {{-- PASSWORD --}}
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Password must consist of 8 characters"
+            <label>Kata Sandi</label>
+            <input type="password" name="password" placeholder="Kata Sandi harus terdiri dari 8 karakter"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -69,8 +69,8 @@
                 " required>
 
             {{-- CONFIRM --}}
-            <label>Confirm Password</label>
-            <input type="password" name="password_confirmation" placeholder="Enter Password"
+            <label>Konfirmasi Kata Sandi</label>
+            <input type="password" name="password_confirmation" placeholder="Masukkan Kata Sandi"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -97,7 +97,7 @@
         </form>
 
         <div style="text-align:center;">
-            <p>Already have an account?</p>
+            <p>Sudah punya akun?</p>
             <a href="/login" style="
                 padding:8px 30px; 
                 border:2px solid #FF6E00;
