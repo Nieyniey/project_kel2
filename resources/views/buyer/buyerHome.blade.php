@@ -244,7 +244,6 @@
                 <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
                 
                 @php
-                    // Use the user model for checking cart/wishlist status, handle guests gracefully
                     $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
                 @endphp
 
@@ -281,14 +280,12 @@
                                         {{-- Product Actions: Cart/Wishlist Buttons --}}
                                         <div class="d-flex justify-content-center gap-3 mt-2">
                                             @php
-                                                // FIX 3 & 4: Use $product->product_id for cart/wishlist checks
                                                 $is_in_cart = $user->inCart($product->product_id); 
                                                 $is_in_wishlist = $user->inWishlist($product->product_id);
                                             @endphp
                         
                                             <button type="button" 
                                                 class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
-                                                {{-- FIX 5: Use $product->product_id for data-product-id --}}
                                                 data-product-id="{{ $product->product_id }}"
                                                 data-action-url="{{ route('cart.add-ajax') }}" 
                                                 title="Add to Cart">
@@ -297,7 +294,6 @@
                         
                                             <button type="button" 
                                                 class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
-                                                {{-- FIX 6: Use $product->product_id for data-product-id --}}
                                                 data-product-id="{{ $product->product_id }}"
                                                 data-action-url="{{ route('wishlist.add-ajax') }}" 
                                                 title="Add to Wishlist">

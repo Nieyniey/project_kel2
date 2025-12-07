@@ -170,14 +170,12 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Re-use your global CSRF setup (if you haven't placed it in your main layout script)
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
 
-    // Helper function for sending AJAX request (copied from buyerHome)
     function sendProductAction(button, url, productId) {
         $.ajax({
             url: url,
@@ -186,27 +184,21 @@ $(document).ready(function() {
                 product_id: productId
             },
             success: function(response) {
-                // Determine if the item is now active/inactive
                 const isActive = response.is_active;
 
                 if (response.action === 'added') {
-                    // Action: Added
                     button.addClass('active');
                     toastr.success('Item added to ' + (url.includes('wishlist') ? 'Wishlist' : 'Cart'));
                 } else {
-                    // Action: Removed
                     button.removeClass('active');
                     toastr.warning('Item removed from ' + (url.includes('wishlist') ? 'Wishlist' : 'Cart'));
                 }
 
-                // If on the Wishlist page and the item was removed, remove the card from the DOM
                 if (url.includes('wishlist') && response.action === 'removed') {
-                    // Find the parent column and fade it out/remove it
                     button.closest('.col-6').fadeOut(300, function() {
                         $(this).remove();
-                        // Check if the list is now empty
+                        
                         if ($('.product-card').length === 0) {
-                            // Simple reload or show the empty state message
                             window.location.reload(); 
                         }
                     });
