@@ -81,7 +81,6 @@
                         <div class="d-flex flex-column align-items-center mb-4">
                             <div class="rounded-circle bg-light border border-secondary d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; overflow: hidden;">
                                 <img src="{{ $profileImageUrl }}" 
-                                            alt="{{ $user->name }}'s Profile Picture" 
                                             class="w-100 h-100 object-fit-cover rounded-circle">
                             </div>
                             <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'User' }}</h5>
@@ -149,7 +148,7 @@
                             <label for="description" class="form-label fw-bold" style="color: #6C2207;">Deskripsi Toko</label>
                             <textarea class="form-control @error('description') is-invalid @enderror custom-form-control" 
                                 id="description" name="description" rows="4"
-                                placeholder="Tell buyers a little about your store, products, and mission.">{{ old('description') }}</textarea>
+                                placeholder="Deskripsikan tokomu..">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -161,7 +160,7 @@
                             <input type="text" class="form-control @error('instagram') is-invalid @enderror custom-form-control" 
                                 id="instagram" name="instagram" 
                                 value="{{ old('instagram') }}"
-                                placeholder="@your_instagram_handle">
+                                placeholder="@username_instagrammu">
                             @error('instagram')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

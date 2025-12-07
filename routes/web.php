@@ -128,7 +128,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])
         ->name('buyer.settings.update.personal');
-
+    Route::get('/seller/create', [SellerController::class, 'showCreateStore'])->name('seller.create.form');
+    Route::post('/seller/register', [SellerController::class, 'registerStore'])->name('seller.register');
     /*
     |---------------- CHAT ----------------|
     */
