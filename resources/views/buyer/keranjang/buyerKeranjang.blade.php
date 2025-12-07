@@ -55,19 +55,25 @@
             data-price="{{ $item->product->price }}"
             style="width:20px; height:20px; margin-right:15px;">
 
-        {{-- IMAGE --}}
-        <div style="width:12%;">
-            <img src="{{ asset($item->product->image) }}"
-                style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
-        </div>
+        {{-- CLICKABLE PRODUCT AREA --}}
+        <a href="{{ route('products.show', $item->product->product_id) }}"
+            style="text-decoration:none; color:inherit; display:flex; width:42%; gap:15px;">
 
-        {{-- INFO --}}
-        <div style="width:30%;">
-            <div style="font-weight:600;">{{ $item->product->name }}</div>
-            <div style="color:gray; font-size:14px;">
-                {{ $item->product->description }}
+            {{-- IMAGE --}}
+            <div style="width:40%;">
+                <img src="{{ asset($item->product->image) }}"
+                     style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
             </div>
-        </div>
+
+            {{-- INFO --}}
+            <div style="width:60%;">
+                <div style="font-weight:600;">{{ $item->product->name }}</div>
+                <div style="color:gray; font-size:14px;">
+                    {{ $item->product->description }}
+                </div>
+            </div>
+
+        </a>
 
         {{-- PRICE --}}
         <div style="width:15%; font-weight:600; color:#FF6E00;">
@@ -129,6 +135,7 @@
 
         <form id="place-order-form" method="POST" action="{{ route('orders.place') }}">
             @csrf
+            <input type="hidden" name="selected_items" id="selected-items-input">
         </form>
 
         <a id="checkout-btn" href="javascript:void(0)"
@@ -150,6 +157,7 @@
 
 @endsection
 
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -158,11 +166,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalText = document.getElementById('total');
     const checkoutBtn = document.getElementById('checkout-btn');
 
+    /* ===========================
+       UPDATE SUMMARY
+    ============================ */
     function updateSummary() {
         let subtotal = 0;
 
         document.querySelectorAll('.cart-item').forEach(item => {
             const checkbox = item.querySelector('.item-check');
+
             if (checkbox && checkbox.checked) {
                 let qty = parseInt(item.querySelector('.qty-number').innerText);
                 let price = parseInt(checkbox.dataset.price);
@@ -171,65 +183,48 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
-        let total = subtotal > 0 ? subtotal + shipping : 0;
-        totalText.innerText = "Rp " + total.toLocaleString('id-ID');
+        totalText.innerText = "Rp " + (subtotal > 0 ? subtotal + shipping : 0).toLocaleString('id-ID');
 
-        if (subtotal > 0) {
-            checkoutBtn.style.background = "#FF6E00";
-            checkoutBtn.style.pointerEvents = 'auto';
-            checkoutBtn.onclick = () => document.getElementById('place-order-form').submit();
-        } else {
-            checkoutBtn.style.background = "#CCC";
-            checkoutBtn.style.pointerEvents = 'none';
-            checkoutBtn.onclick = null;
-        }
+        checkoutBtn.style.background = subtotal > 0 ? "#FF6E00" : "#CCC";
+        checkoutBtn.style.pointerEvents = subtotal > 0 ? "auto" : "none";
     }
 
     updateSummary();
 
+
+    /* ===========================
+       CHECKBOX EVENT
+    ============================ */
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
     });
 
 
-    /* ============================================================
-       QTY BUTTONS (PLUS & MINUS) — FIX LIMIT STOCK
-       ============================================================ */
+    /* ===========================
+       QTY BUTTONS
+    ============================ */
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
 
             let item = this.closest('.cart-item');
             let itemId = item.dataset.itemId;
             let number = item.querySelector('.qty-number');
-            let qty = parseInt(number.innerText);
-
-            let maxStock = parseInt(number.dataset.stock); // ambil stok
+            let oldQty = parseInt(number.innerText);
+            let qty = oldQty;
 
             if (this.dataset.action === "minus") {
-
                 if (qty === 1) {
                     if (confirm("Hapus produk dari keranjang?")) {
                         removeItem(item, itemId);
                     }
                     return;
                 }
-
                 qty--;
-
-            } else if (this.dataset.action === "plus") {
-
-                // ❗ BATASI QTY SESUAI STOCK
-                if (qty >= maxStock) {
-                    alert("Stock hanya " + maxStock);
-                    return;
-                }
-
+            } else {
                 qty++;
             }
 
-            number.innerText = qty;
-
-            // UPDATE KE SERVER (PASTI CEK STOCK JUGA)
+            // SEND TO BACKEND
             let form = new FormData();
             form.append("item_id", itemId);
             form.append("qty", qty);
@@ -238,21 +233,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                 body: form
-            }).then(async res => {
+            })
+            .then(async (res) => {
+                let data = await res.json();
+
                 if (!res.ok) {
-                    let data = await res.json();
-                    alert(data.message || "Stock tidak cukup");
-                    number.innerText = qty - 1; // rollback qty
+                    alert(data.message);
+                    return;
                 }
+
+                number.innerText = qty;
                 updateSummary();
             });
+
         });
     });
 
 
-    /* ============================================================
+    /* ===========================
        DELETE ITEM
-       ============================================================ */
+    ============================ */
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             let item = this.closest('.cart-item');
@@ -278,6 +278,34 @@ document.addEventListener("DOMContentLoaded", function () {
             updateSummary();
         });
     }
+
+
+    /* ===========================
+       CHECKOUT BUTTON
+    ============================ */
+    checkoutBtn.addEventListener("click", function () {
+
+        let selected = [];
+
+        document.querySelectorAll('.cart-item').forEach(item => {
+            let checkbox = item.querySelector('.item-check');
+
+            if (checkbox && checkbox.checked) {
+                selected.push({
+                    id: item.dataset.itemId,
+                    qty: parseInt(item.querySelector('.qty-number').innerText)
+                });
+            }
+        });
+
+        if (selected.length === 0) {
+            alert("Pilih minimal 1 item!");
+            return;
+        }
+
+        document.getElementById('selected-items-input').value = JSON.stringify(selected);
+        document.getElementById('place-order-form').submit();
+    });
+
 });
 </script>
-

@@ -52,7 +52,7 @@
     <div class="card-box">
 
         <h2 style="font-size:20px; font-weight:700; color:#333; margin-bottom:10px;">
-            New Password
+            Kata Sandi Baru
         </h2>
 
         <form method="POST" action="{{ route('reset.save') }}">
@@ -61,7 +61,7 @@
             <input type="hidden" name="email" value="{{ $email }}">
 
             <label style="width:100%; text-align:left; display:block; font-size:14px;">
-                Enter New Password
+                Masukkan Kata Sandi Baru
             </label>
             <input type="password" name="password"
                 style="
@@ -73,7 +73,7 @@
                 " required>
 
             <label style="width:100%; text-align:left; display:block; font-size:14px;">
-                Confirm Password
+                Konfirmasi Kata Sandi
             </label>
             <input type="password" name="password_confirmation"
                 style="
@@ -96,7 +96,7 @@
                     font-size:15px;
                     font-weight:600;
                 ">
-                Finished
+                Selesai
             </button>
         </form>
 
