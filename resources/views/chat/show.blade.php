@@ -129,7 +129,6 @@
                            class="list-group-item list-group-item-action d-flex align-items-center p-3 text-brown {{ $isActive ? 'active' : '' }}">
                             
                             <img src="{{ $profileImageUrl }}" 
-                                 alt="{{ $otherUser->name }}'s Profile" 
                                  class="rounded-circle me-3" 
                                  style="width: 50px; height: 50px; object-fit: cover;">
                             
