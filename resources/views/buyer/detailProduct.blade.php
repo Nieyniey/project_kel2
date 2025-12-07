@@ -157,75 +157,41 @@
 {{-- JAVASCRIPT --}}
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-        /* ---------------- QTY LOGIC ---------------- */
-        let qty = 1;
-        const qtyNumber = document.getElementById("qty-number");
-        const qtyInput = document.getElementById("qty-input");
+    let qty = 1;
+    const maxStock = {{ $product->stock }};
+    const qtyNumber = document.getElementById("qty-number");
+    const qtyInput = document.getElementById("qty-input");
 
-        document.getElementById("qty-minus").onclick = () => {
-            if (qty > 1) qty--;
-            qtyNumber.innerText = qty;
-            qtyInput.value = qty;
-        };
+    // MINUS
+    document.getElementById("qty-minus").onclick = () => {
+        if (qty > 1) {
+            qty--;
+        }
+        qtyNumber.innerText = qty;
+        qtyInput.value = qty;
+    };
 
-        document.getElementById("qty-plus").onclick = () => {
+    // PLUS – LIMIT TIDAK BOLEH > STOCK
+    document.getElementById("qty-plus").onclick = () => {
+        if (qty < maxStock) {
             qty++;
-            qtyNumber.innerText = qty;
-            qtyInput.value = qty;
-        };
-
-        document.getElementById("add-btn").onclick = () => {
-            document.getElementById("add-to-cart-form").submit();
-        };
-
-    });
-
-    $(document).ready(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        
-        function sendProductAction(button, url, productId) {
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
-            
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: {
-                    product_id: productId
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        if (response.is_active) {
-                            button.addClass('active');
-                        } else {
-                            button.removeClass('active');
-                        }
-                    } else {
-                        alert('Action failed: ' + response.message);
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 401) {
-                        alert('Please log in to use this feature.');
-                    } else {
-                        alert('An unknown error occurred.');
-                    }
-                }
-            });
+        } else {
+            alert("Stock hanya tersedia " + maxStock);
         }
 
-        $('.add-to-wishlist-btn').on('click', function() {
-            const button = $(this);
-            const productId = button.data('product-id');
-            const url = button.data('action-url');
-            sendProductAction(button, url, productId);
-        });
-    });
+        qtyNumber.innerText = qty;
+        qtyInput.value = qty;
+    };
+
+    // Submit add to cart
+    document.getElementById("add-btn").onclick = () => {
+        document.getElementById("add-to-cart-form").submit();
+    };
+
+});
 </script>
+
 @endpush
 @endsection

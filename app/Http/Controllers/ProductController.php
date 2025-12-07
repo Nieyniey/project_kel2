@@ -11,24 +11,22 @@ class ProductController extends Controller
     // Show product detail
     public function show($id)
     {
-        $product = Product::with('seller')->findOrFail($id);
+        $product = Product::with(['seller', 'category'])
+                        ->where('product_id', $id)
+                        ->firstOrFail();
 
         $isFavorite = false;
 
         if (auth()->check()) {
-
-            // ambil wishlist user atau bikin kalo belum ada
             $wishlist = \App\Models\Wishlist::firstOrCreate([
                 'user_id' => auth()->id()
             ]);
 
-            // cek apakah produk sudah ada di wishlist_items
             $isFavorite = \App\Models\WishlistItem::where('wishlist_id', $wishlist->id)
                             ->where('product_id', $product->product_id)
                             ->exists();
         }
 
-        // Similar products
         $similarProducts = Product::where('category_id', $product->category_id)
             ->where('product_id', '!=', $product->product_id)
             ->take(6)

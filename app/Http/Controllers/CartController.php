@@ -56,31 +56,28 @@ class CartController extends Controller
 
         // CEK STOK
         if ($request->qty > $product->stock) {
-            return back()->with('error', 'Stock tidak cukup');
+            return back()->with('error', 'Stock tidak cukup. Maksimal: ' . $product->stock);
         }
 
-        // GET cart user
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-        // Cek kalau item sudah ada
         $item = CartItem::where('cart_id', $cart->id)
                         ->where('product_id', $product->product_id)
                         ->first();
 
+        // Jika item sudah ada di cart
         if ($item) {
 
-            // cek lagi total qty kalau ditambah
+            // cek total setelah penambahan
             if ($item->qty + $request->qty > $product->stock) {
                 return back()->with('error', 'Stock tidak cukup untuk jumlah yang diminta');
             }
 
-            // kalau stok cukup → tambah qty
             $item->qty += $request->qty;
             $item->save();
 
         } else {
-
-            // item belum ada → buat baru
+            // buat baru
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $product->product_id,
@@ -91,7 +88,6 @@ class CartController extends Controller
 
         return redirect()->route('cart.index')->with('success', 'Produk ditambahkan ke keranjang');
     }
-
 
     /**
      * Add/remove item from cart via AJAX (toggle)
