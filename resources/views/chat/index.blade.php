@@ -5,8 +5,28 @@
 @section('content')
 
 <style>
+    :root {
+        --color-main-text: #6C2207; 
+        --color-page-bg: #FFFBE8; 
+        --color-list-bg: #FFFEF7; 
+        --color-main-panel-bg: #E8E0BB; 
+    }
+
+    body {
+        color: var(--color-main-text);
+        background-color: var(--color-page-bg);
+    }
+    
+    .text-main {
+        color: var(--color-main-text) !important;
+    }
+    
+    .text-dark {
+        color: var(--color-main-text) !important; 
+    }
+
     .header-fixed {
-        background-color: #FFFEF7; 
+        background-color: var(--color-list-bg); 
         width: 100%;
         position: sticky; 
         top: 0;
@@ -22,28 +42,26 @@
     }
     
     .chat-list-panel {
-        background-color: #f7e6d1;
+        background-color: var(--color-list-bg);
         max-height: calc(100vh - 60px); 
         overflow-y: auto; 
     }
 
     .chat-main-panel {
-        background-color: #fff9f0;
+        background-color: var(--color-main-panel-bg);
         max-height: calc(100vh - 60px); 
-    }
-
-    .chat-list-header {
-        background-color: #5c4a3e; 
-        color: white;
-        padding: 15px;
     }
 
     .list-group-item-action {
         transition: background-color 0.2s;
     }
-
+    
     .list-group-item.bg-light {
-        background-color: #FFFBE8 !important; 
+        background-color: var(--color-page-bg) !important; 
+    }
+
+    .text-muted {
+        color: rgba(108, 34, 7, 0.7) !important;
     }
 </style>
 
@@ -54,8 +72,8 @@
                 <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
-                <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                    {{ Auth::user()->is_seller ? 'Chat Buyer' : 'Chat Seller' }}
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                    {{ Auth::user()->is_seller ? 'Chat Pembeli' : 'Chat Penjual' }}
                 </h5>
             </div>
         </div>
@@ -69,7 +87,7 @@
             {{-- Content previously here is now in the fixed header --}}
 
             @if ($chats->isEmpty())
-                <p class="text-center p-4 text-muted">You have no active conversations.</p>
+                <p class="text-center p-4 text-muted">Belum ada chat aktif.</p>
             @else
                 <div class="list-group list-group-flush">
                     @foreach ($chats as $chat)
@@ -80,7 +98,7 @@
                             
                             $profileImageUrl = $otherUser->profile_photo 
                                 ? asset('storage/' . $otherUser->profile_photo) 
-                                : asset('default-avatar.jpg'); // Ensure this fallback exists
+                                : asset('default-avatar.jpg'); 
                         @endphp
 
                         {{-- Chat Item --}}
@@ -89,7 +107,6 @@
                            aria-current="{{ $isActive ? 'true' : 'false' }}">
                             
                             <img src="{{ $profileImageUrl }}" 
-                                 alt="{{ $otherUser->name }}'s Profile" 
                                  class="rounded-circle me-3" 
                                  style="width: 50px; height: 50px; object-fit: cover;">
                             
@@ -99,7 +116,7 @@
                                     @if ($lastMessage)
                                         {{ Str::limit($lastMessage->content, 30) }}
                                     @else
-                                        Start a conversation.
+                                        Mulailah sebuah chat.
                                     @endif
                                 </small>
                             </div>
@@ -112,7 +129,7 @@
         {{-- Main Chat Content (Right Panel) - Empty on index page --}}
         <div class="col-12 col-md-8 d-none d-md-block chat-main-panel">
             <div class="d-flex align-items-center justify-content-center h-100">
-                <p class="text-muted">Select a chat to start messaging.</p>
+                <p class="text-muted">Pilih sebuah chat untuk pesan.</p>
             </div>
         </div>
     </div>

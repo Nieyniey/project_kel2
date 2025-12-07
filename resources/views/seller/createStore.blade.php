@@ -59,11 +59,11 @@
     <div class="header-fixed">
         <div class="container"> 
             <div class="d-flex align-items-center">
-                <a href="{{ route('home') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
                 <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                    Settings
+                    Pengaturan
                 </h5>
             </div>
         </div>
@@ -84,8 +84,8 @@
                                             alt="{{ $user->name }}'s Profile Picture" 
                                             class="w-100 h-100 object-fit-cover rounded-circle">
                             </div>
-                            <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
-                            <small class="text-muted">General User</small>
+                            <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'User' }}</h5>
+                            <small class="text-muted">User</small>
                         </div>
 
                         {{-- Navigation Links --}}
@@ -94,19 +94,19 @@
                             <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
                                 class="list-group-item list-group-item-action border-0" 
                                 style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-person-fill me-2"></i> Personal Information
+                                <i class="bi bi-person-fill me-2"></i> Informasi Personal
                             </a>
                             {{-- 2. Your Orders --}}
                             <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
                                 class="list-group-item list-group-item-action border-0" 
                                 style="background-color: transparent; color: #6C2207;">
-                                <i class="bi bi-box-seam-fill me-2"></i> Your Orders
+                                <i class="bi bi-box-seam-fill me-2"></i> Pesanan
                             </a>
                             {{-- 3. Seller Page (Highlighted) --}}
                             <a href="{{ route('seller.create.form') }}" 
                             class="list-group-item list-group-item-action border-0 settings-active-link shadow-sm" 
                             style="background-color: transparent;">
-                                <i class="bi bi-shop me-2"></i> Seller Page
+                                <i class="bi bi-shop me-2"></i> Mode Penjual
                             </a>
                             
                             {{-- Log Out --}}
@@ -134,7 +134,7 @@
 
                         {{-- 1. Store Name --}}
                         <div class="mb-4">
-                            <label for="store_name" class="form-label fw-bold" style="color: #6C2207;">Store Name <span class="text-danger">*</span></label>
+                            <label for="store_name" class="form-label fw-bold" style="color: #6C2207;">Nama Toko<span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('store_name') is-invalid @enderror custom-form-control" 
                                 id="store_name" name="store_name" 
                                 value="{{ old('store_name') }}" 
@@ -146,7 +146,7 @@
 
                         {{-- 2. Description (Now a functional textarea) --}}
                         <div class="mb-4">
-                            <label for="description" class="form-label fw-bold" style="color: #6C2207;">Store Description</label>
+                            <label for="description" class="form-label fw-bold" style="color: #6C2207;">Deskripsi Toko</label>
                             <textarea class="form-control @error('description') is-invalid @enderror custom-form-control" 
                                 id="description" name="description" rows="4"
                                 placeholder="Tell buyers a little about your store, products, and mission.">{{ old('description') }}</textarea>
@@ -157,7 +157,7 @@
 
                         {{-- 3. Instagram @ (Now a functional input) --}}
                         <div class="mb-4">
-                            <label for="instagram" class="form-label fw-bold" style="color: #6C2207;">Instagram @ (Optional)</label>
+                            <label for="instagram" class="form-label fw-bold" style="color: #6C2207;">Instagram @ (Opsional)</label>
                             <input type="text" class="form-control @error('instagram') is-invalid @enderror custom-form-control" 
                                 id="instagram" name="instagram" 
                                 value="{{ old('instagram') }}"
@@ -169,7 +169,7 @@
 
                         {{-- Action Button --}}
                         <div class="d-flex justify-content-end pt-3">
-                            <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Create</button>
+                            <button type="submit" class="btn border px-4 btn-seller-mode btn-custom-med">Buat Toko</button>
                         </div>
 
                     </form>

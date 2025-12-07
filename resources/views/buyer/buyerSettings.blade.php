@@ -81,8 +81,8 @@
                 <a href="{{ route('homeIn') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
                     &leftarrow;
                 </a>
-                <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                    Settings
+                <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                    Pengaturan
                 </h5>
             </div>
         </div>
@@ -103,8 +103,8 @@
                                     <img src="{{ $profileImageUrl }}" 
                                             class="w-100 h-100 object-fit-cover rounded-circle">
                                 </div>
-                                <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'General User' }}</h5>
-                                <small class="text-muted">General User</small>
+                                <h5 class="fw-bold mb-0" style="color: #6C2207;">{{ $user->name ?? 'User' }}</h5>
+                                <small class="text-muted">User</small>
                             </div>
 
                             {{-- Navigation Links --}}
@@ -113,19 +113,19 @@
                                 <a href="{{ route('buyer.settings', ['tab' => 'personal-info']) }}" 
                                     class="list-group-item list-group-item-action border-0 {{ $activeTab == 'personal-info' ? 'settings-active-link shadow-sm' : '' }}" 
                                     style="background-color: transparent; color: #6C2207;">
-                                    <i class="bi bi-person-fill me-2"></i> Personal Information
+                                    <i class="bi bi-person-fill me-2"></i> Informasi Personal
                                 </a>
                                 {{-- Your Orders --}}
                                 <a href="{{ route('buyer.settings', ['tab' => 'orders']) }}" 
                                     class="list-group-item list-group-item-action border-0 {{ $activeTab == 'orders' ? 'settings-active-link shadow-sm' : '' }}" 
                                     style="background-color: transparent; color: #6C2207;">
-                                    <i class="bi bi-box-seam-fill me-2"></i> Your Orders
+                                    <i class="bi bi-box-seam-fill me-2"></i> Pesanan
                                 </a>
                                 {{-- Seller Page --}}
                                 <a href="{{ route('buyer.settings', ['tab' => 'seller-mode']) }}" 
                                     class="list-group-item list-group-item-action border-0 {{ $activeTab == 'seller-mode' ? 'settings-active-link shadow-sm' : '' }}" 
                                     style="background-color: transparent; color: #6C2207;">
-                                    <i class="bi bi-shop me-2"></i> Seller Page
+                                    <i class="bi bi-shop me-2"></i> Mode Penjual
                                 </a>
                                 
                                 {{-- Log Out --}}
@@ -143,14 +143,14 @@
                 <div class="card shadow-sm border-0 p-4" style="background-color: #FFFEF7;">
                     
                     @if ($activeTab == 'personal-info')
-                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Personal Information</h3>
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Informasi Personal</h3>
 
                         @if(session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
                         @if($errors->any())
                             {{-- Show a general error message if there are any validation issues --}}
-                            <div class="alert alert-danger">Please check the form for errors.</div>
+                            <div class="alert alert-danger">Periksa kembali untuk error.</div>
                         @endif
 
                         <form action="{{ route('buyer.settings.update.personal') }}" method="POST" enctype="multipart/form-data">
@@ -180,7 +180,7 @@
                             
                             {{-- Phone Number --}}
                             <div class="mb-3">
-                                <label for="phone" class="form-label fw-bold" style="color: #6C2207;">Phone Number</label>
+                                <label for="phone" class="form-label fw-bold" style="color: #6C2207;">Nomor Telepon</label>
                                 <input type="text" class="form-control @error('phone') is-invalid @enderror custom-form-control" 
                                         id="phone" name="phone" 
                                         value="{{ old('phone', $user->phone) }}">
@@ -191,7 +191,7 @@
 
                             {{-- DOB --}}
                             <div class="mb-3">
-                                <label for="DOB" class="form-label fw-bold" style="color: #6C2207;">Date of Birth</label>
+                                <label for="DOB" class="form-label fw-bold" style="color: #6C2207;">Tanggal Lahir</label>
                                 <input type="date" class="form-control @error('DOB') is-invalid @enderror custom-form-control" 
                                         id="DOB" name="DOB" 
                                         value="{{ old('DOB', $user->DOB) }}">
@@ -202,7 +202,7 @@
 
                             {{-- Profile Photo --}}
                             <div class="mb-4 p-3 border rounded" style="background-color: #f7f3ed; border-color: #d8c8b4;">
-                                <label class="form-label fw-bold mb-3" style="color: #6C2207;">Profile Picture</label>
+                                <label class="form-label fw-bold mb-3" style="color: #6C2207;">Foto Profil</label>
 
                                 <div class="d-flex align-items-center">
                                     
@@ -227,7 +227,7 @@
                                             id="profile_photo_input" 
                                             name="profile_photo" 
                                             accept="image/jpeg, image/png"> {{-- Corrected accept to 'image/jpeg' --}}
-                                        <p class="text-muted mb-2 small">Upload a new photo (Max 2MB, jpeg/png/jpg/gif only).</p>
+                                        <p class="text-muted mb-2 small">Masukan foto baru (Maks. 2MB, hanya jpeg/png/jpg/gif).</p>
 
                                         @error('profile_photo')
                                             <div class="text-danger mt-1 small">{{ $message }}</div>
@@ -237,12 +237,12 @@
                             </div>
 
                             <div class="d-flex justify-content-end pt-3">
-                                <button type="submit" class="btn px-4 btn-seller-mode-custom">Save Changes</button>
+                                <button type="submit" class="btn px-4 btn-seller-mode-custom">Simpan</button>
                             </div>
                         </form>
                         
                     @elseif ($activeTab == 'orders')
-                        <h3 class="fw-bold mb-4" style="color: #6C2207;">My Orders</h3>
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Pesanan</h3>
 
                         {{-- Alert Messages --}}
                         @if(session('success'))
@@ -254,7 +254,7 @@
                         
                         {{-- Main Order List --}}
                         @if ($orders->isEmpty())
-                            <p class="text-muted">You have no orders.</p>
+                            <p class="text-muted">Belum ada pesanan.</p>
                         @else
                             @foreach ($orders as $order)
                                 @php
@@ -313,7 +313,7 @@
                                             {{-- Action Buttons: PENDING/PAID STATUS --}}
                                             @if ($order->status == 'pending')
                                                 {{-- Button: CANCEL (The only action while pending) --}}
-                                                <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                                <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin cancel pesanan ini?');">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                                         Cancel
@@ -322,21 +322,21 @@
 
                                             @elseif ($order->status == 'paid') 
                                                 {{-- Button: COMPLETED (The only action while paid, before shipping) --}}
-                                                <form action="{{ route('order.complete', $order) }}" method="POST" onsubmit="return confirm('Confirm receipt of order #{{ $order->order_id }}?');">
+                                                <form action="{{ route('order.complete', $order) }}" method="POST" onsubmit="return confirm('Konfirmasi Pesanan #{{ $order->order_id }}?');">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-success">
-                                                        Completed
+                                                        Selesai
                                                     </button>
                                                 </form>
                                             
                                             {{-- Action Button: COMPLETED/CANCELLED STATUS --}}
                                             @elseif (in_array($order->status, ['completed', 'cancelled']))
                                                 {{-- Button: DELETE --}}
-                                                <form action="{{ route('order.delete', $order) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order history? This action cannot be undone.');">
+                                                <form action="{{ route('order.delete', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin hapus history pesanan ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary">
-                                                        Delete
+                                                        Hapus
                                                     </button>
                                                 </form>
                                             @endif
@@ -353,18 +353,18 @@
                         @endif
 
                     @elseif ($activeTab == 'seller-mode')
-                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Change to Seller Mode</h3>
+                        <h3 class="fw-bold mb-4" style="color: #6C2207;">Mode Penjual</h3>
 
                         @if($isSeller)
                             @php
                                 $storeName = $user->seller->store_name ?? 'Your Store';
                             @endphp
-                            <p class="lead" style="color: #6C2207;">Transform into {{ $storeName }} Seller?</p>
+                            <p class="lead" style="color: #6C2207;">Berubah ke penjual {{ $storeName }}?</p>
                             <form action="{{ route('seller.settings') }}" method="GET">
                                 <button type="submit" class="btn px-4 btn-seller-mode-custom">Yes</button>
                             </form>
                         @else
-                            <p class="lead" style="color: #6C2207;">You don't have a store yet. Would you like to become a seller?</p>
+                            <p class="lead" style="color: #6C2207;">Anda belum memiliki toko. Apakah anda ingin menjadi penjual?</p>
                             <form action="{{ route('seller.create.form') }}" method="GET">
                                 <button type="submit" class="btn px-4 btn-seller-mode-custom">Yes</button>
                             </form>

@@ -4,134 +4,134 @@
 
 @section('content')
 <style>
-    body {
-            background-color: #FFFBE8; 
-        }
+body {
+    background-color: #FFFBE8;
+}
 
-    .wts-header {
-        background-color: #FFFBE8; 
-        border-bottom: 1px solid #FFFBE8;
-    }
-        
-    .category-flex-wrapper {
-        display: flex;
-        justify-content: center; 
-        align-items: flex-start; 
-    }
+.wts-header {
+    background-color: #FFFBE8;
+    border-bottom: 1px solid #FFFBE8;
+}
 
-    .category-scroll-container {
-        overflow-x: auto;
-        padding-bottom: 10px; 
-        -webkit-overflow-scrolling: touch;
-    }
-    .category-item {
-        flex-shrink: 0; 
-        text-align: center;
-        margin-right: 15px;
-    }
+.category-flex-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
 
-    .category-icon {
-        width: 50px;
-        height: 50px;
-        background-color: #FFFBE8; 
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 5px;
-    }
+.category-scroll-container {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+.category-item {
+    flex-shrink: 0;
+    text-align: center;
+    margin-right: 15px;
+}
 
-    .product-card {
-        background-color: #FFFBE8; 
-        border: none;
-        border-radius: 10px;
-        overflow: hidden;
-    }
+.category-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #FFFBE8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5px;
+}
 
-    .product-image-container {
-        background-color: #D9D9D9; 
-        height: 180px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px; 
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    }
+.product-card {
+    background-color: #FFFBE8;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-    .product-image-shadow:hover {
-        transform: translateY(-5px); 
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
-    }
+.product-image-container {
+    background-color: #D9D9D9;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
 
-    .product-action-icon {
-        color: #6C2207; 
-    }
+.product-image-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
 
-    .product-action-circle {
-        background-color: #6C2207; 
-        color: #FFFBE8 !important; 
-        width: 32px;
-        height: 32px;
-        border-radius: 50%; 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        border: none;
-        transition: background-color 0.2s;
-    }
+.product-action-icon {
+    color: #6C2207;
+}
 
-    .product-action-circle.active {
-        background-color: #6C2207;
-        color: #F3D643 !important;
-    }
+.product-action-circle {
+    background-color: #6C2207;
+    color: #FFFBE8 !important;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    transition: background-color 0.2s;
+}
 
-    .product-action-circle:hover {
-        background-color: #5c4a3e; 
-    }
+.product-action-circle.active {
+    background-color: #6C2207;
+    color: #F3D643 !important;
+}
 
-    .horizontal-scroll-wrapper::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .horizontal-scroll-wrapper {
-        -ms-overflow-style: none; 
-    }
+.product-action-circle:hover {
+    background-color: #5c4a3e;
+}
 
-    .horizontal-scroll-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch; 
-        white-space: nowrap; 
-        padding-bottom: 10px; 
-    }
+.horizontal-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+}
 
-    .scrollable-product-item {
-        display: inline-block;
-        flex-shrink: 0;
-        width: 25%; 
-    }
+.horizontal-scroll-wrapper {
+    -ms-overflow-style: none;
+}
 
-    .pagination .page-item:not(.active) .page-link {
-        color: #6C2207;
-        border-color: #6C2207; 
-    }
+.horizontal-scroll-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    padding-bottom: 10px;
+}
 
-    .pagination .page-item.active .page-link {
-        background-color: #6C2207; 
-        border-color: #6C2207; 
-        color: #FFFBE8; 
-    }
+.scrollable-product-item {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 25%;
+}
 
-    .pagination .page-item:not(.active) .page-link:hover {
-        color: #FFFBE8; 
-        background-color: #7d3319;
-        border-color: #7d3319;
-    }
+.pagination .page-item:not(.active) .page-link {
+    color: #6C2207;
+    border-color: #6C2207;
+}
 
-    .pagination .page-item.disabled .page-link {
-        color: #a0a0a0; 
-        border-color: #d1d1d1;
-    }
+.pagination .page-item.active .page-link {
+    background-color: #6C2207;
+    border-color: #6C2207;
+    color: #FFFBE8;
+}
+
+.pagination .page-item:not(.active) .page-link:hover {
+    color: #FFFBE8;
+    background-color: #7d3319;
+    border-color: #7d3319;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #a0a0a0;
+    border-color: #d1d1d1;
+}
 </style>
 
     <div class="container-fluid p-0">
@@ -149,7 +149,7 @@
                 </a>
 
                 {{-- Icons Container (Right-aligned Group for Action Icons) --}}
-                <div class="d-flex gap-3 align-items-center position-absolute end-0 me-3"> 
+                <div class="d-flex gap-3 align-items-center position-absolute end-0 me-3">
                     
                     {{-- Search Icon Button --}}
                     <button type="button" class="btn p-0" id="search-icon-btn">
@@ -175,11 +175,9 @@
         </div>
         {{-- END HEADER REVISION --}}
 
-        {{-- NEW TOGGLED SEARCH BAR CONTAINER --}}
-    {{-- We check if $keyword exists (meaning a search was just executed) --}}
+    {{-- SEARCH BAR --}}
     <div id="toggled-search-bar" class="container p-3 {{ request()->has('q') ? '' : 'd-none' }}" style="padding-top: 15px !important;">
         <div class="d-flex align-items-center w-100">
-            {{-- Close button ('x') --}}
             <button type="button" class="btn-close fs-4 me-3" id="close-search-bar" aria-label="Close" style="color: #5c4a3e;"></button>
 
             {{-- Search Form --}}
@@ -194,126 +192,121 @@
             </form>
         </div>
     </div>
+    
+    @unless (request()->has('q'))
+        {{-- CATEGORIES (NOW IMPLEMENTING FILTERING) --}}
+        <div class="py-3" style="background-color: #FFFBE8; box-shadow: none;"> 
+            <div class="category-scroll-container px-3" >
+                <div class="category-flex-wrapper">
+                    
+                    {{-- Category Filter Links --}}
 
-    {{-- CATEGORIES (NOW IMPLEMENTING FILTERING) --}}
-    <div class="py-3" style="background-color: #FFFBE8; box-shadow: none;"> 
-        <div class="category-scroll-container px-3" >
-            <div class="category-flex-wrapper">
-                
-                {{-- Category Filter Links --}}
-
-                {{-- 1. "All Products" Link --}}
-                {{-- This link removes the category query parameter --}}
-                <a href="{{ route('homeIn', array_merge(request()->except('category', 'page'))) }}" class="category-item text-decoration-none text-dark">
-                    <div class="category-icon" style="{{ is_null($selectedCategorySlug) ? 'background-color: #f79471 !important;' : '' }}">
-                        <i class="bi bi-grid-fill" style="font-size: 1.2rem; color: {{ is_null($selectedCategorySlug) ? 'white' : '#f79471' }};"></i>
-                    </div>
-                    <small class="{{ is_null($selectedCategorySlug) ? 'fw-bold' : 'text-muted' }}">All</small>
-                </a>
-
-                {{-- 2. Loop through real categories from the controller --}}
-                @foreach ($categories as $category)
-                    @php
-                        // Check if the current category is the one selected
-                        $isActive = ($selectedCategorySlug == $category->slug);
-                        $iconColor = $isActive ? 'white' : '#f79471';
-                        $bgColor = $isActive ? '#f79471' : '#FFFBE8';
-                    @endphp
-
-                    {{-- Link to filter by this category's slug --}}
-                    <a href="{{ route('homeIn', ['category' => $category->slug]) }}" class="category-item text-decoration-none text-dark">
-                        <div class="category-icon" style="background-color: {{ $bgColor }};">
-                            {{-- Assuming the icon column holds the BI class name (e.g., 'bi-sunglasses') --}}
-                            <i class="bi {{ $category->icon }}" style="font-size: 1.2rem; color: {{ $iconColor }};"></i>
+                    {{-- 1. "All Products" Link --}}
+                    {{-- This link removes the category query parameter --}}
+                    <a href="{{ route('homeIn', array_merge(request()->except('category', 'page'))) }}" class="category-item text-decoration-none text-dark">
+                        <div class="category-icon" style="{{ is_null($selectedCategorySlug) ? 'background-color: #f79471 !important;' : '' }}">
+                            <i class="bi bi-grid-fill" style="font-size: 1.2rem; color: {{ is_null($selectedCategorySlug) ? 'white' : '#f79471' }};"></i>
                         </div>
-                        <small class="{{ $isActive ? 'fw-bold' : 'text-muted' }}">{{ $category->name }}</small>
+                        <small class="{{ is_null($selectedCategorySlug) ? 'fw-bold' : 'text-muted' }}">All</small>
                     </a>
-                @endforeach
-                
+
+                    {{-- 2. Loop through real categories from the controller --}}
+                    @foreach ($categories as $category)
+                        @php
+                            // Check if the current category is the one selected
+                            $isActive = ($selectedCategorySlug == $category->slug);
+                            $iconColor = $isActive ? 'white' : '#f79471';
+                            $bgColor = $isActive ? '#f79471' : '#FFFBE8';
+                        @endphp
+
+                        {{-- Link to filter by this category's slug --}}
+                        <a href="{{ route('homeIn', ['category' => $category->slug]) }}" class="category-item text-decoration-none text-dark">
+                            <div class="category-icon" style="background-color: {{ $bgColor }};">
+                                {{-- Assuming the icon column holds the BI class name (e.g., 'bi-sunglasses') --}}
+                                <i class="bi {{ $category->icon }}" style="font-size: 1.2rem; color: {{ $iconColor }};"></i>
+                            </div>
+                            <small class="{{ $isActive ? 'fw-bold' : 'text-muted' }}">{{ $category->name }}</small>
+                        </a>
+                    @endforeach
+                    
+                </div>
             </div>
         </div>
-    </div>
-    {{-- END CATEGORIES --}}
 
-    {{-- BLACK FRIDAY SALE BANNER --}}
-    @unless (request()->has('q'))
-        {{-- Check if there are any products on sale before rendering the banner --}}
-        @if ($saleProducts->count() > 0) 
+        {{-- SALE BANNER --}}
+        @if (!request()->has('q') && $saleProducts->count() > 0)
             <div class="p-4" style="background-color: #E8E0BB;">
-                <h3 class="fw-bold" style="color: #6C2207;">BLACK FRIDAY SALE!</h3>
-                <p style="color: #6C2207;">Get up to 70% off on selected items.</p>
-                
-                @php
-                    $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
-                @endphp
-
+                <h3 class="fw-bold" style="color: #6C2207;">PRODUK DISKON!</h3>
+                <p style="color: #6C2207;">Dapatkan produk-produk ini saat masa diskonnya.</p>
                 <div class="horizontal-scroll-wrapper">
                     <div class="d-flex flex-nowrap align-items-stretch g-3">
-                        {{-- Loop through the real $saleProducts collection from the Controller --}}
                         @foreach ($saleProducts as $product)
-                            <div class="scrollable-product-item px-2"> 
-                                <div class="product-card" style="background-color: #E8E0BB !important;">
-                                    <div class="product-image-container product-image-shadow">
-                                        {{-- FIX 1: Use $product->product_id for the product link --}}
-                                        <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
-                                            @if ($product->image_path)
-                                                <img src="{{ asset('storage/' . $product->image_path) }}" 
-                                                    alt="{{ $product->name }}" 
-                                                    class="img-fluid" 
-                                                    style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                                            @else
-                                                {{-- Placeholder for image --}}
-                                                <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                                                    <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
-                                                </div>
-                                            @endif
-                                        </a>
-                                    </div>
+                                <div class="scrollable-product-item px-2"> 
+                                    <div class="product-card" style="background-color: #E8E0BB !important;">
+                                        <div class="product-image-container product-image-shadow">
+                                            <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                                                @if ($product->image_path)
+                                                    <img src="{{ asset('storage/' . $product->image_path) }}" 
+                                                        alt="{{ $product->name }}" 
+                                                        class="img-fluid" 
+                                                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                @else
+                                                    {{-- Placeholder for image --}}
+                                                    <div style="width: 100%; height: 100%; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                                                        <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                                    </div>
+                                                @endif
+                                            </a>
+                                        </div>
 
-                                    <div class="p-2 text-center">
-                                        {{-- FIX 2: Use $product->product_id for the product name link --}}
-                                        <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none">
-                                            <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
-                                            <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                        </a>
-                                        
-                                        {{-- Product Actions: Cart/Wishlist Buttons --}}
-                                        <div class="d-flex justify-content-center gap-3 mt-2">
-                                            @php
-                                                $is_in_cart = $user->inCart($product->product_id); 
-                                                $is_in_wishlist = $user->inWishlist($product->product_id);
-                                            @endphp
-                        
-                                            <button type="button" 
-                                                class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
-                                                data-product-id="{{ $product->product_id }}"
-                                                data-action-url="{{ route('cart.add-ajax') }}" 
-                                                title="Add to Cart">
-                                                <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
-                                            </button>
-                        
-                                            <button type="button" 
-                                                class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
-                                                data-product-id="{{ $product->product_id }}"
-                                                data-action-url="{{ route('wishlist.add-ajax') }}" 
-                                                title="Add to Wishlist">
-                                                <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
-                                            </button>
+                                        <div class="p-2 text-center">
+                                            <a href="{{ route('products.show', $product->product_id) }}" class="text-dark text-decoration-none">
+                                                <p class="mb-1 fw-bold text-truncate" style="color: #6C2207;">{{ $product->name }}</p>
+                                                <p class="mb-2" style="color: #6C2207;">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                            </a>
+                                            
+                                            {{-- Product Actions: Cart/Wishlist Buttons --}}
+                                            <div class="d-flex justify-content-center gap-3 mt-2">
+                                                @php
+                                                    $user = Auth::user() ?? (object)['inCart' => fn() => false, 'inWishlist' => fn() => false];
+                                                    $is_in_cart = $user->inCart($product->product_id); 
+                                                    $is_in_wishlist = $user->inWishlist($product->product_id);
+                                                @endphp
+                                            
+                                                <button type="button" 
+                                                    class="product-action-circle add-to-cart-btn {{ $is_in_cart ? 'active' : '' }}" 
+                                                    data-product-id="{{ $product->product_id }}"
+                                                    data-action-url="{{ route('cart.add-ajax') }}" 
+                                                    title="Add to Cart">
+                                                    <i class="bi bi-bag-fill" style="font-size: 1.1rem;"></i> 
+                                                </button>
+                                            
+                                                <button type="button" 
+                                                    class="product-action-circle add-to-wishlist-btn {{ $is_in_wishlist ? 'active' : '' }}" 
+                                                    data-product-id="{{ $product->product_id }}"
+                                                    data-action-url="{{ route('wishlist.add-ajax') }}" 
+                                                    title="Add to Wishlist">
+                                                    <i class="bi bi-heart-fill" style="font-size: 1.1rem;"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
         @endif
     @endunless
-    {{-- END BLACK FRIDAY SALE --}}
 
     {{-- RECOMMENDED PRODUCTS --}}
     <div class="container py-5">
-        <h3 class="fw-bold mb-4" style="color: #6C2207;">Recommended Products</h3>
+        @unless (request()->has('q'))
+            <h3 class="fw-bold mb-4" style="color: #6C2207;">Rekomendasi untukmu</h3>
+        @else
+            {{-- Show a title indicating search results --}}
+            <h3 class="fw-bold mb-4" style="color: #6C2207;">Search Results for "{{ request('q') }}"</h3>
+        @endunless
         <div class="row g-4">
             @forelse ($products as $product)
             <div class="col-6 col-md-3 col-xl-3"> 
@@ -374,7 +367,7 @@
             </div>
             @empty
             <div class="col-12">
-                <div class="alert alert-info">No products found at the moment.</div>
+                <div class="alert alert-info" style="background-color: #F3D643; color: #6C2207; border: #6C2207">No products found at the moment.</div>
             </div>
             @endforelse
         </div>
@@ -384,7 +377,6 @@
         </div>
         
     </div>
-    {{-- END RECOMMENDED PRODUCTS --}}
 
 </div>
 
@@ -411,17 +403,19 @@
         });
 
         $('#close-search-bar').on('click', function() {
-            hideSearchBar();
+            // Clear the input and redirect to the home page without the search query
+            searchInput.val('');
+            window.location.href = "{{ route('homeIn', request()->except('q', 'page')) }}";
         });
 
         $.ajaxSetup({
             headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-csrf-token"]').attr('content')
             }
         });
         
         function sendProductAction(button, url, productId) {
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            const csrfToken = $('meta[name="csrf-csrf-token"]').attr('content');
             
             $.ajax({
                 url: url,

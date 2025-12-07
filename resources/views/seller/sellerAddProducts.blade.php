@@ -63,11 +63,11 @@
 <div class="header-fixed">
     <div class="container"> 
         <div class="d-flex align-items-center">
-            <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#6C2207 !important;">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <h5 class="fw-bold mb-0" style="color: #6C2207;">
-                Add New Product
+            <a href="{{ route('seller.products') }}" class="text-decoration-none me-3" style="font-size: 1.5rem; color:#FC5801!important;">
+                    &leftarrow;
+             </a>
+            <h5 class="fw-bold mb-0" style="color: #FC5801!important;">
+                Tambah Produk Baru
             </h5>
         </div>
     </div>
@@ -82,12 +82,12 @@
     {{-- LEFT COLUMN: Name and Description --}}
         <div class="col-md-6">
             <div class="mb-4">
-                <label class="fw-semibold form-label">Product Name</label>
+                <label class="fw-semibold form-label">Nama Produk</label>
                 <input type="text" class="form-control custom-form-control" name="name">
             </div>
 
             <div class="mb-4">
-                <label class="fw-semibold form-label">Product Description</label>
+                <label class="fw-semibold form-label">Deskripsi Produk</label>
                 <textarea name="description" class="form-control custom-form-control" rows="6"></textarea>
             </div>
         </div>
@@ -95,16 +95,15 @@
         {{-- RIGHT COLUMN: Product Image (Now uses Flexbox for Height Alignment) --}}
         <div class="col-md-6 d-flex flex-column">
             
-            <label class="fw-semibold form-label">Product Image</label>
+            <label class="fw-semibold form-label">Foto Produk</label>
 
             {{-- Image Upload Area - h-100 or flex-grow-1 forces it to fill the remaining height --}}
             <div class="text-center p-4 h-100" 
                 style="border:2px dashed #FC5801; border-radius:12px; background:white;">
                 
                 <i class="bi bi-image-fill" style="font-size: 2rem; color:#FC5801;"></i>
-                <span style="color:#7c7c7c; display:block; margin-top:5px;">Upload 1 Image</span>
+                <span style="color:#7c7c7c; display:block; margin-top:5px;">Hanya 1 Foto</span>
                 
-                {{-- We need to ensure the file input is not pushing the height beyond the parent --}}
                 <input type="file" name="image" class="form-control mt-3 custom-form-control" accept="image/*" required>
             </div>
         </div>
@@ -114,13 +113,13 @@
 
             <div class="col-md-6">
                 <div class="p-4" style="background:white; border-radius:10px; border:1px solid #d8c8b4;">
-                    <h6 class="fw-bold mb-3">Product Details</h6>
+                    <h6 class="fw-bold mb-3">Detail Produk</h6>
 
                     <div class="mb-3">
-                        <label class="fw-semibold form-label">Category</label>
+                        <label class="fw-semibold form-label">Kategori</label>
                         {{-- Changed input to select --}}
                         <select name="category_id" class="form-control custom-form-control" required>
-                            <option value="" disabled selected>Select a Category</option>
+                            <option value="" disabled selected>Pilihlah Kategori</option>
                             
                             {{-- Loop through the categories passed from the controller --}}
                             @foreach($categories as $category)
@@ -139,7 +138,7 @@
                     </div>
 
                     <div class="mb-1">
-                        <label class="fw-semibold form-label">Stock</label>
+                        <label class="fw-semibold form-label">Stok</label>
                         <input type="number" name="stock" class="form-control custom-form-control">
                     </div>
                 </div>
@@ -147,10 +146,10 @@
 
             <div class="col-md-6">
                 <div class="p-4" style="background:white; border-radius:10px; border:1px solid #d8c8b4;">
-                    <h6 class="fw-bold mb-3">Pricing</h6>
+                    <h6 class="fw-bold mb-3">Harga</h6>
 
                     <div class="mb-3">
-                        <label class="fw-semibold form-label" id="price-label">Price (Rp)</label>
+                        <label class="fw-semibold form-label" id="price-label">Harga (Rp)</label>
                         <input type="number" name="price" id="original-price" class="form-control custom-form-control" required>
                     </div>
                 </div>
@@ -161,7 +160,7 @@
         {{-- Save Button --}}
         <div class="text-end mt-5">
             <button type="submit" class="btn px-5 py-2 btn-add-product">
-                Add Product
+                Tambahkan Produk
             </button>
         </div>
 

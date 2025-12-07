@@ -46,9 +46,15 @@ class ProductController extends Controller
         $selectedCategorySlug = null;
         $categories = Category::all();
 
-        $products = Product::where('name', 'LIKE', "%$keyword%")
-                           ->orWhere('description', 'LIKE', "%$keyword%")
-                           ->paginate(12);
+        $productQuery = Product::query();
+
+        if ($keyword) {
+            $productQuery->where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+        
+        $products = $productQuery->paginate(12);
 
         return view('buyer.buyerHome', compact('products', 'keyword', 'selectedCategorySlug', 'categories'));
     }

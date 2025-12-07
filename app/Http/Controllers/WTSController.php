@@ -36,9 +36,13 @@ class WTSController extends Controller
             })
             ->inRandomOrder()->paginate(12);
 
-        $saleProducts = Product::where('is_sale', 1)
-                       ->inRandomOrder() 
-                       ->limit(6)       
+        $saleQuery = Product::where('is_sale', 1);
+
+        if (isset($selectedCategory)) {
+            $saleQuery->where('category_id', $selectedCategory->category_id);
+        }
+        $saleProducts = $saleQuery
+                       ->inRandomOrder()        
                        ->get();
 
         return view('buyer.buyerHome', compact(

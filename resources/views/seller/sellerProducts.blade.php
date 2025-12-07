@@ -94,11 +94,11 @@
         
         {{-- ADD PRODUCT BUTTON --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold mb-0">My Products</h4>
+            <h4 class="fw-bold mb-0">Produk Toko</h4>
             <a href="{{ route('seller.products.create') }}" 
                class="btn fw-bold" 
                style="background-color: #FC5801; color: white;">
-                <i class="bi bi-plus-lg me-1"></i> Add Product
+                <i class="bi bi-plus-lg me-1"></i> Tambah Produk
             </a>
         </div>
 

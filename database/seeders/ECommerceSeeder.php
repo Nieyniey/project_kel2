@@ -19,7 +19,7 @@ class ECommerceSeeder extends Seeder
         $faker = Faker::create(); 
 
         // 0. BUAT KATEGORI (Wajib ada sebelum produk)
-        $categories = Category::factory(10)->create(); // Buat 10 kategori dummy
+        $categories = Category::All();
 
         // 1. BUAT AKUN TEST
         User::create(['name' => 'Admin Test', 'email' => 'admin@test.com', 'password' => Hash::make('password')]);
