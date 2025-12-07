@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,61 +14,79 @@ class OrderController extends Controller
 {
     public function place(Request $request)
     {
-        $cart = Cart::where('user_id', Auth::id())
-                    ->with('items.product')
-                    ->first();
+        // Ambil item yang dipilih dari form
+        $selected = json_decode($request->selected_items, true);
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return back()->with('error', 'Keranjang masih kosong.');
+        if (!$selected || count($selected) === 0) {
+            return back()->with('error', 'Tidak ada item yang dipilih.');
         }
 
-        $subtotal = $cart->items->sum(fn($item) =>
-            $item->product->price * $item->qty
-        );
+        // Ambil cart user
+        $cart = Cart::where('user_id', Auth::id())->first();
+
+        if (!$cart) {
+            return back()->with('error', 'Keranjang tidak ditemukan.');
+        }
+
+        // Ambil cart item berdasarkan ID yang dipilih user
+        $items = CartItem::with('product')
+            ->where('cart_id', $cart->cart_id)
+            ->whereIn('cart_item_id', collect($selected)->pluck('id'))
+            ->get();
+
+        if ($items->isEmpty()) {
+            return back()->with('error', 'Item tidak valid.');
+        }
+
+        // Hitung subtotal
+        $subtotal = 0;
+        foreach ($items as $i) {
+            $subtotal += $i->product->price * $i->qty;
+        }
 
         $shipping = 10000;
         $total = $subtotal + $shipping;
 
+        // Ambil alamat default user
+        $address = \App\Models\Address::where('user_id', Auth::id())
+            ->where('is_default', 1)
+            ->first();
+
+        if (!$address) {
+            return back()->with('error', 'Alamat default tidak ditemukan.');
+        }
+
+        // Buat order baru
         $order = Order::create([
             'user_id' => Auth::id(),
-            'address_id' => 1,
+            'address_id' => $address->id,
             'total_price' => $total,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
-        foreach ($cart->items as $item) {
+        // Masukkan item ke tabel order_items
+        foreach ($items as $i) {
             OrderItem::create([
                 'order_id' => $order->order_id,
-                'product_id' => $item->product_id,
-                'qty' => $item->qty,
-                'price_per_item' => $item->product->price
+                'product_id' => $i->product_id,
+                'qty' => $i->qty,
+                'price_per_item' => $i->product->price,
             ]);
         }
 
-        CartItem::where('cart_id', $cart->cart_id)->delete();
+        // Hapus hanya item yang dipilih dari cart
+        CartItem::whereIn('cart_item_id', collect($selected)->pluck('id'))->delete();
 
-        return redirect()->route('payment.page', $order->order_id);
+        // Redirect ke payment page
+        return redirect()->route('payment.page', ['order_id' => $order->order_id]);
     }
 
-    public function trackList()
+    public function show($id)
     {
-        // Ambil semua order milik user
-        $orders = Order::with('items.product')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
+        $order = Order::with('items.product')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
-        return view('buyer.track.track-list', compact('orders'));
+        return view('buyer.order.show', compact('order'));
     }
-
-    // public function trackDetail($id)
-    // {
-    //     // Ambil 1 order + itemnya
-    //     $order = Order::with('items.product')
-    //         ->where('user_id', auth()->id())
-    //         ->findOrFail($id);
-
-    //     return view('buyer.track.track-detail', compact('order'));
-    // }
-
 }

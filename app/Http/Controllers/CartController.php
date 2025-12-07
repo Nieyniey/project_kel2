@@ -44,9 +44,15 @@ class CartController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $product = Product::findOrFail($request->product_id);
 
-        $item = CartItem::updateOrCreate(
-            ['cart_id' => $cart->id, 'product_id' => $request->product_id],
-            ['price_per_item' => $product->price, 'qty' => \DB::raw('qty + 1')]
+        CartItem::updateOrCreate(
+            [
+                'cart_id' => $cart->cart_id,   // FIX DI SINI
+                'product_id' => $request->product_id
+            ],
+            [
+                'price_per_item' => $product->price,
+                'qty' => \DB::raw('qty + 1')
+            ]
         );
 
         return redirect()->route('cart.index')->with('success', 'Added to Cart');
@@ -55,45 +61,38 @@ class CartController extends Controller
     public function addAjax(Request $request)
     {
         $productId = $request->product_id;
-        
-        // 1. Get/Create the cart header
+
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        
-        // 2. Explicitly check for the CartItem
-        $cartItem = CartItem::where('cart_id', $cart->id)
+
+        $cartItem = CartItem::where('cart_id', $cart->cart_id)  // FIX DI SINI
                             ->where('product_id', $productId)
                             ->first();
-                            
-        $isCurrentlyInCart = (bool) $cartItem; // Check if the item exists
+
+        $isCurrentlyInCart = (bool) $cartItem;
 
         if ($isCurrentlyInCart) {
-            // --- REMOVAL PATH (Second Click) ---
-            // If item exists, delete it. This is the correct action to remove.
-            $cartItem->delete(); 
-            $action = 'removed';
-        } else {
-            // --- ADDITION PATH (First Click) ---
-            // Ensure product exists before adding
-            $product = Product::find($productId); 
 
-            if (!$product) {
-                return response()->json(['status' => 'error', 'message' => 'Product not found.'], 404);
-            }
-            
+            $cartItem->delete();
+            $action = 'removed';
+
+        } else {
+
+            $product = Product::find($productId);
+
             CartItem::create([
-                'cart_id' => $cart->id,
+                'cart_id' => $cart->cart_id,   // FIX JUGA DI SINI
                 'product_id' => $productId,
                 'price_per_item' => $product->price,
                 'qty' => 1,
             ]);
+
             $action = 'added';
         }
 
-        // 3. Return the new state (which is the opposite of the starting state)
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'action' => $action,
-            'is_active' => !$isCurrentlyInCart // New state is the opposite of the old state
+            'is_active' => !$isCurrentlyInCart
         ]);
     }
 
@@ -105,6 +104,18 @@ class CartController extends Controller
         ]);
 
         $item = CartItem::findOrFail($request->item_id);
+
+        // Ambil stock produk
+        $stock = $item->product->stock;
+
+        if ($request->qty > $stock) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Stock tidak cukup!'
+            ], 400);
+        }
+
+        // Update qty jika valid
         $item->qty = $request->qty;
         $item->save();
 

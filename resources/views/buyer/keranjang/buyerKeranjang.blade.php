@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('title', 'Keranjang')
 
@@ -46,8 +46,7 @@
             border-radius:15px;
             margin-bottom:15px;
             box-shadow:0 2px 6px rgba(0,0,0,0.1);
-        "
-    >
+        ">
 
         {{-- CHECKBOX --}}
         <input type="checkbox"
@@ -89,7 +88,7 @@
             </button>
         </div>
 
-        {{-- DELETE BUTTON (BENAR DI SINI!!) --}}
+        {{-- DELETE BUTTON --}}
         <button class="delete-btn"
             style="background:none; border:none; cursor:pointer; font-size:22px;">
             ❌
@@ -99,7 +98,7 @@
     @endforeach
 
 
-    {{-- ORDER SUMMARY --}}
+    {{-- SUMMARY --}}
     <div style="
         width: 350px;
         background:white;
@@ -129,6 +128,7 @@
 
         <form id="place-order-form" method="POST" action="{{ route('orders.place') }}">
             @csrf
+            <input type="hidden" name="selected_items" id="selected-items-input">
         </form>
 
         <a id="checkout-btn" href="javascript:void(0)"
@@ -150,6 +150,7 @@
 
 @endsection
 
+@push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -164,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.cart-item').forEach(item => {
             const checkbox = item.querySelector('.item-check');
 
-            if (checkbox && checkbox.checked) {
+            if (checkbox.checked) {
                 let qty = parseInt(item.querySelector('.qty-number').innerText);
                 let price = parseInt(checkbox.dataset.price);
                 subtotal += qty * price;
@@ -172,70 +173,66 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
-        let total = subtotal > 0 ? subtotal + shipping : 0;
-        totalText.innerText = "Rp " + total.toLocaleString('id-ID');
+        totalText.innerText = "Rp " + (subtotal > 0 ? subtotal + shipping : 0).toLocaleString('id-ID');
 
-        if (subtotal > 0) {
-            checkoutBtn.style.background = "#FF6E00";
-            checkoutBtn.style.pointerEvents = 'auto';
-            checkoutBtn.onclick = () => document.getElementById('place-order-form').submit();
-        } else {
-            checkoutBtn.style.background = "#CCC";
-            checkoutBtn.style.pointerEvents = 'none';
-            checkoutBtn.onclick = null;
-        }
+        checkoutBtn.style.background = subtotal > 0 ? "#FF6E00" : "#CCC";
+        checkoutBtn.style.pointerEvents = subtotal > 0 ? "auto" : "none";
     }
 
-    // ⬅⬅⬅ FIX 1: panggil saat pertama dibuka!
     updateSummary();
 
     // Checkbox
-    document.querySelectorAll('.item-check').forEach(check => {
-        check.addEventListener('change', updateSummary);
-    });
+    document.querySelectorAll('.item-check')
+        .forEach(check => check.addEventListener('change', updateSummary));
 
-    // Qty button
-    document.querySelectorAll('.qty-btn').forEach(button => {
-        button.addEventListener('click', function () {
+    // Qty
+    document.querySelectorAll('.qty-btn')
+        .forEach(button => {
+            button.addEventListener('click', function () {
+                let item = this.closest('.cart-item');
+                let itemId = item.dataset.itemId;
+                let number = item.querySelector('.qty-number');
+                let oldQty = parseInt(number.innerText);
+                let qty = oldQty;
 
-            let item = this.closest('.cart-item');
-            let itemId = item.dataset.itemId;
-            let number = item.querySelector('.qty-number');
-            let qty = parseInt(number.innerText);
-
-            if (this.dataset.action === "minus") {
-                if (qty === 1) {
-                    if (confirm("Hapus produk dari keranjang?")) {
-                        removeItem(item, itemId);
+                if (this.dataset.action === "minus") {
+                    if (qty === 1) {
+                        if (confirm("Hapus produk dari keranjang?")) {
+                            removeItem(item, itemId);
+                        }
+                        return;
                     }
-                    return;
+                    qty--;
+                } else {
+                    qty++;
                 }
-                qty--;
-            }
 
-            if (this.dataset.action === "plus") {
-                qty++;
-            }
+                number.innerText = qty;
 
-            number.innerText = qty;
+                fetch("{{ route('cart.updateQty') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ item_id: itemId, qty })
+                }).then(async (res) => {
 
-            fetch("{{ route('cart.updateQty') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ item_id: itemId, qty })
+                    if (!res.ok) {
+                        let data = await res.json();
+                        alert(data.message || "Stock tidak cukup!");
+                        number.innerText = oldQty;
+                        return;
+                    }
+
+                    updateSummary();
+                });
             });
-
-            updateSummary();
         });
-    });
 
-    // Delete btn
+    // Delete
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-
             let item = this.closest('.cart-item');
             let itemId = item.dataset.itemId;
 
@@ -258,6 +255,33 @@ document.addEventListener("DOMContentLoaded", function () {
             updateSummary();
         });
     }
-});
 
+    // CHECKOUT BUTTON
+    checkoutBtn.addEventListener("click", function () {
+
+        let selected = [];
+
+        document.querySelectorAll('.cart-item').forEach(item => {
+            let checkbox = item.querySelector('.item-check');
+            if (checkbox.checked) {
+                selected.push({
+                    id: item.dataset.itemId,
+                    qty: parseInt(item.querySelector('.qty-number').innerText)
+                });
+            }
+        });
+
+        if (selected.length === 0) {
+            alert("Pilih minimal 1 item!");
+            return;
+        }
+
+        document.getElementById('selected-items-input').value = JSON.stringify(selected);
+
+        document.getElementById('place-order-form').submit();
+    });
+
+});
 </script>
+@endpush
+

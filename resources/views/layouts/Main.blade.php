@@ -134,7 +134,6 @@
     @endif
 </div>
 
-
 <script>
 function toggleSearchBar() {
     let bar = document.getElementById("searchBar");
@@ -144,3 +143,6 @@ function toggleSearchBar() {
 </script>
 
 @endsection
+
+{{-- ⭐ INI WAJIB DITAMBAH --}}
+@stack('scripts')
