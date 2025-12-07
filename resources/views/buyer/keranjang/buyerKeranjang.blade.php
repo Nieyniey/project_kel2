@@ -191,7 +191,10 @@ document.addEventListener("DOMContentLoaded", function () {
         check.addEventListener('change', updateSummary);
     });
 
-    // QTY BUTTONS
+
+    /* ============================================================
+       QTY BUTTONS (PLUS & MINUS) — FIX LIMIT STOCK
+       ============================================================ */
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
 
@@ -200,21 +203,33 @@ document.addEventListener("DOMContentLoaded", function () {
             let number = item.querySelector('.qty-number');
             let qty = parseInt(number.innerText);
 
+            let maxStock = parseInt(number.dataset.stock); // ambil stok
+
             if (this.dataset.action === "minus") {
+
                 if (qty === 1) {
                     if (confirm("Hapus produk dari keranjang?")) {
                         removeItem(item, itemId);
                     }
                     return;
                 }
+
                 qty--;
-            } else {
+
+            } else if (this.dataset.action === "plus") {
+
+                // ❗ BATASI QTY SESUAI STOCK
+                if (qty >= maxStock) {
+                    alert("Stock hanya " + maxStock);
+                    return;
+                }
+
                 qty++;
             }
 
             number.innerText = qty;
 
-            // FIX: SEND USING FORMDATA
+            // UPDATE KE SERVER (PASTI CEK STOCK JUGA)
             let form = new FormData();
             form.append("item_id", itemId);
             form.append("qty", qty);
@@ -223,13 +238,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                 body: form
+            }).then(async res => {
+                if (!res.ok) {
+                    let data = await res.json();
+                    alert(data.message || "Stock tidak cukup");
+                    number.innerText = qty - 1; // rollback qty
+                }
+                updateSummary();
             });
-
-            updateSummary();
         });
     });
 
-    // DELETE BUTTON
+
+    /* ============================================================
+       DELETE ITEM
+       ============================================================ */
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             let item = this.closest('.cart-item');
@@ -257,3 +280,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+

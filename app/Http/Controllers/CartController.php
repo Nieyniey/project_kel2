@@ -137,8 +137,8 @@ class CartController extends Controller
             'qty' => 'required|integer|min:1'
         ]);
 
-        $item = CartItem::where('id', $request->item_id)
-                        ->whereHas('cart', function($q){
+        $item = CartItem::where('cart_item_id', $request->item_id)
+                        ->whereHas('cart', function ($q) {
                             $q->where('user_id', Auth::id());
                         })
                         ->firstOrFail();
@@ -147,15 +147,18 @@ class CartController extends Controller
 
         // CEK STOK
         if ($request->qty > $product->stock) {
-            return response()->json(['status' => 'error', 'message' => 'Stock tidak cukup']);
+            return response()->json([
+                'status' => 'error',
+                'message' => "Stok hanya {$product->stock}"
+            ], 400);
         }
 
+        // UPDATE QTY
         $item->qty = $request->qty;
         $item->save();
 
         return response()->json(['status' => 'success']);
     }
-
 
     /**
      * Delete cart item
