@@ -13,27 +13,27 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'Fashion',
                 'slug' => 'fashion',
-                'icon' => 'fa-shirt'
+                'icon' => 'bi-handbag'
             ],
             [
                 'name' => 'Aksesoris',
                 'slug' => 'aksesoris',
-                'icon' => 'fa-gem'
+                'icon' => 'bi-gem'
             ],
             [
                 'name' => 'Elektronik',
                 'slug' => 'elektronik',
-                'icon' => 'fa-bolt'
+                'icon' => 'bi-phone'
             ],
             [
-                'name' => 'Buku',
+                'name' => 'Buku dan Media',
                 'slug' => 'buku',
-                'icon' => 'fa-book'
+                'icon' => 'bi-journals'
             ],
             [
                 'name' => 'Lain-lain',
                 'slug' => 'lain-lain',
-                'icon' => 'fa-ellipsis'
+                'icon' => 'bi-three-dots'
             ],
         ];
 
