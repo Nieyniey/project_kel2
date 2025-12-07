@@ -65,23 +65,23 @@
 ">
     <div style="text-align:center; width:70px;">
         <img src="/icons/bagcat.png" style="width:35px;">
-        <div style="font-size:12px;">Outer</div>
+        <div style="font-size:12px;">Fashion</div>
     </div>
     <div style="text-align:center; width:70px;">
         <img src="/icons/dresscat.png" style="width:35px;">
-        <div style="font-size:12px;">Dress</div>
+        <div style="font-size:12px;">Aksesoris</div>
     </div>
     <div style="text-align:center; width:70px;">
         <img src="/icons/pantscat.png" style="width:35px;">
-        <div style="font-size:12px;">Pants</div>
+        <div style="font-size:12px;">Elektronik</div>
     </div>
     <div style="text-align:center; width:70px;">
         <img src="/icons/shoescat.png" style="width:35px;">
-        <div style="font-size:12px;">Shoes</div>
+        <div style="font-size:12px;">Buku</div>
     </div>
     <div style="text-align:center; width:70px;">
         <img src="/icons/accessories.png" style="width:35px;">
-        <div style="font-size:12px;">Accessories</div>
+        <div style="font-size:12px;">Lain-lain</div>
     </div>
 </div>
 
@@ -129,7 +129,7 @@
         @endforeach
     @else
         <div style="text-align:center; color:#555; padding:20px;">
-            <em>No products available.</em>
+            <em>Tidak Ada Produk yang Tersedia.</em>
         </div>
     @endif
 </div>
