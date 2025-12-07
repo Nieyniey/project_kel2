@@ -138,27 +138,26 @@ class CartController extends Controller
         ]);
 
         $item = CartItem::where('cart_item_id', $request->item_id)
-                        ->whereHas('cart', function ($q) {
+                        ->whereHas('cart', function($q){
                             $q->where('user_id', Auth::id());
                         })
                         ->firstOrFail();
 
-        $product = Product::findOrFail($item->product_id);
+        $product = $item->product;
 
-        // CEK STOK
         if ($request->qty > $product->stock) {
             return response()->json([
                 'status' => 'error',
-                'message' => "Stok hanya {$product->stock}"
+                'message' => 'Stock tidak cukup!'
             ], 400);
         }
 
-        // UPDATE QTY
         $item->qty = $request->qty;
         $item->save();
 
         return response()->json(['status' => 'success']);
     }
+
 
     /**
      * Delete cart item

@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,45 +14,68 @@ class OrderController extends Controller
 {
     public function place(Request $request)
     {
-        $cart = Cart::where('user_id', Auth::id())
-                    ->with('items.product')
-                    ->first();
+        // Pastikan selected_items diterima dari form
+        $request->validate([
+            'selected_items' => 'required'
+        ]);
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return back()->with('error', 'Keranjang masih kosong.');
+        $selected = json_decode($request->selected_items, true);
+
+        if (!$selected || count($selected) === 0) {
+            return back()->with('error', 'Tidak ada item yang dipilih.');
         }
 
-        $subtotal = $cart->items->sum(fn($item) =>
-            $item->product->price * $item->qty
-        );
+        $total = 0;
 
-        $shipping = 10000;
-        $total = $subtotal + $shipping;
-
+        // Buat order
         $order = Order::create([
             'user_id' => Auth::id(),
             'address_id' => 1,
-            'total_price' => $total,
+            'total_price' => 0,
             'status' => 'pending'
         ]);
 
-        foreach ($cart->items as $item) {
+        foreach ($selected as $s) {
+
+            $item = CartItem::with('product')->find($s['id']);
+
+            if (!$item) continue;
+
+            $product = $item->product;
+
+            // CEK STOCK
+            if ($s['qty'] > $product->stock) {
+                return back()->with('error', 'Stock tidak cukup untuk: ' . $product->name);
+            }
+
+            // SIMPAN ORDER ITEM
             OrderItem::create([
                 'order_id' => $order->order_id,
-                'product_id' => $item->product_id,
-                'qty' => $item->qty,
-                'price_per_item' => $item->product->price
+                'product_id' => $product->product_id,
+                'qty' => $s['qty'],
+                'price_per_item' => $product->price
             ]);
+
+            // HITUNG TOTAL
+            $total += $product->price * $s['qty'];
+
+            // KURANGI STOCK
+            $product->stock -= $s['qty'];
+            $product->save();
+
+            // HAPUS DARI CART
+            $item->delete();
         }
 
-        CartItem::where('cart_id', $cart->cart_id)->delete();
+        // UPDATE TOTAL ORDER
+        $order->total_price = $total + 10000; // Ongkir
+        $order->save();
 
         return redirect()->route('payment.page', $order->order_id);
     }
 
     public function trackList()
     {
-        // Ambil semua order milik user
         $orders = Order::with('items.product')
             ->where('user_id', auth()->id())
             ->latest()
@@ -69,40 +93,34 @@ class OrderController extends Controller
         $order->status = 'cancelled';
         $order->save();
 
-        return back()->with('success', 'Order #' . $order->order_id . ' has been cancelled.');
+        return back()->with('success', 'Order #' . $order->order_id . ' cancelled.');
     }
 
     public function completeOrder(Order $order)
     {
         if ($order->user_id !== Auth::id() || $order->status !== 'paid') {
-            return back()->with('error', 'Order have not been paid yet.');
+            return back()->with('error', 'Order belum dibayar.');
         }
 
-        if ($order->user_id !== Auth::id() || in_array($order->status, ['completed', 'cancelled'])) {
-            return back()->with('error', 'Order is already completed or cancelled.');
-        }
-        
         $order->status = 'completed';
         $order->save();
 
-        return back()->with('success', 'Order #' . $order->order_id . ' has been marked as completed. Thank you!');
+        return back()->with('success', 'Order #' . $order->order_id . ' completed.');
     }
 
     public function deleteOrder(Order $order)
     {
         if ($order->user_id !== Auth::id()) {
-            return back()->with('error', 'You do not have permission to delete this order.');
+            return back()->with('error', 'Not allowed.');
         }
 
         if (!in_array($order->status, ['completed', 'cancelled'])) {
-            return back()->with('error', 'Only completed or cancelled orders can be deleted.');
+            return back()->with('error', 'Only completed/cancelled orders can be deleted.');
         }
 
         $order->items()->delete();
-        
         $order->delete();
 
-        return back()->with('success', 'Order history #' . $order->order_id . ' has been deleted.');
+        return back()->with('success', 'Order deleted.');
     }
-
 }
