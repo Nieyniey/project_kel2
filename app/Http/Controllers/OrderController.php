@@ -52,7 +52,7 @@ class OrderController extends Controller
             $cartItemsToDelete = [];
             
             // Collect Product IDs to lock them for stock safety
-            $productIds = collect($selectedItemsData)->pluck('id')->toArray();
+            $productIds = collect($selectedItemsData)->pluck('cart_item_id')->toArray();
             
             // Lock the necessary CartItems and related Products (Optimistic Locking)
             $cartItems = CartItem::whereIn('cart_item_id', $productIds)
