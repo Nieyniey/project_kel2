@@ -39,7 +39,7 @@ class AuthController extends Controller
         ]);
 
         // 3. REDIRECT TO LOGIN PAGE
-        return redirect()->route('login')->with('success', 'Account created successfully!');
+        return redirect()->route('login')->with('berhasil', 'Akun berhasil dibuat!');
     }
 
     // LOGIN
@@ -63,7 +63,7 @@ class AuthController extends Controller
 
         // LOGIN FAILED
         return back()->withErrors([
-            'email' => 'Invalid email or password.',
+            'email' => 'Email atau sandi salah.',
         ]);
     }
 
