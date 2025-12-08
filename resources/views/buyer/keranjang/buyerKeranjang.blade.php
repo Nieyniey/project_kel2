@@ -368,7 +368,10 @@ document.addEventListener("DOMContentLoaded", function () {
             let checkbox = item.querySelector('.item-check');
 
             if (checkbox && checkbox.checked) {
-                selected.push(item.dataset.itemId); // Only push the ID
+                selected.push({
+                    id: item.dataset.itemId,
+                    qty: parseInt(item.querySelector('.qty-number').innerText)
+                });
             }
         });
 
