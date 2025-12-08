@@ -165,8 +165,8 @@
                     </span>
                 </div>
 
-                @if(Auth::check() && Auth::id() !== $product->seller->seller_id)
-                    <a href="{{ route('chat.show', $product->seller->seller_id) }}"
+                @if(Auth::check() && Auth::id() !== $product->seller->user_id)
+                    <a href="{{ route('chat.show', $product->seller->user_id) }}"
                         class="btn-chat"
                         style="margin-left:auto; padding:6px 12px; border:none;
                                 border-radius:6px; color:white; text-decoration:none;">
