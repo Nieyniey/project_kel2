@@ -13,11 +13,11 @@ class OrderController extends Controller
 {
     public function place(Request $request)
     {
+        // Validasi input dari JS
         $request->validate([
             'selected_items' => 'required'
         ]);
 
-        // Array berisi ID cart_item
         $selected = json_decode($request->selected_items, true);
 
         if (!$selected || count($selected) === 0) {
@@ -26,50 +26,61 @@ class OrderController extends Controller
 
         $total = 0;
 
-        // Buat order
+        // BUAT ORDER BARU
         $order = Order::create([
             'user_id' => Auth::id(),
-            'address_id' => 1,
+            'address_id' => 1, // nanti diganti address user
             'total_price' => 0,
-            'status' => 'pending',
+            'status' => 'pending'
         ]);
 
-        foreach ($selected as $cartItemId) {
+        // LOOP ITEMS DARI FRONTEND
+        foreach ($selected as $s) {
 
-            // Ambil cart item berdasarkan ID
-            $item = CartItem::with('product')->find($cartItemId);
+            // ->
+            // s HARUSNYA ISI: [ "id" => 22, "qty" => 3 ]
+            // <-
+
+            // FIX DEPLOY BUG: pastikan id selalu integer
+            $cartItemId = intval($s['id']);
+            $qty = intval($s['qty']);
+
+            // Ambil cart item (HARUS ->first() biar tidak jadi collection)
+            $item = CartItem::with('product')
+                ->where('cart_item_id', $cartItemId)
+                ->first();
 
             if (!$item) continue;
 
             $product = $item->product;
-            $qty     = $item->qty; // qty dari DB — INI YANG BENAR
 
-            // Cek stok
+            // CEK STOK
             if ($qty > $product->stock) {
                 return back()->with('error', 'Stok tidak cukup untuk: ' . $product->name);
             }
 
-            // Simpan di order_items
+            // SIMPAN ORDER ITEM
             OrderItem::create([
                 'order_id' => $order->order_id,
                 'product_id' => $product->product_id,
                 'qty' => $qty,
-                'price_per_item' => $product->price,
+                'price_per_item' => $product->price
             ]);
 
-            // Tambah total
-            $total += $product->price * $qty;
+            // HITUNG TOTAL
+            $total += ($product->price * $qty);
 
-            // Kurangi stok
+            // KURANGI STOK
             $product->stock -= $qty;
             $product->save();
 
-            // Hapus dari cart
+            // HAPUS DARI CART
             $item->delete();
         }
 
-        // Hitung total + ongkir
-        $order->total_price = $total + 10000;
+        // SET TOTAL ORDER (produk + ongkir)
+        $shippingCost = 10000;
+        $order->total_price = $total + $shippingCost;
         $order->save();
 
         return redirect()->route('payment.page', $order->order_id);
@@ -91,9 +102,10 @@ class OrderController extends Controller
             return back()->with('error', 'Order tidak dapat dibatalkan.');
         }
 
-        // Kembalikan stok
+        // Kembalikan stok produk
         foreach ($order->items as $item) {
-            Product::where('product_id', $item->product_id)->increment('stock', $item->qty);
+            Product::where('product_id', $item->product_id)
+                ->increment('stock', $item->qty);
         }
 
         $order->status = 'cancelled';
