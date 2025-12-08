@@ -165,12 +165,14 @@
                     </span>
                 </div>
 
-                <a href="{{ route('chat.show', $product->seller->user_id) }}"
-                    class="btn-chat"
-                    style="margin-left:auto; padding:6px 12px; border:none;
-                            border-radius:6px; color:white; text-decoration:none;">
-                    Chat
-                </a>
+                @if(Auth::check() && Auth::id() !== $product->seller->user_id)
+                    <a href="{{ route('chat.show', $product->seller->user_id) }}"
+                        class="btn-chat"
+                        style="margin-left:auto; padding:6px 12px; border:none;
+                                border-radius:6px; color:white; text-decoration:none;">
+                        Chat
+                    </a>
+                @endif
             </div>
 
             <p style="margin-top:10px;" class="primary-text-color">{{ $product->description }}</p>
@@ -308,7 +310,10 @@ $(document).ready(function() {
         });
         
         function sendProductAction(button, url, productId) {
-            
+            if (url.startsWith('http://')) {
+                url = url.replace('http://', 'https://');
+            }
+
             $.ajax({
                 url: url,
                 method: 'POST',
