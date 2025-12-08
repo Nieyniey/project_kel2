@@ -85,7 +85,7 @@
                     font-size:15px;
                     font-weight:600;
                 ">
-                kirim
+                Kirim
             </button>
         </form>
 
