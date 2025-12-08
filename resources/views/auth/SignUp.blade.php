@@ -9,7 +9,6 @@
     justify-content: center;
     align-items: stretch;
     max-width: 1400px;
-    margin: 20px auto;
     border-radius: 25px;
     overflow: hidden;
 ">

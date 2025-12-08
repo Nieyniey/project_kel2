@@ -8,8 +8,6 @@
     border-radius: 20px; 
     padding: 60px; 
     text-align:center;
-    max-width: 1100px;
-    margin: 40px auto;
 ">
 
     {{-- Logo WTS --}}
