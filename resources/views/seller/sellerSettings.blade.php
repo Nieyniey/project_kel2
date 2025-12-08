@@ -211,7 +211,7 @@
                 
                 {{-- 2. User Page (Switch to Buyer Settings) --}}
                 @elseif ($activeTab == 'user-page')
-                    <h3 class="fw-bold mb-4" style="color: #6C2207;">Switch to Buyer Mode</h3>
+                    <h3 class="fw-bold mb-4" style="color: #6C2207;">Ubah ke Mode Pembeli</h3>
                     
                     @php
                         $displayName = $user->name ?? ($user->seller->store_name ?? 'Your User Account');

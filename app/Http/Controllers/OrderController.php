@@ -83,7 +83,7 @@ class OrderController extends Controller
                 if ($qty > $product->stock) {
                     // Rollback all changes if stock check fails
                     DB::rollBack();
-                    return back()->with('error', 'Stock tidak cukup untuk: ' . $product->name);
+                    return back()->with('error', 'Stok tidak cukup untuk: ' . $product->name);
                 }
 
                 // 6. Prepare Order Item and Update Totals

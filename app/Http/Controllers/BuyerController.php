@@ -90,7 +90,7 @@ class BuyerController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('buyer.settings')->with('success', 'Personal Information successfully updated!');
+        return redirect()->route('buyer.settings')->with('success', 'Informasi berhasil terbarui!');
     }
 
     public function changeAddressPage($order_id)
@@ -120,7 +120,7 @@ class BuyerController extends Controller
         // redirect ke payment page
         return redirect()
             ->route('payment.page', $request->order_id)
-            ->with('success', 'Address updated!');
+            ->with('success', 'Alamat terbarui!');
     }
 
 
