@@ -49,6 +49,6 @@ class ForgotPasswordController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return redirect('/login')->with('success', 'Password updated successfully!');
+        return redirect('/login')->with('berhasil', 'Sandi berhasil diperbarui!');
     }
 }

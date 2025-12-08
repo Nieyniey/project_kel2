@@ -50,7 +50,7 @@ class PaymentController extends Controller
         $order = Order::findOrFail($order_id);
 
         if (!$request->method) {
-            return back()->with('error', 'Please select a payment method.');
+            return back()->with('error', 'Pilih metode pembayaran.');
         }
 
         Payment::create([
@@ -63,7 +63,7 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('buyer.settings', ['tab' => 'orders'])
-            ->with('success', 'Payment Successful!');
+            ->with('berhasil', 'Pembayaran berhasil!');
     }
 
 }

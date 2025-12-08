@@ -87,7 +87,7 @@ class OrderController extends Controller
     public function cancelOrder(Order $order)
     {
         if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
-            return back()->with('error', 'Order cannot be cancelled.');
+            return back()->with('error', 'Pesanan tidak dapat dibatalkan.');
         }
 
         $order->status = 'cancelled';
@@ -115,12 +115,12 @@ class OrderController extends Controller
         }
 
         if (!in_array($order->status, ['completed', 'cancelled'])) {
-            return back()->with('error', 'Only completed/cancelled orders can be deleted.');
+            return back()->with('error', 'hanya pesanan yang selesai atau dibatalkan yang dapat dihapus.');
         }
 
         $order->items()->delete();
         $order->delete();
 
-        return back()->with('success', 'Order deleted.');
+        return back()->with('berhasil', 'Pesanan berhasil dihapus.');
     }
 }
