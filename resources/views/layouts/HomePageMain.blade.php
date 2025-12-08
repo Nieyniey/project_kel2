@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.Main')
 
 @section('title', 'Home Page')
 
@@ -11,7 +11,7 @@
 ">
 
     {{-- Logo WTS --}}
-    <img src="{{ asset('img/Logo.jpg') }}" 
+    <img src="{{ asset('logo.jpg') }}" 
          alt="WTS Logo"
          style="height: 150px; margin-bottom: 20px;">
 
@@ -26,11 +26,11 @@
 
     {{-- Image Gallery --}}
     <div style="display: flex; justify-content:center; gap: 25px; margin-top: 50px;">
-        <img src="{{ asset('img/item1.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
-        <img src="{{ asset('img/item2.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
-        <img src="{{ asset('img/item3.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
-        <img src="{{ asset('img/item4.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
-        <img src="{{ asset('img/item5.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
+        <img src="{{ asset('item1.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
+        <img src="{{ asset('item2.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
+        <img src="{{ asset('item3.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
+        <img src="{{ asset('item4.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
+        <img src="{{ asset('item5.jpg') }}" style="width:150px; height:180px; border-radius:15px; object-fit:cover;">
     </div>
 
     {{-- CTA Buttons --}}
