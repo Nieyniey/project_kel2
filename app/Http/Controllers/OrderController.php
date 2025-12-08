@@ -55,7 +55,7 @@ class OrderController extends Controller
             $productIds = collect($selectedItemsData)->pluck('id')->toArray();
             
             // Lock the necessary CartItems and related Products (Optimistic Locking)
-            $cartItems = CartItem::whereIn('id', $productIds)
+            $cartItems = CartItem::whereIn('cart_item_id', $productIds)
                                  ->with('product')
                                  ->lockForUpdate() // Locks rows in the database
                                  ->get();
