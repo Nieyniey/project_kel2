@@ -12,6 +12,7 @@
     border-radius: 25px;
     overflow: hidden;
     background: #FFFBE8;
+    color: #6C2207;
 ">
 
     <div style="

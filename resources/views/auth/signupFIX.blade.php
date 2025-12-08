@@ -11,6 +11,7 @@
     max-width: 1400px;
     border-radius: 25px;
     overflow: hidden;
+    color: #6C2207;
 ">
 
     {{-- LEFT FORM --}}
