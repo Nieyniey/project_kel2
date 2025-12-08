@@ -139,4 +139,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/{chat}/send', [ChatController::class, 'store'])->name('store');
     });
 
+    Route::get('/seller/products/search', [SellerProductController::class, 'search'])->name('seller.products.search');
+
 });

@@ -78,7 +78,7 @@
             <button type="button" class="btn-close fs-4 me-3" id="close-search-bar" aria-label="Close" style="color: #5c4a3e;"></button>
 
             {{-- Search Form --}}
-            <form action="{{ route('products.search') }}" method="GET" class="w-100 d-flex">
+            <form action="{{ route('seller.products.search') }}" method="GET" class="w-100 d-flex">
                 <input type="search" 
                     id="search-input" 
                     name="q" 
