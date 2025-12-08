@@ -23,7 +23,7 @@
         
         {{-- LOGO --}}
         <div style="text-align:center; margin-bottom: 20px;">
-            <img src="{{ asset('logo.jpg') }}" 
+            <img src="{{ asset('img/Logo.jpg') }}" 
                  alt="WTS Logo"
                  style="height: 160px;">
         </div>
@@ -117,12 +117,12 @@
         gap: 12px;
         padding: 12px;
     ">
-        <img src="{{ asset('item1.jpg') }}" style="width:100%; height:220px; object-fit:cover; border-radius:12px;">
-        <img src="{{ asset('item2.jpg') }}" style="width:100%; height:220px; object-fit:cover; border-radius:12px;">
-        <img src="{{ asset('item3.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
-        <img src="{{ asset('item4.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
-        <img src="{{ asset('item5.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
-        <img src="{{ asset('item6.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item1.jpg') }}" style="width:100%; height:220px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item2.jpg') }}" style="width:100%; height:220px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item3.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item4.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item5.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
+        <img src="{{ asset('img/item6.jpg') }}" style="width:100%; height:260px; object-fit:cover; border-radius:12px;">
     </div>
 
 </div>

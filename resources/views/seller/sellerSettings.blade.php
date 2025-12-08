@@ -8,7 +8,7 @@
     
     $profileImageUrl = $user->profile_photo 
                         ? asset('storage/' . $user->profile_photo) 
-                        : asset('placeholder.jpg');
+                        : asset('img/placeholder.jpg');
     
     $activeTab = request('tab') ?? 'store-info'; 
 @endphp
