@@ -197,7 +197,7 @@
         </form>
 
         {{-- REVISION 3: NO UNDERLINE --}}
-        <a id="checkout-btn" href="payment.page"
+        <a id="checkout-btn" href="javascript:void(0)"
             style="
                 width:100%;
                 background:#CCC;
