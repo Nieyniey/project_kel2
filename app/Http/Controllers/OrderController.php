@@ -2,78 +2,144 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // <-- Important: Added DB facade
 
 class OrderController extends Controller
 {
+    /**
+     * Handles placing an order from selected cart items.
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function place(Request $request)
     {
-        // Pastikan selected_items diterima dari form
+        // 1. Validation
         $request->validate([
-            'selected_items' => 'required'
+            // Assuming the selected_items JSON string is passed
+            'selected_items' => 'required|string'
         ]);
 
-        $selected = json_decode($request->selected_items, true);
+        $selectedItemsData = json_decode($request->selected_items, true);
 
-        if (!$selected || count($selected) === 0) {
+        if (!$selectedItemsData || count($selectedItemsData) === 0) {
             return back()->with('error', 'Tidak ada item yang dipilih.');
         }
 
-        $total = 0;
+        $totalPrice = 0;
+        $order = null;
 
-        // Buat order
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'address_id' => 1,
-            'total_price' => 0,
-            'status' => 'pending'
-        ]);
+        // 2. Wrap logic in a Database Transaction for safety and atomicity
+        try {
+            DB::beginTransaction();
 
-        foreach ($selected as $s) {
-
-            $item = CartItem::with('product')->find($s['id']);
-
-            if (!$item) continue;
-
-            $product = $item->product;
-
-            // CEK STOCK
-            if ($s['qty'] > $product->stock) {
-                return back()->with('error', 'Stock tidak cukup untuk: ' . $product->name);
-            }
-
-            // SIMPAN ORDER ITEM
-            OrderItem::create([
-                'order_id' => $order->order_id,
-                'product_id' => $product->product_id,
-                'qty' => $s['qty'],
-                'price_per_item' => $product->price
+            // 3. Create initial order record
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                // NOTE: 'address_id' => 1 is hardcoded. Use user's selected address ID here.
+                'address_id' => 1, 
+                'total_price' => 0, // Will be updated later
+                'status' => 'pending'
             ]);
 
-            // HITUNG TOTAL
-            $total += $product->price * $s['qty'];
+            // Prepare for Order Item creation
+            $orderItemsToCreate = [];
+            $cartItemsToDelete = [];
+            
+            // Collect Product IDs to lock them for stock safety
+            $productIds = collect($selectedItemsData)->pluck('id')->toArray();
+            
+            // Lock the necessary CartItems and related Products (Optimistic Locking)
+            $cartItems = CartItem::whereIn('id', $productIds)
+                                 ->with('product')
+                                 ->lockForUpdate() // Locks rows in the database
+                                 ->get();
+            
+            // Map CartItem ID to the full CartItem object
+            $cartItemMap = $cartItems->keyBy('id');
 
-            // KURANGI STOCK
-            $product->stock -= $s['qty'];
-            $product->save();
+            // 4. Process each selected item
+            foreach ($selectedItemsData as $s) {
+                // Ensure the selected item ID and qty are present and valid
+                if (!isset($s['id']) || !isset($s['qty'])) {
+                    continue; 
+                }
 
-            // HAPUS DARI CART
-            $item->delete();
+                $cartItemId = $s['id'];
+                $qty = (int)$s['qty'];
+
+                $item = $cartItemMap->get($cartItemId);
+
+                if (!$item) continue;
+
+                $product = $item->product;
+
+                // 5. Check Stock and handle failure (before modification)
+                if ($qty > $product->stock) {
+                    // Rollback all changes if stock check fails
+                    DB::rollBack();
+                    return back()->with('error', 'Stok tidak cukup untuk: ' . $product->name);
+                }
+
+                // 6. Prepare Order Item and Update Totals
+                $subtotal = $product->price * $qty;
+                $totalPrice += $subtotal;
+
+                $orderItemsToCreate[] = [
+                    'order_id' => $order->order_id,
+                    'product_id' => $product->product_id,
+                    'qty' => $qty,
+                    'price_per_item' => $product->price,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                // 7. Reduce Stock (Product update prepared outside the loop if using mass update)
+                // For simplicity and safety with lockForUpdate, we update it in the loop
+                $product->stock -= $qty;
+                $product->save();
+                
+                // 8. Mark Cart Item for deletion
+                $cartItemsToDelete[] = $cartItemId;
+            }
+
+            // 9. Mass insert Order Items
+            OrderItem::insert($orderItemsToCreate);
+
+            // 10. Finalize Order Total and save
+            $shippingCost = 10000;
+            $order->total_price = $totalPrice + $shippingCost;
+            $order->save();
+
+            // 11. Delete processed Cart Items
+            CartItem::destroy($cartItemsToDelete);
+
+            // 12. Commit Transaction
+            DB::commit();
+
+        } catch (\Exception $e) {
+            // Log the error and rollback the transaction if anything failed
+            DB::rollBack();
+            // Optional: Log error $e->getMessage()
+
+            // Delete the partially created order if it exists (optional safety net)
+            if ($order) {
+                $order->delete();
+            }
+
+            return back()->with('error', 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.');
         }
 
-        // UPDATE TOTAL ORDER
-        $order->total_price = $total + 10000; // Ongkir
-        $order->save();
-
+        // 13. Redirect
         return redirect()->route('payment.page', $order->order_id);
     }
-
+    
+    // ... (rest of the controller methods remain unchanged) ...
     public function trackList()
     {
         $orders = Order::with('items.product')
@@ -89,11 +155,20 @@ class OrderController extends Controller
         if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
             return back()->with('error', 'Order cannot be cancelled.');
         }
+        
+        // Revert stock for cancelled items
+        DB::transaction(function () use ($order) {
+            $order->status = 'cancelled';
+            $order->save();
 
-        $order->status = 'cancelled';
-        $order->save();
+            // Increment product stock for each item in the cancelled order
+            foreach ($order->items as $item) {
+                // Using increment method to prevent race condition on stock
+                Product::where('product_id', $item->product_id)->increment('stock', $item->qty);
+            }
+        });
 
-        return back()->with('success', 'Order #' . $order->order_id . ' cancelled.');
+        return back()->with('success', 'Order #' . $order->order_id . ' cancelled and stock reverted.');
     }
 
     public function completeOrder(Order $order)

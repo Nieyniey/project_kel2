@@ -15,7 +15,7 @@ class SellerController extends Controller
     {
         $user = Auth::user();
         if (!$user || !$user->seller) {
-            return redirect()->route('home')->with('error', 'You are not registered as a seller.');
+            return redirect()->route('home')->with('error', 'Anda belom registrasi sebagai seller.');
         }
         
         $activeTab = $request->query('tab', 'store-info'); 
@@ -53,13 +53,13 @@ class SellerController extends Controller
         $seller->update($validated);
 
         return redirect()->route('seller.settings', ['tab' => 'store-info'])
-            ->with('success', 'Store Information successfully updated!');
+            ->with('success', 'Informasi toko terubah dan tersimpan!');
     }
 
     public function showCreateStore()
     {
         if (Auth::user()->seller) {
-            return redirect()->route('seller.settings')->with('info', 'You already have a store!');
+            return redirect()->route('seller.settings')->with('info', 'Anda sudah punya toko!');
         }
         
         $user = Auth::user(); 
@@ -77,7 +77,7 @@ class SellerController extends Controller
         $user = Auth::user();
 
         if ($user->seller()->exists()) {
-            return redirect()->route('seller.settings')->with('error', 'You already have a store.');
+            return redirect()->route('seller.settings')->with('error', 'Anda sudah punya toko.');
         }
 
         $user->seller()->create([
@@ -87,7 +87,7 @@ class SellerController extends Controller
             'status' => 'active',
         ]);
         
-        return redirect()->route('seller.settings')->with('success', 'Your store has been successfully created!');
+        return redirect()->route('seller.settings')->with('success', 'Tokomu berhasil dibuat!');
     }
 
     public function index($id)

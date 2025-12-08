@@ -33,7 +33,7 @@ class WishlistController extends Controller
             'product_id' => $request->product_id,
         ]);
 
-        return back()->with('success', 'Added to Wishlist');
+        return back()->with('success', 'Ditambahkan ke Wishlist');
     }
 
     public function remove(Request $request)
@@ -48,11 +48,11 @@ class WishlistController extends Controller
                                    ->delete();
 
             if ($deleted) {
-                 return back()->with('success', 'Product removed from your Wishlist.');
+                 return back()->with('success', 'Produk dihapuskan dari Wishlist.');
             }
         }
         
-        return back()->with('error', 'Product was not found in your Wishlist.');
+        return back()->with('error', 'Produk tidak ditemukan di Wishlist.');
     }
 
     public function addAjax(Request $request)

@@ -415,7 +415,9 @@ body {
         });
         
         function sendProductAction(button, url, productId) {
-            //button.prop('disabled', true);
+            if (url && url.startsWith('http:')) {
+                url = url.replace('http:', 'https:');
+            }
             
             $.ajax({
                 url: url,

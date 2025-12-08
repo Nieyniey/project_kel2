@@ -111,4 +111,30 @@ class SellerProductController extends Controller
             abort(403, 'Akses Tidak Diizinkan. Produk ini bukan milik Anda.');
         }
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        $user = Auth::user();
+
+        if (!$user || !$user->seller) {
+            return redirect('/')->with('error', 'Authentication required to search seller products.');
+        }
+
+        $sellerId = $user->seller->seller_id;
+
+        $products = Product::where('seller_id', $sellerId)
+                           ->orderBy('created_at', 'desc');
+
+        if ($query) {
+            $products->where(function ($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%')
+                  ->orWhere('description', 'like', '%' . $query . '%');
+            });
+        }
+        
+        $products = $products->get();
+
+        return view('seller.sellerProducts', compact('products'));
+    }
 }

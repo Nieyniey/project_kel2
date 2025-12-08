@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login')
+@section('title', 'Sign Up')
 
 @section('content')
 
@@ -11,59 +11,44 @@
     max-width: 1400px;
     border-radius: 25px;
     overflow: hidden;
-    background: #FFFBE8;
     color: #6C2207;
 ">
 
+    {{-- LEFT FORM --}}
     <div style="
+        background: #FFFBE8; 
+        padding: 50px 70px;
         width: 45%;
-        background: #FFFBE8;
-        padding: 60px 70px;
+        min-height: 650px;
     ">
-
-        <div style="text-align:center; margin-bottom: 30px;">
+        
+        {{-- LOGO --}}
+        <div style="text-align:center; margin-bottom: 20px;">
             <img src="{{ asset('img/Logo.jpg') }}" 
                  alt="WTS Logo"
                  style="height: 160px;">
         </div>
 
-        <h3 style="font-weight: 700; margin-bottom: 25px;">Log In</h3>
+        <h3 style="font-weight: 700; margin-bottom: 25px;">Sign Up</h3>
 
-        {{-- ERROR MESSAGE --}}
-        @if ($errors->any())
-            <div style="
-                background:#ffe0e0;
-                color:#b10000;
-                padding:10px 15px;
-                border-radius:10px;
-                margin-bottom:15px;
-                border:1px solid #ffb3b3;
-                font-size:14px;
-            ">
-                {{ $errors->first() }}
-            </div>
-        @endif
-
-        {{-- SUCCESS MESSAGE (setelah signup) --}}
-        @if (session('success'))
-            <div style="
-                background:#e0ffe8;
-                color:#008f2a;
-                padding:10px 15px;
-                border-radius:10px;
-                margin-bottom:15px;
-                border:1px solid #b2ffcc;
-                font-size:14px;
-            ">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login.post') }}">
+        {{-- FORM --}}
+        <form method="POST" action="{{ route('signup.post') }}">
             @csrf
 
+            {{-- NAME --}}
+            <label>Nama</label>
+            <input type="text" name="name" placeholder="Enter Name"
+                style="
+                    width:100%;
+                    padding:10px 15px;
+                    border:2px solid #FF8A3D;
+                    border-radius:10px;
+                    margin-bottom:18px;
+                " required>
+
+            {{-- EMAIL --}}
             <label>Alamat Email</label>
-            <input type="email" name="email" placeholder="Masukkan Alamat Email"
+            <input type="email" name="email" placeholder="Enter Email Address"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -72,8 +57,9 @@
                     margin-bottom:18px;
                 " required>
 
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Masukan Password"
+            {{-- PASSWORD --}}
+            <label>Kata Sandi</label>
+            <input type="password" name="password" placeholder="Kata Sandi harus terdiri dari 8 karakter"
                 style="
                     width:100%;
                     padding:10px 15px;
@@ -82,14 +68,18 @@
                     margin-bottom:18px;
                 " required>
 
-            {{-- FORGOT PASSWORD --}}
-            <div style="text-align:right; margin-bottom:10px;">
-                <a href="/forgot-password" 
-                style="color:#FF6E00; font-size:14px; text-decoration:none;">
-                    Lupa sandi
-                </a>
-            </div>
+            {{-- CONFIRM --}}
+            <label>Konfirmasi Kata Sandi</label>
+            <input type="password" name="password_confirmation" placeholder="Masukkan Kata Sandi"
+                style="
+                    width:100%;
+                    padding:10px 15px;
+                    border:2px solid #FF8A3D;
+                    border-radius:10px;
+                    margin-bottom:25px;
+                " required>
 
+            {{-- SUBMIT --}}
             <button type="submit" style="
                 width:100%; 
                 background:#FF6E00;
@@ -99,25 +89,27 @@
                 border-radius:10px;
                 font-size:16px;
                 cursor:pointer;
-                margin-top:20px;
+                margin-bottom:20px;
             ">
-                Log in
+                Sign up
             </button>
+
         </form>
 
-        <div style="text-align:center; margin-top:20px;">
-            <p>Belum punya akun?</p>
-            <a href="/signup" style="
+        <div style="text-align:center;">
+            <p>Sudah punya akun?</p>
+            <a href="/login" style="
                 padding:8px 30px; 
                 border:2px solid #FF6E00;
                 color:#FF6E00;
                 background:white;
                 border-radius:10px;
                 text-decoration:none;
-            ">Sign Up</a>
+            ">Log in</a>
         </div>
     </div>
 
+    {{-- RIGHT IMAGE --}}
     <div style="
         width: 55%;
         background: #FFFBE8;
