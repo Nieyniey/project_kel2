@@ -4,38 +4,96 @@
 
 @section('content')
 
-<div style="
-    width: 100%;
-    padding: 30px;
-    background: #FFFBE8;
-    min-height: 100vh;
-">
+{{-- Injecting Styles for Fixed Header --}}
+<style>
+    /* ** REVISION 4: Fixed Header Style 
+    */
+    .header-fixed {
+        background-color: #FFFEF7; 
+        width: 100%;
+        position: sticky; 
+        top: 0;
+        left: 0;
+        z-index: 1000; 
+        padding: 15px 0; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    }
+    
+    /* ** REVISION 1: General Text Color and Background 
+    */
+    body {
+        background-color: #FFFBE8;
+    }
+    .cart-page-content {
+        background: #FFFBE8;
+        min-height: 100vh;
+    }
+    .text-main-color {
+        color: #6C2207 !important; /* Main text color */
+    }
+    .price-color {
+        color: #FC5801 !important; /* Price highlight color */
+    }
+    .cart-item {
+        color: #6C2207;
+    }
+    
+    /* ** REVISION 3: Checkout button text styling 
+    */
+    #checkout-btn {
+        text-decoration: none !important;
+    }
 
-    {{-- HEADER --}}
-    <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
-        <a href="/home" style="color:#FF6E00; font-size:22px; text-decoration:none;">←</a>
-        <span style="font-weight:600; font-size:20px;">Keranjang Belanja</span>
+    /* Additional adjustment for consistent padding if using a 'container' class */
+    .container {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+</style>
+
+<div class="header-fixed">
+    <div class="container" style="padding: 0 30px;"> 
+        <div style="display:flex; align-items:center;">
+            <a href="{{ route('homeIn') }}" style="font-size: 1.5rem; color:#FC5801!important; text-decoration:none; margin-right:15px;">
+                &leftarrow;
+            </a>
+            <h5 style="font-weight:bold; margin-bottom:0; color: #FC5801!important;">
+                Keranjang Belanja
+            </h5>
+        </div>
     </div>
+</div>
 
-    {{-- TABLE HEADER --}}
-    <div style="
+<div class="cart-page-content container" style="padding-top: 30px;">
+
+<div style="
         display:flex;
         justify-content:space-between;
+        align-items: center; 
         padding:10px 15px;
-        background:#FAEED0;
+        background:#E8E0BB; 
         border-radius:10px;
         font-weight:600;
         margin-bottom:20px;
-    ">
-        <span style="width:45%;">Produk</span>
-        <span style="width:20%;">Harga</span>
-        <span style="width:20%;">Banyak</span>
-        <span style="width:10%;">Hapus</span>
+    " class="text-main-color">
+        
+        {{-- Produk (Combined with Checkbox space) --}}
+        <span style="width:47%; margin-left:85px;">Produk</span> 
+        
+        {{-- Harga --}}
+        <span style="width:13%; text-align: left;">Harga</span> 
+        
+        {{-- Banyak (Centered for Qty buttons) --}}
+        <span style="width:15%; text-align: center;">Banyak</span> 
+        
+        {{-- Hapus (Aligned with the delete button) --}}
+        <span style="width:10%; text-align: right; padding-right: 10px;">Hapus</span> 
+
     </div>
 
     {{-- CART ITEMS --}}
     @foreach ($items as $item)
-    <div class="cart-item"
+    <div class="cart-item text-main-color"
         data-item-id="{{ $item->cart_item_id }}"
         style="
             display:flex;
@@ -62,13 +120,13 @@
             {{-- IMAGE --}}
             <div style="width:40%;">
                 <img src="{{ asset($item->product->image) }}"
-                     style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
+                    style="width:100%; height:90px; object-fit:cover; border-radius:10px;">
             </div>
 
             {{-- INFO --}}
             <div style="width:60%;">
                 <div style="font-weight:600;">{{ $item->product->name }}</div>
-                <div style="color:gray; font-size:14px;">
+                <div style="color:gray; font-size:14px; color:#6C2207;"> 
                     {{ $item->product->description }}
                 </div>
             </div>
@@ -76,21 +134,21 @@
         </a>
 
         {{-- PRICE --}}
-        <div style="width:15%; font-weight:600; color:#FF6E00;">
+        <div style="width:15%; font-weight:600;" class="price-color">
             Rp {{ number_format($item->product->price, 0, ',', '.') }}
         </div>
 
         {{-- QTY --}}
         <div style="width:15%; display:flex; align-items:center; gap:10px;">
             <button class="qty-btn" data-action="minus"
-                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#6C2207;">
                 -
             </button>
 
             <span class="qty-number">{{ $item->qty }}</span>
 
             <button class="qty-btn" data-action="plus"
-                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none;">
+                style="width:28px; height:28px; border-radius:50%; background:#FFF3D2; border:none; color:#6C2207;">
                 +
             </button>
         </div>
@@ -113,24 +171,24 @@
         border-radius:15px;
         padding:20px;
         box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    ">
-        <h4 style="font-weight:700; margin-bottom:15px;">Ringkasan Pesanan</h4>
+    " class="text-main-color">
+        <h4 style="font-weight:700; margin-bottom:15px; color:#6C2207;">Ringkasan Pesanan</h4>
 
         <div style="display:flex; justify-content:space-between;">
             <span>Subtotal</span>
-            <span id="subtotal">Rp 0</span>
+            <span id="subtotal" class="text-main-color">Rp 0</span>
         </div>
 
         <div style="display:flex; justify-content:space-between;">
             <span>Ongkir</span>
-            <span id="shipping">Rp {{ number_format($summary['shipping'],0,',','.') }}</span>
+            <span id="shipping" class="text-main-color">Rp {{ number_format($summary['shipping'],0,',','.') }}</span>
         </div>
 
-        <hr>
+        <hr style="border-color: #d8c8b4;">
 
         <div style="display:flex; justify-content:space-between; font-weight:700;">
             <span>Total</span>
-            <span id="total" style="color:#FF6E00;">Rp 0</span>
+            <span id="total" class="price-color">Rp 0</span>
         </div>
 
         <form id="place-order-form" method="POST" action="{{ route('orders.place') }}">
@@ -138,6 +196,7 @@
             <input type="hidden" name="selected_items" id="selected-items-input">
         </form>
 
+        {{-- REVISION 3: NO UNDERLINE --}}
         <a id="checkout-btn" href="javascript:void(0)"
             style="
                 width:100%;
@@ -148,6 +207,7 @@
                 color:white;
                 border-radius:10px;
                 margin-top:10px;
+                text-decoration: none; /* Applied revision */
             ">
             Checkout
         </a>
@@ -158,6 +218,8 @@
 @endsection
 
 
+{{-- JAVASCRIPT MUST BE IN @push('scripts') if using layouts.main --}}
+@push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -167,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkoutBtn = document.getElementById('checkout-btn');
 
     /* ===========================
-       UPDATE SUMMARY
+        UPDATE SUMMARY
     ============================ */
     function updateSummary() {
         let subtotal = 0;
@@ -185,7 +247,10 @@ document.addEventListener("DOMContentLoaded", function () {
         subtotalText.innerText = "Rp " + subtotal.toLocaleString('id-ID');
         totalText.innerText = "Rp " + (subtotal > 0 ? subtotal + shipping : 0).toLocaleString('id-ID');
 
-        checkoutBtn.style.background = subtotal > 0 ? "#FF6E00" : "#CCC";
+        // Note: The original code used #FF6E00 for the button color. I will use the established price-color #FC5801 for consistency.
+        const activeColor = "#FC5801"; // Updated active color for checkout button
+
+        checkoutBtn.style.background = subtotal > 0 ? activeColor : "#CCC";
         checkoutBtn.style.pointerEvents = subtotal > 0 ? "auto" : "none";
     }
 
@@ -193,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* ===========================
-       CHECKBOX EVENT
+        CHECKBOX EVENT
     ============================ */
     document.querySelectorAll('.item-check').forEach(check => {
         check.addEventListener('change', updateSummary);
@@ -201,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* ===========================
-       QTY BUTTONS
+        QTY BUTTONS
     ============================ */
     document.querySelectorAll('.qty-btn').forEach(button => {
         button.addEventListener('click', function () {
@@ -228,7 +293,10 @@ document.addEventListener("DOMContentLoaded", function () {
             let form = new FormData();
             form.append("item_id", itemId);
             form.append("qty", qty);
-
+            
+            // Re-use existing CSRF token from the meta tag if available, 
+            // or use the embedded token if the view doesn't use a meta tag (as done below).
+            
             fetch("{{ route('cart.updateQty') }}", {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
@@ -244,6 +312,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 number.innerText = qty;
                 updateSummary();
+            })
+            .catch(error => {
+                console.error('Error updating quantity:', error);
+                alert('Gagal update kuantitas. Coba lagi.');
             });
 
         });
@@ -251,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* ===========================
-       DELETE ITEM
+        DELETE ITEM
     ============================ */
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -273,15 +345,20 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
             body: fd
-        }).then(() => {
+        })
+        .then(() => {
             item.remove();
             updateSummary();
+        })
+        .catch(error => {
+            console.error('Error deleting item:', error);
+            alert('Gagal menghapus item. Coba lagi.');
         });
     }
 
 
     /* ===========================
-       CHECKOUT BUTTON
+        CHECKOUT BUTTON
     ============================ */
     checkoutBtn.addEventListener("click", function () {
 
@@ -291,10 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let checkbox = item.querySelector('.item-check');
 
             if (checkbox && checkbox.checked) {
-                selected.push({
-                    id: item.dataset.itemId,
-                    qty: parseInt(item.querySelector('.qty-number').innerText)
-                });
+                selected.push(item.dataset.itemId); // Only push the ID
             }
         });
 
@@ -302,10 +376,12 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Pilih minimal 1 item!");
             return;
         }
-
+        
+        // Pass the array of IDs to the form
         document.getElementById('selected-items-input').value = JSON.stringify(selected);
         document.getElementById('place-order-form').submit();
     });
 
 });
 </script>
+@endpush

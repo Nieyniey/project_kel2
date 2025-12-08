@@ -52,7 +52,7 @@
                 <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
             </a>
             <a href="{{ route('seller.products') }}" class="wts-logo mx-auto">
-                <img src="{{ asset('Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
+                <img src="{{ asset('img/Logo.jpg') }}" alt="WTS Logo" style="height: 50px; width: auto; object-fit: contain;">
             </a>
 
             {{-- Icons Container (Right-aligned Group for Action Icons) --}}

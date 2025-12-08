@@ -42,10 +42,10 @@
 
     {{-- <!-- LEFT IMAGES -->
     <div class="grid-box">
-        <img src="/item1.jpg" class="grid-img">
-        <img src="/item2.jpg" class="grid-img">
-        <img src="/item3.jpg" class="grid-img">
-        <img src="/item4.jpg" class="grid-img">
+        <img src="/img/item1.jpg" class="grid-img">
+        <img src="/img/item2.jpg" class="grid-img">
+        <img src="/img/item3.jpg" class="grid-img">
+        <img src="/img/item4.jpg" class="grid-img">
     </div> --}}
 
     <!-- CARD -->
@@ -99,10 +99,10 @@
 
     {{-- <!-- RIGHT IMAGES -->
     <div class="grid-box">
-        <img src="/item5.jpg" class="grid-img">
-        <img src="/item6.jpg" class="grid-img">
-        <img src="/item7.jpg" class="grid-img">
-        <img src="/item8.jpg" class="grid-img">
+        <img src="/img/item5.jpg" class="grid-img">
+        <img src="/img/item6.jpg" class="grid-img">
+        <img src="/img/item7.jpg" class="grid-img">
+        <img src="/img/item8.jpg" class="grid-img">
     </div> --}}
 
 </div>

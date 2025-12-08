@@ -8,7 +8,7 @@
     
     $profileImageUrl = $user->profile_photo 
                         ? asset('storage/' . $user->profile_photo) 
-                        : asset('placeholder.jpg'); 
+                        : asset('img/placeholder.jpg'); 
 @endphp
 
 @section('content')
@@ -71,6 +71,31 @@
         .fixed-panel-left {
             width: 33.3333%; 
         }
+    }
+    
+    .btn-chat-seller {
+        color: #6C2207;
+        border-color: #6C2207;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-chat-seller:hover {
+        background-color: #6C2207; 
+        color: white;
+        border-color: #6C2207;
+    }
+
+    .btn-pay-action {
+        background-color: #FC5801;
+        border-color: #FC5801;
+        color: white; 
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .btn-pay-action:hover {
+        background-color: #e54c00; 
+        border-color: #e54c00;
+        color: white;
     }
 </style>
 
@@ -303,7 +328,7 @@
                                         <div class="d-flex align-items-center gap-2">
                                             @if ($sellerId)
                                                 <a href="{{ route('chat.show', $sellerId) }}" 
-                                                    class="btn btn-sm" style="color: #6C2207; border-color: #6C2207;">
+                                                    class="btn btn-sm btn-outline-secondary btn-chat-seller">
                                                     Chat Penjual
                                                 </a>
                                             @else
@@ -312,6 +337,11 @@
 
                                             {{-- Action Buttons: PENDING/PAID STATUS --}}
                                             @if ($order->status == 'pending')
+                                                {{-- Button: PAY (The only action while pending) --}}
+                                                <a href="{{ route('payment.page', $order->order_id) }}"
+                                                   class="btn btn-sm btn-pay-action">
+                                                    Lanjutkan Pembayaran
+                                                </a>
                                                 {{-- Button: CANCEL (The only action while pending) --}}
                                                 <form action="{{ route('order.cancel', $order) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin cancel pesanan ini?');">
                                                     @csrf

@@ -29,7 +29,7 @@ class ProductController extends Controller
 
         $similarProducts = Product::where('category_id', $product->category_id)
             ->where('product_id', '!=', $product->product_id)
-            ->take(6)
+            ->take(8)
             ->get();
 
         return view('buyer.detailProduct', compact(

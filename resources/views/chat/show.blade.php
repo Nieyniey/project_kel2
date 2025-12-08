@@ -210,7 +210,7 @@
                     @endphp
                     @foreach ($messages as $message)
                         @php
-                            $messageDate = $message->created_at->translatedFormat('l, j F Y');
+                            $messageDate = $message->created_at->timezone('Asia/Jakarta')->settings(['locale' => 'id'])->translatedFormat('l, j F Y');
                             if ($messageDate !== $currentDate) {
                                 $currentDate = $messageDate;
                                 echo '<p class="text-center my-3"><span class="badge date-badge">' . $currentDate . '</span></p>';
@@ -229,7 +229,7 @@
                                 {{ $message->content }}
 
                                 <small class="text-end d-block mt-1 sender-timestamp">
-                                    {{ $message->created_at->format('H:i') }}
+                                    {{ $message->created_at->timezone('Asia/Jakarta')->format('H:i') }}
                                 </small>
 
                             </div>

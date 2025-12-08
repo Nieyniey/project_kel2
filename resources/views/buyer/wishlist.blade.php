@@ -6,7 +6,7 @@
 
 <style>
     .header-fixed {
-        background-color: #FFFEF7; /* Navigation and Right Square Background */
+        background-color: #FFFEF7; 
         width: 100%;
         position: sticky; 
         top: 0;

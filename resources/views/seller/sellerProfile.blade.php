@@ -123,7 +123,7 @@
                 @php
                     $profileImage = $seller->user->profile_photo 
                         ? asset('storage/' . $seller->user->profile_photo) 
-                        : asset('placeholder.jpg'); 
+                        : asset('img/placeholder.jpg'); 
                 @endphp
                 <img src="{{ $profileImage }}" 
                      class="seller-profile-pic">
