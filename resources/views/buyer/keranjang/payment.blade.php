@@ -189,6 +189,19 @@
                             Rp {{ number_format($item->price_per_item * $item->qty, 0, ',', '.') }}
                         </span>
                     </div>
+                    {{-- Tambahkan subtotal produk --}}
+                    {{-- <hr>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                        <span>Subtotal Produk</span>
+                        <span>Rp {{ number_format($order->total_price - 10000, 0, ',', '.') }}</span>
+                    </div> --}}
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                        <span>Ongkir</span>
+                        <span>Rp 10.000</span>
+                    </div>
+
+                    <hr>
                 @endforeach
 
                 <hr style="margin:20px 0; border-color: #d8c8b4;">
