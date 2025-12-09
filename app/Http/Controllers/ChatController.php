@@ -11,9 +11,6 @@ use Illuminate\Validation\Rule;
 class ChatController extends Controller
 {
 
-    /**
-     * 1. Menampilkan daftar semua chat room user yang sedang login.
-     */
     public function index()
     {
         $userId = Auth::id();
@@ -28,21 +25,15 @@ class ChatController extends Controller
         return view('chat.index', compact('chats'));
     }
 
-    /**
-     * 2. Menampilkan chat room spesifik atau MEMBUAT room baru.
-     * @param int $receiverId - ID user lawan chat (seller atau buyer)
-     */
-    public function show(int $receiverId) // Original signature: expects an ID
+    public function show(int $receiverId)
     {
         $senderId = Auth::id(); 
 
-        // 1. Cek apakah lawan chat nya ada
         $receiver = User::find($receiverId);
         if (!$receiver) {
             return redirect()->route('chat.index')->with('error', 'Penerima pesan tidak ditemukan.');
         }
 
-        // 2. Cari atau buat chat room
         $chat = Chat::where(function ($query) use ($senderId, $receiverId) {
             $query->where('user1_id', $senderId)
                   ->where('user2_id', $receiverId);
@@ -58,18 +49,13 @@ class ChatController extends Controller
             ]);
         }
         
-        // 3. Ambil semua pesan di chat room
         $messages = $chat->messages()->with('sender')->get();
 
-        // 4. Tandai semua pesan yang diterima sebagai sudah dibaca
         $chat->messages()->where('sender_id', '!=', $senderId)->update(['is_read' => true]);
 
-        
-        // 5. Load the list of all active chats for the sidebar
         $userId = Auth::id();
         $chats = Chat::where('user1_id', $userId)
                      ->orWhere('user2_id', $userId)
-                     // You may need to eager load here as well, depending on your sidebar content
                      ->with(['user1', 'user2', 'messages' => function ($query) {
                          $query->latest()->limit(1);
                      }])
@@ -78,20 +64,14 @@ class ChatController extends Controller
         return view('chat.show', compact('chat', 'messages', 'receiver', 'chats')); 
     }
 
-    /**
-     * 3. Menyimpan pesan baru ke database (Mengirim Pesan).
-     */
     public function store(Request $request, Chat $chat)
     {
-        // 1. Validasi input
         $request->validate(['content' => 'required|string|max:500']);
         
-        // 2. Cek otorisasi
         if ($chat->user1_id !== Auth::id() && $chat->user2_id !== Auth::id()) {
             abort(403, 'Anda tidak diizinkan mengirim pesan di chat room ini.');
         }
 
-        // 3. Simpan pesan
         Message::create([
             'chat_id' => $chat->id,
             'sender_id' => Auth::id(),
