@@ -6,8 +6,7 @@
 
 {{-- Injecting Styles for Fixed Header --}}
 <style>
-    /* ** REVISION 4: Fixed Header Style 
-    */
+
     .header-fixed {
         background-color: #FFFEF7; 
         width: 100%;
@@ -18,9 +17,7 @@
         padding: 15px 0; 
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     }
-    
-    /* ** REVISION 1: General Text Color and Background 
-    */
+
     body {
         background-color: #FFFBE8;
     }
@@ -38,13 +35,12 @@
         color: #6C2207;
     }
     
-    /* ** REVISION 3: Checkout button text styling 
-    */
+
     #checkout-btn {
         text-decoration: none !important;
     }
 
-    /* Additional adjustment for consistent padding if using a 'container' class */
+
     .container {
         padding-left: 30px;
         padding-right: 30px;
@@ -294,8 +290,6 @@ document.addEventListener("DOMContentLoaded", function () {
             form.append("item_id", itemId);
             form.append("qty", qty);
             
-            // Re-use existing CSRF token from the meta tag if available, 
-            // or use the embedded token if the view doesn't use a meta tag (as done below).
             
             fetch("{{ route('cart.updateQty') }}", {
                 method: "POST",

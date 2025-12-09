@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'product_id';   // PK sesuai ERD
+    protected $primaryKey = 'product_id';   
     public $incrementing = true;
     protected $keyType = 'int';
 

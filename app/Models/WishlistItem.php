@@ -10,9 +10,9 @@ class WishlistItem extends Model
     protected $table = 'wishlist_items';
 
     protected $fillable = [
-        'wishlist_item_id',      // <<< WAJIB ADA
-        'wishlist_id',      // <<< WAJIB ADA
-        'product_id',   // <<< WAJIB ADA
+        'wishlist_item_id',   
+        'wishlist_id',    
+        'product_id',   
     ];
 
     public function product()

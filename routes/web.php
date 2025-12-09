@@ -15,9 +15,7 @@ use App\Http\Controllers\WTSController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
-| PUBLIC ROUTES
-|--------------------------------------------------------------------------
+Public Routes
 */
 
 Route::get('/', [WTSController::class, 'index'])->name('home');
@@ -45,9 +43,7 @@ Route::get('/search', [ProductController::class, 'search'])->name('products.sear
 
 
 /*
-|--------------------------------------------------------------------------
-| SELLER ROUTES
-|--------------------------------------------------------------------------
+Seller Routes
 */
 Route::prefix('seller')->group(function () {
     // PROFILE
@@ -69,14 +65,12 @@ Route::prefix('seller')->group(function () {
 
 
 /*
-|--------------------------------------------------------------------------
-| AUTH-PROTECTED ROUTES
-|--------------------------------------------------------------------------
+Auth-Protected Routes
 */
 Route::middleware('auth')->group(function () {
 
     /*
-    |---------------- CART ----------------|
+    Cart
     */
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
@@ -85,7 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/add-ajax', [CartController::class, 'addAjax'])->name('cart.add-ajax');
 
     /*
-    |---------------- ORDER ----------------|
+    Order
     */
     Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
@@ -94,7 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/order/{order}/delete', [OrderController::class, 'deleteOrder'])->name('order.delete');
 
     /*
-    |---------------- PAYMENT ----------------|
+    Payment
     */
     Route::get('/payment/{order_id}', [PaymentController::class, 'page'])
     ->name('payment.page');
@@ -102,7 +96,7 @@ Route::middleware('auth')->group(function () {
     ->name('payment.pay');
 
     /*
-    |---------------- ADDRESS CHANGE ----------------|
+    Address Change
     */
     // PAGE ganti alamat (GET)
     Route::get('/address/change/{order_id}', 
@@ -115,7 +109,7 @@ Route::middleware('auth')->group(function () {
     )->name('address.change.save');
 
     /*
-    |---------------- WISHLIST ----------------|
+    Wishlist
     */
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
@@ -123,7 +117,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/wishlist/add-ajax', [WishlistController::class, 'addAjax'])->name('wishlist.add-ajax');
 
     /*
-    |---------------- BUYER PROFILE ----------------|
+    Buyer Profile
     */
     Route::get('/buyer/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
     Route::post('/buyer/settings/personal-info', [BuyerController::class, 'updatePersonalInfo'])
@@ -131,7 +125,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/create', [SellerController::class, 'showCreateStore'])->name('seller.create.form');
     Route::post('/seller/register', [SellerController::class, 'registerStore'])->name('seller.register');
     /*
-    |---------------- CHAT ----------------|
+    Chat
     */
     Route::prefix('chat')->name('chat.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');

@@ -7,11 +7,11 @@
 <style>
     /* Global Styles for Consistency */
     body {
-        background-color: #FFFBE8; /* REVISION 1: Page background */
-        color: #6C2207; /* REVISION 1: Default text color */
+        background-color: #FFFBE8; 
+        color: #6C2207; 
     }
     
-    /* Fixed Header Styling (REVISION 3) */
+    
     .header-fixed {
         background-color: #FFFEF7;
         width: 100%;
@@ -42,7 +42,7 @@
     
     /* Address Box Style (REVISION 2) */
     .address-box {
-        background:#E8E0BB !important; /* REVISION 2: Address box color */
+        background:#E8E0BB !important; 
         border:1px solid #D8C8B4 !important; /* Slightly darker border for #E8E0BB */
     }
     

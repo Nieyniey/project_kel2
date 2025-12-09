@@ -41,7 +41,7 @@ class OrderController extends Controller
             // s HARUSNYA ISI: [ "id" => 22, "qty" => 3 ]
             // <-
 
-            // FIX DEPLOY BUG: pastikan id selalu integer
+            // pastikan id selalu integer
             $cartItemId = intval($s['id']);
             $qty = intval($s['qty']);
 

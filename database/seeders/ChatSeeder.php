@@ -16,7 +16,6 @@ class ChatSeeder extends Seeder
 
         $users = User::all();
         if ($users->count() < 2) {
-            // $this->command->warn('Skip ChatSeeder: Need at least 2 users.'); // Opsional
             return;
         }
         
@@ -25,7 +24,6 @@ class ChatSeeder extends Seeder
         // Ambil 5 pasangan user unik untuk memulai chat
         $chatPairs = collect();
         while ($chatPairs->count() < 5) {
-            // Ganti $this->faker()->... dengan $faker->...
             $user1Id = $faker->randomElement($usersArray);
             $user2Id = $faker->randomElement($usersArray);
 
@@ -36,7 +34,7 @@ class ChatSeeder extends Seeder
         }
 
         // Buat Chat Room dan Isi Pesan
-        $chatPairs->each(function ($pair) use ($faker) { // <<< Jangan lupa use ($faker)
+        $chatPairs->each(function ($pair) use ($faker) {
             $chat = Chat::create([
                 'user1_id' => $pair[0],
                 'user2_id' => $pair[1],

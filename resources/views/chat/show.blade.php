@@ -9,8 +9,8 @@
         --color-chat-list-bg: #FFFBE8; 
         --color-brown: #6C2207; 
         --color-white: #FFFEF7; 
-        --color-primary-orange: #FC5801; /* New Primary Color */
-        --color-primary-darker-40: #9B3600; /* ~40% darker of #FC5801 */
+        --color-primary-orange: #FC5801; 
+        --color-primary-darker-40: #9B3600; 
     }
 
     body {

@@ -10,13 +10,12 @@ class Cart extends Model
 {
     use HasFactory;
 
-    // Pastikan Primary Key benar (default 'id'). 
-    // Jika di migration Anda menggunakan $table->id('cart_id'), ubah ini jadi 'cart_id'
+ 
     protected $primaryKey = 'id'; 
     protected $table = 'carts';
 
     protected $fillable = [
-        'user_id', // <<< WAJIB ADA AGAR BISA DIISI LEWAT CREATE()
+        'user_id',
     ];
 
     public function user(): BelongsTo
