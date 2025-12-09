@@ -32,7 +32,7 @@ class WTSController extends Controller
         
         $products = $productQuery
             ->where(function ($query) {
-                $query->where('is_sale', true);
+                $query->where('is_sale', false);
             })
             ->inRandomOrder()->paginate(12);
 
