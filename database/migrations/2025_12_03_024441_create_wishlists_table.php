@@ -10,12 +10,8 @@ return new class extends Migration
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id(); // Primary Key untuk tabel wishlists
 
-            // 🛑 PERBAIKAN DI SINI:
-            // Karena Primary Key di 'users' adalah 'id', kita pastikan merujuk ke sana.
-            // Sintaks ini secara default mencari 'id' di tabel 'users'.
-            // Jika Anda ingin memastikan, gunakan: 
             $table->foreignId('user_id')
-                  ->constrained('users') // Mencari 'id' di tabel 'users'
+                  ->constrained('users') 
                   ->onDelete('cascade');
 
             $table->timestamps();

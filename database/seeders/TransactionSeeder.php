@@ -25,19 +25,16 @@ class TransactionSeeder extends Seeder
 
         // Buat 50 Pesanan Dummy
         Order::factory(50)->make()
-            // Lewatkan $faker ke closure
             ->each(function (Order $order) use ($users, $products, $faker) {
             
             $order->user_id = $users->random()->id;
             $order->total_price = 0; 
             $order->save();
             
-            // 🛑 FIX: Ambil ID yang benar. Karena migration pakai $table->id('order_id')
             $orderId = $order->order_id ?? $order->id; 
 
             $total = 0;
             
-            // Gunakan $faker, bukan $this->faker()
             $orderItemsCount = $faker->numberBetween(1, min(4, $products->count()));
             $orderItems = $products->random($orderItemsCount);
 
@@ -47,8 +44,8 @@ class TransactionSeeder extends Seeder
                 $price = $product->price;
 
                 DB::table('order_items')->insert([
-                    'order_id' => $orderId, // 🛑 FIX: Gunakan $orderId yang sudah diambil
-                    'product_id' => $product->product_id, // Asumsi Product model PK = product_id
+                    'order_id' => $orderId, 
+                    'product_id' => $product->product_id, 
                     'qty' => $qty,
                     'price_per_item' => $price,
                     'created_at' => $order->created_at,
@@ -65,7 +62,7 @@ class TransactionSeeder extends Seeder
             // Buat record Pembayaran 
             if ($order->status === 'completed' || $order->status === 'shipped') {
                 Payment::factory()->create([
-                    'order_id' => $orderId, // 🛑 FIX: Gunakan $orderId
+                    'order_id' => $orderId, 
                     'status' => 'completed',
                     'method' => $order->payment_method
                 ]);

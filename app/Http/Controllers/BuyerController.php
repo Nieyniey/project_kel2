@@ -13,7 +13,7 @@ class BuyerController extends Controller
 {
     public function home()
     {
-        // Example dummy products (replace with DB later)
+        // Example dummy products
         $products = [
             (object)[
                 'id' => 1,
@@ -44,7 +44,7 @@ class BuyerController extends Controller
         $user = Auth::user();
         $isSeller = $user->seller()->exists();
 
-        // ⬅ INI FIX-nya!!
+       
         $activeTab = $request->query('tab', 'personal-info');
 
         $data = [

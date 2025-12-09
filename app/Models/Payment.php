@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
-    use HasFactory; // <<< TAMBAHKAN INI AGAR FACTORY BISA DIPANGGIL
+    use HasFactory; 
 
     protected $table = 'payments';
     protected $primaryKey = 'payment_id';

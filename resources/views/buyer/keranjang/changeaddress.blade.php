@@ -8,10 +8,10 @@
     /* Global Styles for Consistency */
     body {
         background-color: #FFFBE8;
-        color: #6C2207; /* REVISION 1: Default text color */
+        color: #6C2207; 
     }
 
-    /* Fixed Header Styling (REVISION 2) */
+
     .header-fixed {
         background-color: #FFFEF7;
         width: 100%;

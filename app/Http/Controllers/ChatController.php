@@ -65,8 +65,7 @@ class ChatController extends Controller
         $chat->messages()->where('sender_id', '!=', $senderId)->update(['is_read' => true]);
 
         
-        // 5. FIX FOR UNDEFINED $CHATS ERROR: Load the list of all active chats for the sidebar
-        // This is necessary because the view chat.show expects $chats to display the chat list.
+        // 5. Load the list of all active chats for the sidebar
         $userId = Auth::id();
         $chats = Chat::where('user1_id', $userId)
                      ->orWhere('user2_id', $userId)
@@ -76,7 +75,6 @@ class ChatController extends Controller
                      }])
                      ->get();
 
-        // 6. Asumsi: View untuk room chat adalah 'chat.show'
         return view('chat.show', compact('chat', 'messages', 'receiver', 'chats')); 
     }
 

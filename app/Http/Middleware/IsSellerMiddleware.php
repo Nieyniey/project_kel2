@@ -11,8 +11,6 @@ class IsSellerMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
 
   
@@ -25,7 +23,6 @@ class IsSellerMiddleware
         }
 
         // 2. Cek apakah pengguna yang login memiliki relasi 'seller'
-        // Asumsi: Di Model User Anda sudah ada relasi public function seller()
         if (Auth::user()->seller) {
             // Lolos: Lanjutkan request ke controller
             return $next($request);

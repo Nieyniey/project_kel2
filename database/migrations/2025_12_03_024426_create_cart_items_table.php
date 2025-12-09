@@ -8,16 +8,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            $table->id('cart_item_id'); // Atau hanya $table->id();
+            $table->id('cart_item_id'); 
 
-            // 🛑 PERBAIKAN DI SINI:
-            // Rujuk ke Primary Key 'id' di tabel 'carts'.
-            // Parameter kedua ('id') tidak wajib, tapi memastikan jelas.
             $table->foreignId('cart_id')
                   ->constrained('carts') 
                   ->onDelete('cascade');
                   
-            // Tambahkan FK ke Products (jika belum ada)
+            // Tambahkan FK ke Products
             $table->foreignId('product_id')->constrained('products', 'product_id')->onDelete('cascade');
 
             $table->unsignedSmallInteger('qty');

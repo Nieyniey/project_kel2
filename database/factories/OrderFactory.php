@@ -13,11 +13,8 @@ class OrderFactory extends Factory
         return [
             'total_price' => $this->faker->randomFloat(2, 50000, 5000000), 
             
-            // 🛑 PERBAIKAN: Hapus 'processing', samakan dengan migration
-            // Migration: ['pending', 'paid', 'shipped', 'completed', 'cancelled']
             'status' => $this->faker->randomElement(['pending', 'paid', 'shipped', 'completed', 'cancelled']),
             
-            // Pastikan payment_method juga sudah benar
             'payment_method' => $this->faker->randomElement(['transfer', 'cod', 'ewallet']), 
         ];
     }

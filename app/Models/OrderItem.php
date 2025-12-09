@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class OrderItem extends Model
 {
     protected $table = 'order_items';
-    protected $primaryKey = 'order_item_id'; // kalau pakai ini
+    protected $primaryKey = 'order_item_id'; 
 
     protected $fillable = [
         'order_id',
@@ -16,7 +16,7 @@ class OrderItem extends Model
         'price_per_item'
     ];
 
-    public $timestamps = true; // kalau tabel punya created_at & updated_at
+    public $timestamps = true; 
 
     public function product()
     {

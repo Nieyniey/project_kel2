@@ -10,13 +10,10 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
 
-            // Secara eksplisit merujuk ke kolom 'id' di tabel 'users'
             $table->foreignId('user_id')
                   ->constrained('users') 
                   ->onDelete('cascade');
             
-            // Perhatikan: Dalam versi lama, mungkin diperlukan:
-            // $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->timestamps();
         });
