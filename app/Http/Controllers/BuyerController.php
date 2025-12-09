@@ -11,40 +11,12 @@ use App\Models\Address;
 
 class BuyerController extends Controller
 {
-    public function home()
-    {
-        // Example dummy products (replace with DB later)
-        $products = [
-            (object)[
-                'id' => 1,
-                'name' => 'Black Knit Sweater',
-                'price' => 120000,
-                'image' => '/images/sample1.png'
-            ],
-            (object)[
-                'id' => 2,
-                'name' => 'Brown Vintage Jacket',
-                'price' => 250000,
-                'image' => '/images/sample2.png'
-            ],
-            (object)[
-                'id' => 3,
-                'name' => 'White Canvas Bag',
-                'price' => 90000,
-                'image' => '/images/sample3.png'
-            ],
-        ];
-
-        return view('buyer.buyerHome', compact('products'));
-    }
-
-
+    
     public function settings(Request $request)
     {
         $user = Auth::user();
         $isSeller = $user->seller()->exists();
 
-        // ⬅ INI FIX-nya!!
         $activeTab = $request->query('tab', 'personal-info');
 
         $data = [
